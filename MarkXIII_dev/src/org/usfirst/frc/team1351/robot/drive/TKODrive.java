@@ -249,20 +249,20 @@ public class TKODrive implements Runnable
 			TKOHardware.getRightDrive().enableBrakeMode(true);
 			Timer t = new Timer();
 			t.start();
-			while ((TKOHardware.getCrateDistance() > Definitions.TRASHCAN_POSITIONING_MAX
-					|| TKOHardware.getCrateDistance() < Definitions.TRASHCAN_POSITIONING_MIN) && t.get() < 10 && TKOHardware.getJoystick(1).getRawButton(3))
-			{
-				if (TKOHardware.getCrateDistance() > Definitions.TRASHCAN_POSITIONING_MAX)
-				{
-					System.out.println("TOO FAR");
-					setLeftRightMotorOutputsPercentVBus(-.1, -.1);
-				}
-				else if (TKOHardware.getCrateDistance() < Definitions.TRASHCAN_POSITIONING_MIN)
-				{
-					System.out.println("TOO CLOSE");
-					setLeftRightMotorOutputsPercentVBus(.1, .1);
-				}
-			}
+//			while ((TKOHardware.getCrateDistance() > Definitions.TRASHCAN_POSITIONING_MAX
+//					|| TKOHardware.getCrateDistance() < Definitions.TRASHCAN_POSITIONING_MIN) && t.get() < 10 && TKOHardware.getJoystick(1).getRawButton(3))
+//			{
+//				if (TKOHardware.getCrateDistance() > Definitions.TRASHCAN_POSITIONING_MAX)
+//				{
+//					System.out.println("TOO FAR");
+//					setLeftRightMotorOutputsPercentVBus(-.1, -.1);
+//				}
+//				else if (TKOHardware.getCrateDistance() < Definitions.TRASHCAN_POSITIONING_MIN)
+//				{
+//					System.out.println("TOO CLOSE");
+//					setLeftRightMotorOutputsPercentVBus(.1, .1);
+//				}
+//			}
 			TKOHardware.getLeftDrive().set(0);
 			TKOHardware.getRightDrive().set(0);
 			t.stop();

@@ -147,8 +147,8 @@ public class TKOHardware
 		if (pistonSolenoids[0] == null)
 			pistonSolenoids[0] = new DoubleSolenoid(Definitions.SHIFTER_A, Definitions.SHIFTER_B);
 
-		if (pistonSolenoids[1] == null)
-			pistonSolenoids[1] = new DoubleSolenoid(Definitions.GRIPPER_A, Definitions.GRIPPER_B);
+//		if (pistonSolenoids[1] == null)
+//			pistonSolenoids[1] = new DoubleSolenoid(Definitions.GRIPPER_A, Definitions.GRIPPER_B);
 
 		if (pistonSolenoids[2] == null)
 			pistonSolenoids[2] = new DoubleSolenoid(Definitions.WHEELIE_A, Definitions.WHEELIE_B);
@@ -189,8 +189,8 @@ public class TKOHardware
 		configLiftTalons(Definitions.LIFT_P, Definitions.LIFT_I, Definitions.LIFT_D, Definitions.LIFT_TALONS_NORMAL_CONTROL_MODE);
 		configPickupTalons();
 
-		if (analog[0] == null)
-			analog[0] = new AnalogInput(Definitions.CRATE_SENSOR_ID);
+//		if (analog[0] == null)
+//			analog[0] = new AnalogInput(Definitions.CRATE_SENSOR_ID);
 	}
 
 	public static synchronized void configDriveTalons(double p, double I, double d, TalonControlMode mode)
@@ -468,11 +468,6 @@ public class TKOHardware
 		// return getAnalog(0).getVoltage();
 		return (-6.066 * Math.log(getAnalog(0).getAverageVoltage()) + 4.6772);
 		// y = -6.066ln(x) + 4.6772
-	}
-
-	public static boolean cratePresent() throws TKOException
-	{
-		return (getCrateDistance() < Definitions.CRATE_DISTANCE_THRESHOLD);
 	}
 
 	public static synchronized Joystick getJoystick(int num) throws TKOException
