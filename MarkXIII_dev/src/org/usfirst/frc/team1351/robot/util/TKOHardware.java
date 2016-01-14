@@ -3,6 +3,8 @@
 
 package org.usfirst.frc.team1351.robot.util;
 
+import java.util.Comparator;
+
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 
@@ -22,6 +24,31 @@ import edu.wpi.first.wpilibj.util.AllocationException;
 
 public class TKOHardware
 {
+	public class ParticleReport implements Comparator<ParticleReport>, Comparable<ParticleReport>{
+		double PercentAreaToImageArea;
+		double Area;
+		double BoundingRectLeft;
+		double BoundingRectTop;
+		double BoundingRectRight;
+		double BoundingRectBottom;
+		
+		public int compareTo(ParticleReport r)
+		{
+			return (int)(r.Area - this.Area);
+		}
+		
+		public int compare(ParticleReport r1, ParticleReport r2)
+		{
+			return (int)(r1.Area - r2.Area);
+		}
+	};
+
+	//Structure to represent the scores for the various tests used for target identification
+	public class Scores {
+		double Area;
+		double Aspect;
+	};
+	
 	// TODO Switch initialization; write getSwitch(int) method
 	
 	/**
