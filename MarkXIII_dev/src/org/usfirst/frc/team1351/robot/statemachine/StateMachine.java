@@ -103,14 +103,6 @@ public class StateMachine implements Runnable
 			id.state[2] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
 			id.state[3] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kReverse);
 			id.state[4] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
-			try
-			{
-				id.state[5] = (TKOHardware.cratePresent() == false);
-			}
-			catch (TKOException e)
-			{
-				e.printStackTrace();
-			}
 		}
 		catch (TKOException e)
 		{
