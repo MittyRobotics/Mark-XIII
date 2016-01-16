@@ -16,12 +16,10 @@ public class TKOLogger implements Runnable
 {
 	private ConcurrentLinkedQueue<String> m_MessageBuffer = new ConcurrentLinkedQueue<String>();
 	private ConcurrentLinkedQueue<String> m_DataBuffer = new ConcurrentLinkedQueue<String>();
-	private PrintWriter m_LogFile;
-	private PrintWriter m_DataLogFile;
+	private PrintWriter m_LogFile, m_DataLogFile;
 	private static TKOLogger m_Instance = null;
 	public TKOThread loggerThread = null;
-	private String directory = "/home/lvuser/logs/"; //TODO THIS IS ACTUAL
-	//private String directory = "";
+	private String directory = "/home/lvuser/logs/"; // TODO THIS IS ACTUAL
 	private String logFileName = "log";
 	private String dataDumpFileName = "data";
 	public long startTime;

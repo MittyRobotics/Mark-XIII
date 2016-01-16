@@ -35,13 +35,13 @@ public class StateMachine implements Runnable
 	public static final float PISTON_EXTEND_TIMEOUT = 15.f;
 
 	// 0b | GS | LR | LE | RR | RE | CP |
-	// 0b | | | 8 | | 2 | | = 10
+	// 0b |    |    |  8 |    |  2 |    | = 10
 	// 0b | GS | LR | LE | RR | RE | CP |
-	// 0b | | 16 | | 4 | | | = 20
+	// 0b |    | 16 |    |  4 |    |    | = 20
 	// 0b | GS | LR | LE | RR | RE | CP |
-	// 0b | 32 | 16 | | 4 | | | = 52
+	// 0b | 32 | 16 |    |  4 |    |    | = 52
 	// 0b | GS | LR | LE | RR | RE | CP |
-	// 0b | 32 | | 8 | | 2 | | = 42
+	// 0b | 32 |    |  8 |    |  2 |    | = 42
 
 	public static final int PISTON_EXTENDED = 10;
 	public static final int PISTON_RETRACTED = 20;
@@ -103,14 +103,14 @@ public class StateMachine implements Runnable
 			id.state[2] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
 			id.state[3] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kReverse);
 			id.state[4] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
-			try
-			{
-				id.state[5] = (TKOHardware.cratePresent() == false);
-			}
-			catch (TKOException e)
-			{
-				e.printStackTrace();
-			}
+//			try
+//			{
+//				id.state[5] = (TKOHardware.cratePresent() == false);
+//			}
+//			catch (TKOException e)
+//			{
+//				e.printStackTrace();
+//			}
 		}
 		catch (TKOException e)
 		{

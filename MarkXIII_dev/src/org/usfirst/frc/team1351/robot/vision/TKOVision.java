@@ -3,6 +3,7 @@
 
 package org.usfirst.frc.team1351.robot.vision;
 
+import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
@@ -27,6 +28,9 @@ public class TKOVision implements Runnable
 	Image frame;
 	Image binaryFrame;
 	int imaqError;
+	NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
+	NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
+//	Scores scores = new Scores();
 	
 	protected TKOVision()
 	{
@@ -52,7 +56,7 @@ public class TKOVision implements Runnable
 
 		if (!visionThread.isAlive() && m_Instance != null)
 			visionThread = new TKOThread(m_Instance);
-			visionThread.setPriority(newPriority);
+//			visionThread.setPriority(newPriority);
 
 		if (!visionThread.isThreadRunning())
 		{
@@ -74,6 +78,11 @@ public class TKOVision implements Runnable
 			visionThread.setThreadRunning(false);
 
 		System.out.println("Stopped vision task");
+	}
+	
+	public void init()
+	{
+
 	}
 
 	public void process()

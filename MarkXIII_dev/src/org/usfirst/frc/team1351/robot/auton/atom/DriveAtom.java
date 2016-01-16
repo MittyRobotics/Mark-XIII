@@ -1,8 +1,6 @@
 package org.usfirst.frc.team1351.robot.auton.atom;
 
-/**
- * TODO check TKOHardware to see where PID is set
- */
+// TODO check TKOHardware to see where PID is set
 
 import org.usfirst.frc.team1351.robot.auton.Atom;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
@@ -10,7 +8,6 @@ import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
-import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,27 +33,11 @@ public class DriveAtom extends Atom
 	{
 		try
 		{
-			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.Position, p, i, d);
-			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.Position, p, i, d);
-			TKOHardware.getLeftDrive().reverseOutput(false);
-			TKOHardware.getRightDrive().reverseOutput(true);
-			TKOHardware.getLeftDrive().reverseSensor(true);
-			TKOHardware.getRightDrive().reverseSensor(false);
-			TKOHardware.getLeftDrive().enableBrakeMode(true);
-			TKOHardware.getRightDrive().enableBrakeMode(true);
-			TKOHardware.getLeftDrive().setPosition(0); // resets encoder
-			TKOHardware.getRightDrive().setPosition(0);
-			TKOHardware.getLeftDrive().ClearIaccum(); // stops bounce
-			TKOHardware.getRightDrive().ClearIaccum();
-			Timer.delay(0.1);
-			TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getPosition());
-			TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getPosition());
-			TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
-			TKOHardware.getPiston(2).set(Definitions.WHEELIE_RETRACT);
+			TKOHardware.autonInit(p, i, d);
 		} catch (TKOException e)
 		{
 			e.printStackTrace();
-			System.out.println("Err.... Talons kinda died ");
+			System.out.println("Talon initialization failed!");
 		}
 		System.out.println("Drive atom initialized");
 	}
@@ -64,35 +45,39 @@ public class DriveAtom extends Atom
 	@Override
 	public void execute()
 	{
-		System.out.println("Starting execution");
+		System.out.println("Executing drive atom");
 		try
 		{
 			if (distance > 0)
 			{
-				while (DriverStation.getInstance().isEnabled() && TKOHardware.getDriveTalon(0).getSetpoint() < distance)
+				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() < distance)
 				{
-					TKOHardware.getDriveTalon(0).set(TKOHardware.getDriveTalon(0).getSetpoint() + incrementer);
-					TKOHardware.getDriveTalon(2).set(TKOHardware.getDriveTalon(2).getSetpoint() + incrementer);
-					System.out.println("Ncoder Left: " + TKOHardware.getDriveTalon(0).getPosition() + "\t Ncoder Rgith: "
-							+ TKOHardware.getDriveTalon(2).getPosition() + "\t Left Setpoint: "
-							+ TKOHardware.getDriveTalon(0).getSetpoint());
-					TKOLogger.getInstance().addMessage("Ncoder Left: " + TKOHardware.getDriveTalon(0).getPosition() + "\t Ncoder Rgith: "
-							+ TKOHardware.getDriveTalon(2).getPosition() + "\t Left Setpoint: "
-							+ TKOHardware.getDriveTalon(0).getSetpoint());
+					// current setpoint + incrementer
+					TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() + incrementer);
+					TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() + incrementer);
+					
+					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
+						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
+						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
+					TKOLogger.getInstance().addMessage("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
+						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
+						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
 					Timer.delay(0.001);
 				}
-			} else
+			}
+			else // driving in reverse
 			{
-				while (DriverStation.getInstance().isEnabled() && TKOHardware.getDriveTalon(0).getSetpoint() > distance)
+				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() > distance)
 				{
-					TKOHardware.getDriveTalon(0).set(TKOHardware.getDriveTalon(0).getSetpoint() - incrementer);
-					TKOHardware.getDriveTalon(2).set(TKOHardware.getDriveTalon(2).getSetpoint() - incrementer);
-					System.out.println("Ncoder Left: " + TKOHardware.getDriveTalon(0).getPosition() + "\t Ncoder Rgith: "
-							+ TKOHardware.getDriveTalon(2).getPosition() + "\t Left Setpoint: "
-							+ TKOHardware.getDriveTalon(0).getSetpoint());
-					TKOLogger.getInstance().addMessage("Ncoder Left: " + TKOHardware.getDriveTalon(0).getPosition() + "\t Ncoder Rgith: "
-							+ TKOHardware.getDriveTalon(2).getPosition() + "\t Left Setpoint: "
-							+ TKOHardware.getDriveTalon(0).getSetpoint());
+					TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() - incrementer);
+					TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() - incrementer);
+
+					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
+						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
+						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
+					TKOLogger.getInstance().addMessage("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
+						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
+						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
 					Timer.delay(0.001);
 				}
 			}
@@ -100,19 +85,18 @@ public class DriveAtom extends Atom
 			TKOHardware.getDriveTalon(0).set(distance);
 			TKOHardware.getDriveTalon(2).set(distance);
 
-			while (Math.abs(TKOHardware.getLeftDrive().getPosition() - distance) > threshold && DriverStation.getInstance().isEnabled())
+			double diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance);
+			while (diff > threshold && DriverStation.getInstance().isEnabled())
 			{
-				// not close enough doe; actually gets stuck here
-				TKOLogger.getInstance().addMessage("NOT CLOSE ENOUGH TO TARGET DIST: " + (TKOHardware.getLeftDrive().getPosition() - distance));
+				TKOLogger.getInstance().addMessage("NOT CLOSE ENOUGH TO TARGET DIST: " + diff);
 				Timer.delay(0.001);
 			}
 
 		} catch (TKOException e1)
 		{
 			e1.printStackTrace();
-			System.out.println("Error at another expected spot, I would assume....");
 		}
-		System.out.println("Done executing");
+		System.out.println("Done executing drive atom");
 	}
 
 }

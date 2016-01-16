@@ -54,16 +54,17 @@ public class Robot extends SampleRobot {
 		Image frame;
 		Image binaryFrame;
 		int imaqError;
+		int session;
 
 		//Constants
-		NIVision.Range TOTE_HUE_RANGE = new NIVision.Range(101, 64);	//Default hue range for yellow tote
-		NIVision.Range TOTE_SAT_RANGE = new NIVision.Range(88, 255);	//Default saturation range for yellow tote
-		NIVision.Range TOTE_VAL_RANGE = new NIVision.Range(134, 255);	//Default value range for yellow tote
+		NIVision.Range TOTE_HUE_RANGE = new NIVision.Range(32, 134);
+		NIVision.Range TOTE_SAT_RANGE = new NIVision.Range(39, 173);
+		NIVision.Range TOTE_VAL_RANGE = new NIVision.Range(220, 255);
 		double AREA_MINIMUM = 0.5; //Default Area minimum for particle as a percentage of total image area
 		double LONG_RATIO = 2.22; //Tote long side = 26.9 / Tote height = 12.1 = 2.22
 		double SHORT_RATIO = 1.4; //Tote short side = 16.9 / Tote height = 12.1 = 1.4
 		double SCORE_MIN = 75.0;  //Minimum score to be considered a tote
-		double VIEW_ANGLE = 49.4; //49.4 for Axis m1011 by default, 64 for m1013, 51.7 for 206, 52 for HD3000 square, 60 for HD3000 640x480
+		double VIEW_ANGLE = 60; //49.4 for Axis m1011 by default, 64 for m1013, 51.7 for 206, 52 for HD3000 square, 60 for HD3000 640x480
 		NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
 		NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
 		Scores scores = new Scores();
@@ -73,7 +74,11 @@ public class Robot extends SampleRobot {
 			frame = NIVision.imaqCreateImage(ImageType.IMAGE_RGB, 0);
 			binaryFrame = NIVision.imaqCreateImage(ImageType.IMAGE_U8, 0);
 			criteria[0] = new NIVision.ParticleFilterCriteria2(NIVision.MeasurementType.MT_AREA_BY_IMAGE_AREA, AREA_MINIMUM, 100.0, 0, 0);
-
+			  session = NIVision.IMAQdxOpenCamera("cam0",
+		                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+		        NIVision.IMAQdxConfigureGrab(session);
+			
+			
 			//Put default values to SmartDashboard so fields will appear
 			SmartDashboard.putNumber("Tote hue min", TOTE_HUE_RANGE.minValue);
 			SmartDashboard.putNumber("Tote hue max", TOTE_HUE_RANGE.maxValue);
@@ -85,12 +90,15 @@ public class Robot extends SampleRobot {
 		}
 
 		public void autonomous() {
+			NIVision.IMAQdxStartAcquisition(session);
 			while (isAutonomous() && isEnabled())
 			{
 				//read file in from disk. For this example to run you need to copy image.jpg from the SampleImages folder to the
 				//directory shown below using FTP or SFTP: http://wpilib.screenstepslive.com/s/4485/m/24166/l/282299-roborio-ftp
-				NIVision.imaqReadFile(frame, "/home/lvuser/SampleImages/image.jpg");
-
+//				NIVision.imaqReadFile(frame, "/home/lvuser/SampleImages/image.jpg");
+				
+				NIVision.IMAQdxGrab(session, frame, 1);
+				
 				//Update threshold values from SmartDashboard. For performance reasons it is recommended to remove this after calibration is finished.
 				TOTE_HUE_RANGE.minValue = (int)SmartDashboard.getNumber("Tote hue min", TOTE_HUE_RANGE.minValue);
 				TOTE_HUE_RANGE.maxValue = (int)SmartDashboard.getNumber("Tote hue max", TOTE_HUE_RANGE.maxValue);
@@ -153,6 +161,7 @@ public class Robot extends SampleRobot {
 
 				Timer.delay(0.005);				// wait for a motor update time
 			}
+			NIVision.IMAQdxStopAcquisition(session);
 		}
 
 		public void operatorControl() {
