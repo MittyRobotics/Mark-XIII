@@ -28,6 +28,7 @@ public class TKOHardware
 	 * The idea behind TKOHardware is to have one common class with all the objects we would need.
 	 * The code is highly modular, as seen below where all the arrays are of variable size.
 	 */
+	protected static CANTalon flywheelTalon[] = new CANTalon[Definitions.NUM_FLYWHEEL_TALONS];
 	protected static Joystick joysticks[] = new Joystick[Definitions.NUM_JOYSTICKS];
 	protected static CANTalon driveTalons[] = new CANTalon[Definitions.NUM_DRIVE_TALONS];
 	protected static CANTalon liftTalons[] = new CANTalon[Definitions.NUM_LIFT_TALONS];

@@ -97,6 +97,8 @@ public class Definitions
 	public static final int LIFT_TOP_OPTICAL_SWITCH = 1;
 	public static final double MAX_CURRENT_LEFT = 10.; // used for current driving
 	public static final double MAX_CURRENT_RIGHT = 10.;
+	
+	public static final int NUM_FLYWHEEL_TALONS = 2;
 
 	public static final int NUM_ANALOG = 2; // crate left and crate right
 	public static final int NUM_DRIVE_TALONS = 4;
