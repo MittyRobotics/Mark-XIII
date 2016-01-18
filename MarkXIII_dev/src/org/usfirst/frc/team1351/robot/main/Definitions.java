@@ -57,27 +57,28 @@ public class Definitions
 
 	public static final int[] DRIVE_TALON_ID =
 	{ 0, 1, 2, 3 };
-	public static final int[] PICKUP_TALON_ID =
+	public static final int[] FLY_TALON_ID =
 	{ 6, 7 };
+	public static final int[] INTAKE_TALON_ID =
+	{ 4, 5 };
 	public static final int[] JOYSTICK_ID =
 	{ 0, 1, 2, 3 };
 
 	public static final int NUM_ANALOG = 2; // crate left and crate right
 	public static final int NUM_DRIVE_TALONS = 4;
+	public static final int NUM_FLY_TALONS = 2;
+	public static final int NUM_INTAKE_TALONS = 2;
+	public static final int ALL_TALONS = NUM_DRIVE_TALONS + NUM_FLY_TALONS + NUM_INTAKE_TALONS;
 
 	public static final int NUM_ENCODERS = 3;
 	public static final int NUM_JOYSTICKS = 4;
 
-	public static final int NUM_LIFT_TALONS = 2;
 	public static final int NUM_PISTONS = 3; // number of piston, also is number of solenoids
 
 	public static final int NUM_SWITCHES = 7; // 5 for state machine + 2 for gripper top/bottom
 	public static final int PCM_ID = 0;
 
-	public static final int NUM_PICKUP_TALONS = 2;
-	public static final int ALL_TALONS = NUM_DRIVE_TALONS + NUM_LIFT_TALONS + NUM_PICKUP_TALONS;
-
-	// Lift constants
+	// Flywheel, intake constants
 
 	public static final int GYRO_ANALOG_CHANNEL = 1;
 	public static final double INCHES_PER_VOLT = 1.;
@@ -88,7 +89,7 @@ public class Definitions
 	public static final double LIFT_CALIBRATION_POWER = .4;
 	public static final int LIFT_CONTROL_STICK = 3;
 
-	public static final CANTalon.FeedbackDevice LIFT_ENCODER_TYPE = CANTalon.FeedbackDevice.QuadEncoder;
+	public static final CANTalon.FeedbackDevice FLY_ENCODER_TYPE = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int LIFT_GRIPPER_SWITCH = 2;
 
 	public static final double LIFT_P = 1.1; // 1
@@ -96,15 +97,13 @@ public class Definitions
 	public static final double LIFT_D = 0.1; // 0.1
 	public static final double LIFT_PID_INCREMENTER = 250.;
 
-	public static final boolean[] PICKUP_REVERSE_OUTPUT_MODE =
+	public static final boolean[] INTAKE_REVERSE_OUTPUT_MODE =
 	{ false, false };
 
 	public static final boolean[] LIFT_REVERSE_OUTPUT_MODE =
 	{ true, false };
-	public static final int[] LIFT_TALON_ID =
-	{ 4, 5 };
 
-	public static final CANTalon.TalonControlMode LIFT_TALONS_NORMAL_CONTROL_MODE = CANTalon.TalonControlMode.Position;
+	public static final CANTalon.TalonControlMode FLY_TALONS_NORMAL_CONTROL_MODE = CANTalon.TalonControlMode.Position;
 
 	public static final int LIFT_TOP_OPTICAL_SWITCH = 1;
 	public static final double MAX_CURRENT_LEFT = 10.; // used for current driving
