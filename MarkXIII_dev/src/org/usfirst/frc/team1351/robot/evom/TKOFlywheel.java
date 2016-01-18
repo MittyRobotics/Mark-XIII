@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 
 /**
- * This is the code to make the flywheel go zoom-zoom.
+ * This is the code to make the flywheel run. It make the spin-spin go zoom-zoom
  * 
  * @author Peri
  * @version 01/18/16
