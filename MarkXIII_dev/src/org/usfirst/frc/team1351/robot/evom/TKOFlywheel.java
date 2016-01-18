@@ -13,12 +13,10 @@ import edu.wpi.first.wpilibj.Timer;
 
 
 /**
- * This is an example of how to make a class that runs as a thread. The most important reason for making TKOThread was to make the thread
- * implementation thread-safe everywhere, meaning that if we happened to use two threads to do the same thing to an object, we would not
- * have memory corruption / other problems.
+ * This is the code to make the flywheel go zoom-zoom.
  * 
- * @author Vadim
- * @version 01/21/15
+ * @author Peri
+ * @version 01/18/16
  */
 public class TKOFlywheel implements Runnable // implements Runnable is important to make this class support the Thread (run method)
 {
@@ -57,7 +55,7 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 			}
 		}
 		
-		if(PIDsetpoint == speedTarget){
+		if(PIDsetpoint >= speedTarget){
 			System.out.println("Ready to Fire");
 		}
 		
