@@ -3,6 +3,8 @@
 
 package org.usfirst.frc.team1351.robot.vision;
 
+import java.io.IOException;
+
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
@@ -15,6 +17,7 @@ import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 // TODO find a way to toggle USB camera feeds
@@ -31,6 +34,12 @@ public class TKOVision implements Runnable
 	NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
 	NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
 //	Scores scores = new Scores();
+	
+	private final static String[] GRIP_ARGS = new String[] {
+        "/usr/local/frc/JRE/bin/java", "-jar",
+        "/home/lvuser/grip.jar", "/home/lvuser/project.grip" };
+
+    private final NetworkTable grip = NetworkTable.getTable("grip");
 	
 	protected TKOVision()
 	{
@@ -59,11 +68,9 @@ public class TKOVision implements Runnable
 //			visionThread.setPriority(newPriority);
 
 		if (!visionThread.isThreadRunning())
-		{
 			visionThread.setThreadRunning(true);
-		}
 		
-		NIVision.IMAQdxStartAcquisition(session);
+		init();
 
 		System.out.println("Started vision task");
 	}
@@ -80,15 +87,29 @@ public class TKOVision implements Runnable
 		System.out.println("Stopped vision task");
 	}
 	
-	public void init()
+	private void init()
 	{
-
+		NIVision.IMAQdxStartAcquisition(session);
+		try
+		{
+			Runtime.getRuntime().exec(GRIP_ARGS);
+		}
+		catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void process()
 	{
 		NIVision.IMAQdxGrab(session, frame, 1);       
         CameraServer.getInstance().setImage(frame);
+        
+        for (double area : grip.getNumberArray("targets/area", new double[0]))
+        {
+        	
+        }
 	}
 
 	@Override
