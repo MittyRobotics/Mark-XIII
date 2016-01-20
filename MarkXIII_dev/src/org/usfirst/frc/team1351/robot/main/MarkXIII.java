@@ -13,6 +13,7 @@ import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOLEDArduino;
 import org.usfirst.frc.team1351.robot.util.TKOTalonSafety;
+import org.usfirst.frc.team1351.robot.evom.TKOFlywheel;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -117,7 +118,8 @@ public class MarkXIII extends SampleRobot
 		// TKODataReporting.getInstance().start();
 		TKOTalonSafety.getInstance().start();
 		TKOLEDArduino.getInstance().start();
-
+		TKOFlywheel.getInstance().start();
+		
 		while (isOperatorControl() && isEnabled())
 		{
 			try
