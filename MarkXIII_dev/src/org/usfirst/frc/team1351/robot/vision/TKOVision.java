@@ -1,31 +1,43 @@
-//Last edited by Alex Parks
-//on 2/16/15
+// Last edited by Ben Kim
+// on 01/12/16
 
 package org.usfirst.frc.team1351.robot.vision;
 
+import org.usfirst.frc.team1351.robot.util.TKOHardware;
+import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.DrawMode;
 import com.ni.vision.NIVision.Image;
 import com.ni.vision.NIVision.Range;
+import com.ni.vision.NIVision.ShapeMode;
 
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
+
+// TODO find a way to toggle USB camera feeds
 
 public class TKOVision implements Runnable
 {
 	public TKOThread visionThread = null;
 	private static TKOVision m_Instance = null;
+	
 	int session;
 	Image frame;
-	AxisCamera camera;
-
+	Image binaryFrame;
+	int imaqError;
+	NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
+	NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
+//	Scores scores = new Scores();
+	
 	protected TKOVision()
-
 	{
-		System.out.println("Vision Activated!!!!!!!!!");
 		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-		camera = new AxisCamera("10.13.51.11");
+        session = NIVision.IMAQdxOpenCamera("cam0",
+                NIVision.IMAQdxCameraControlMode.CameraControlModeController);
+        NIVision.IMAQdxConfigureGrab(session);
 	}
 
 	public static synchronized TKOVision getInstance()
@@ -44,9 +56,14 @@ public class TKOVision implements Runnable
 
 		if (!visionThread.isAlive() && m_Instance != null)
 			visionThread = new TKOThread(m_Instance);
+//			visionThread.setPriority(newPriority);
 
 		if (!visionThread.isThreadRunning())
+		{
 			visionThread.setThreadRunning(true);
+		}
+		
+		NIVision.IMAQdxStartAcquisition(session);
 
 		System.out.println("Started vision task");
 	}
@@ -54,30 +71,24 @@ public class TKOVision implements Runnable
 	public void stop()
 	{
 		System.out.println("Stopping vision task");
+		
+		NIVision.IMAQdxStopAcquisition(session);
+		
 		if (visionThread.isThreadRunning())
 			visionThread.setThreadRunning(false);
 
 		System.out.println("Stopped vision task");
 	}
+	
+	public void init()
+	{
+
+	}
 
 	public void process()
 	{
-		if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-		{
-			camera.writeBrightness(0);
-			camera.getImage(frame);
-			
-			Range range1 = new Range(100, 140);
-			Range range2 = new Range(104, 255);
-			Range range3 = new Range(92, 132);
-			Image processedImage = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
-			NIVision.imaqColorThreshold(processedImage, frame, 0, NIVision.ColorMode.HSV, range1, range2, range3);
-			//NIVision.imaqMorphology(processedImage, processedImage, NIVision.MorphologyMethod., structuringElement);
-//			CameraServer.getInstance().setImage(frame);
-
-			/** robot code here! **/
-
-		}
+		NIVision.IMAQdxGrab(session, frame, 1);       
+        CameraServer.getInstance().setImage(frame);
 	}
 
 	@Override
