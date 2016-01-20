@@ -38,12 +38,13 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	float d = 0;
 	PIDController controller = new PIDController(p, i, d, encoder, flyTalon1);
 	double PIDsetpoint = 0;
+	
+	//to see how long it takes to speed up/slow down
 	Timer timer = new Timer();
 	
 	
 	
-	//90 revs per tick (50 milliseconds) for 5 seconds
-	// 5 setpoints (1 every sec)
+	//increase speed to 9000 RPM
 	public double increaseSpeed(int speedTarget){
 		timer.start();
 		
@@ -55,6 +56,7 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 			}
 		}
 		
+		//when speed is reached, ready to fire
 		if(PIDsetpoint >= speedTarget){
 			System.out.println("Ready to Fire");
 		}
@@ -159,6 +161,8 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 				/*
 				 * THIS IS WHERE YOU PUT ALL OF YOUR CODEZ
 				 */
+				
+				//use trigger to speed up
 				while(TKOHardware.getJoystick(3).getTrigger()) {
 					increaseSpeed(9000);
 				}
