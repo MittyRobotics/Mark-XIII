@@ -27,22 +27,21 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	public TKOThread flywheelThread = null;
 	private static TKOFlywheel m_Instance = null;
 	
-	CANTalon flyTalon1 = new CANTalon(1), flyTalon2 = new CANTalon(2);
-	Joystick stick1 = new Joystick(1), stick2 = new Joystick(2);
+//	CANTalon TKOHardware.getFlyTalon() = new CANTalon(1), flyTalon2 = new CANTalon(2);
+//	Joystick stick1 = new Joystick(1), stick2 = new Joystick(2);
 	
 	//dummy numbers. fix when we know what the ports are going to be
-	Encoder encoder = new Encoder(1, 2, false, CounterBase.EncodingType.k4X);
+//	Encoder encoder = new Encoder(1, 2, false, CounterBase.EncodingType.k4X);
 	//PID
-	float p = 0;
-	float i = 0;
-	float d = 0;
-	PIDController controller = new PIDController(p, i, d, encoder, flyTalon1);
+	double p = 0;
+	double i = 0;
+	double d = 0;
+	//figure out what source kind we need
+	PIDController controller = new PIDController(p, i, d, encoder, TKOHardware.getFlyTalon());
 	double PIDsetpoint = 0;
 	
 	//to see how long it takes to speed up/slow down
 	Timer timer = new Timer();
-	
-	
 	
 	//increase speed to 9000 RPM
 	public double increaseSpeed(int speedTarget){
@@ -51,8 +50,8 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 		if (PIDsetpoint < speedTarget){
 			for(double i = PIDsetpoint; i <= speedTarget; i += 90){
 				PIDsetpoint = i;
-				flyTalon1.set(PIDsetpoint);
-				flyTalon2.set(flyTalon1.get());
+				TKOHardware.getFlyTalon().set(PIDsetpoint);
+//				flyTalon2.set(TKOHardware.getFlyTalon().get());
 			}
 		}
 		
@@ -61,10 +60,10 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 			System.out.println("Ready to Fire");
 		}
 		
-		double volts = flyTalon1.getOutputVoltage();
+		double volts = TKOHardware.getFlyTalon().getOutputVoltage();
 		controller.disable();
-		flyTalon1.set(volts);
-		flyTalon2.set(volts);
+		TKOHardware.getFlyTalon().set(volts);
+//		flyTalon2.set(volts);
 		
 		timer.stop();
 		return timer.get();
@@ -77,8 +76,8 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 		if (PIDsetpoint > 0){
 			for(double i = PIDsetpoint; i >= 0; i -= 100){
 				PIDsetpoint = i;
-				flyTalon1.set(PIDsetpoint);
-				flyTalon2.set(flyTalon1.get());
+				TKOHardware.getFlyTalon().set(PIDsetpoint);
+//				flyTalon2.set(TKOHardware.getFlyTalon().get());
 			}
 		}
 		
@@ -89,8 +88,8 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	// Typical constructor made protected so that this class is only accessed statically, though that doesnt matter
 	protected TKOFlywheel()
 	{
-		flyTalon1.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-		flyTalon2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+		TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+//		flyTalon2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 	}
 
 	/**
