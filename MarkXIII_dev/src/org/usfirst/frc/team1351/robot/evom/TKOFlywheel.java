@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1351.robot.evom;
 
 import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
@@ -27,9 +28,6 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	public TKOThread flywheelThread = null;
 	private static TKOFlywheel m_Instance = null;
 	
-//	CANTalon TKOHardware.getFlyTalon() = new CANTalon(1), flyTalon2 = new CANTalon(2);
-//	Joystick stick1 = new Joystick(1), stick2 = new Joystick(2);
-	
 	//dummy numbers. fix when we know what the ports are going to be
 //	Encoder encoder = new Encoder(1, 2, false, CounterBase.EncodingType.k4X);
 	//PID
@@ -37,14 +35,14 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	double i = 0;
 	double d = 0;
 	//figure out what source kind we need
-	PIDController controller = new PIDController(p, i, d, encoder, TKOHardware.getFlyTalon());
+	PIDController controller; 
 	double PIDsetpoint = 0;
 	
 	//to see how long it takes to speed up/slow down
 	Timer timer = new Timer();
 	
-	//increase speed to 9000 RPM
-	public double increaseSpeed(int speedTarget){
+	//Sets the speed based on a variable speedTarget
+	public double setSpeed(int speedTarget) throws TKOException{
 		timer.start();
 		
 		if (PIDsetpoint < speedTarget){
@@ -53,43 +51,31 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 				TKOHardware.getFlyTalon().set(PIDsetpoint);
 //				flyTalon2.set(TKOHardware.getFlyTalon().get());
 			}
+		} 
+		else if (speedTarget == 0 && PIDsetpoint > 0) {
+			for (double i = PIDsetpoint; i >= speedTarget; i -= 1000) {
+				PIDsetpoint = i;
+				TKOHardware.getFlyTalon().set(PIDsetpoint);
+			}
 		}
 		
 		//when speed is reached, ready to fire
-		if(PIDsetpoint >= speedTarget){
+		if(speedTarget == 9000 && PIDsetpoint >= speedTarget){
 			System.out.println("Ready to Fire");
 		}
 		
 		double volts = TKOHardware.getFlyTalon().getOutputVoltage();
 		controller.disable();
 		TKOHardware.getFlyTalon().set(volts);
-//		flyTalon2.set(volts);
 		
 		timer.stop();
 		return timer.get();
 	}
 	
-	//decrease speed to 0 each time
-	public double decreaseSpeed(){
-		timer.start();
-		
-		if (PIDsetpoint > 0){
-			for(double i = PIDsetpoint; i >= 0; i -= 100){
-				PIDsetpoint = i;
-				TKOHardware.getFlyTalon().set(PIDsetpoint);
-//				flyTalon2.set(TKOHardware.getFlyTalon().get());
-			}
-		}
-		
-		timer.stop();
-		return timer.get();
-	}
 
 	// Typical constructor made protected so that this class is only accessed statically, though that doesnt matter
 	protected TKOFlywheel()
 	{
-		TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-//		flyTalon2.changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 	}
 
 	/**
@@ -107,6 +93,7 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	}
 
 	/**
+	 * @throws TKOException 
 	 * The {@code start} method starts the thread, making it call the run method (only once) but can do this for threads in different
 	 * classes in parallel. The {@code isThreadRunning} method checks with a boolean whether the thread is running. We only start the thread
 	 * if it is not. The {@code setThreadRunning} method sets the boolean to true, and the {@code start} method starts the Thread. We use
@@ -116,12 +103,14 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	 * @category
 	 
 	 */
-	public void start()
+	public void start() throws TKOException
 	{
 		if (!flywheelThread.isAlive() && m_Instance != null)
 		{
 			flywheelThread = new TKOThread(m_Instance);
 			flywheelThread.setPriority(Definitions.getPriority("threadExample"));
+			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+			controller = new PIDController(p, i, d, TKOHardware.getFlyTalon(), TKOHardware.getFlyTalon());
 		}
 		if (!flywheelThread.isThreadRunning())
 		{
@@ -163,13 +152,15 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 				
 				//use trigger to speed up
 				while(TKOHardware.getJoystick(3).getTrigger()) {
-					increaseSpeed(9000);
+					setSpeed(9000);
 				}
+				timer.reset();
 				synchronized (flywheelThread) // synchronized per the thread to make sure that we wait safely
 				{
 					flywheelThread.wait(100); // the wait time that the thread sleeps, in milliseconds
 				}
-				decreaseSpeed();
+				setSpeed(0);
+				timer.reset();
 			}
 		} catch (Exception e)
 		{
