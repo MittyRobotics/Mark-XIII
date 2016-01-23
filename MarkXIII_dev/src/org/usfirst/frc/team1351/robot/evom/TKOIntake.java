@@ -84,6 +84,6 @@ public class TKOIntake implements Runnable
 
 	public synchronized void spikeControl()
 	{
-
+		//joystick 2, button 4 to be reverse 3 is 0 and 5 is forward
 	}
 }
