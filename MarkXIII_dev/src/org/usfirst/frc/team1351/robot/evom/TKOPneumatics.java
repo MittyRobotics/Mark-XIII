@@ -25,7 +25,7 @@ public class TKOPneumatics implements Runnable
 	public TKOThread pneuThread = null;
 	private static TKOPneumatics m_Instance = null;
 	long lastShiftTime = System.currentTimeMillis();
-	long toggledPistonTime[] = new long[Definitions.NUM_DSOlENOIDS + Definitions.NUM_SOLENOIDS];
+	long toggledPistonTime[] = new long[Definitions.NUM_DSOLENOIDS + Definitions.NUM_SOLENOIDS];
 
 	protected TKOPneumatics()
 	{
