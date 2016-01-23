@@ -141,7 +141,7 @@ public class TKOVision implements Runnable
 
 				chooseCamera();
 				viewCamera(cameraChoice);
-
+				printTable();
 				synchronized (visionThread)
 				{
 					visionThread.wait(50);
@@ -156,6 +156,7 @@ public class TKOVision implements Runnable
 
 	public void printTable()
 	{
+		System.out.println("\n \n \n"); 
 		double[] areas = table.getNumberArray("area", defaultValue);
 		System.out.print("areas: ");
 		for (double area : areas)
