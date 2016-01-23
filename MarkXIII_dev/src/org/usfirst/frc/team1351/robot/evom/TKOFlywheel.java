@@ -6,9 +6,9 @@ import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.CounterBase;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.Joystick;
+//import edu.wpi.first.wpilibj.CounterBase;
+//import edu.wpi.first.wpilibj.Encoder;
+//import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -16,8 +16,8 @@ import edu.wpi.first.wpilibj.Timer;
 /**
  * This is the code to make the flywheel run. It make the spin-spin go zoom-zoom
  * 
- * @author Peri
- * @version 01/18/16
+ * @author Louis
+ * @version 01/23/16
  */
 public class TKOFlywheel implements Runnable // implements Runnable is important to make this class support the Thread (run method)
 {
