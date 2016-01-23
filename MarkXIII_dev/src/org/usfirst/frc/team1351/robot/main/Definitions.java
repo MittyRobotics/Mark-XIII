@@ -58,22 +58,22 @@ public class Definitions
 	public static final int[] DRIVE_TALON_ID =
 	{ 0, 1, 2, 3 };
 	public static final int[] FLY_TALON_ID =
-	{ 6, 7 };
-	public static final int[] INTAKE_TALON_ID =
 	{ 4, 5 };
+	public static final int[] SPIKE_ID =
+	{ 6, 7, 8 };
 	public static final int[] JOYSTICK_ID =
 	{ 0, 1, 2, 3 };
 
 	public static final int NUM_ANALOG = 2; // crate left and crate right
 	public static final int NUM_DRIVE_TALONS = 4;
 	public static final int NUM_FLY_TALONS = 2;
-	public static final int NUM_INTAKE_TALONS = 2;
-	public static final int ALL_TALONS = NUM_DRIVE_TALONS + NUM_FLY_TALONS + NUM_INTAKE_TALONS;
+	public static final int NUM_SPIKES = 3;
+	public static final int ALL_TALONS = NUM_DRIVE_TALONS + NUM_FLY_TALONS;
 
 	public static final int NUM_ENCODERS = 3;
 	public static final int NUM_JOYSTICKS = 4;
 
-	public static final int NUM_DSOlENOIDS = 5;
+	public static final int NUM_DSOLENOIDS = 5;
 	public static final int NUM_SOLENOIDS = 2;
 
 	public static final int NUM_SWITCHES = 7; // 5 for state machine + 2 for gripper top/bottom

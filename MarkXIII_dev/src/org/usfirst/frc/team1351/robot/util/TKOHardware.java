@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.can.CANMessageNotFoundException;
@@ -32,8 +33,9 @@ public class TKOHardware
 	protected static Joystick joysticks[] = new Joystick[Definitions.NUM_JOYSTICKS];
 	protected static CANTalon driveTalons[] = new CANTalon[Definitions.NUM_DRIVE_TALONS];
 	protected static CANTalon flyTalons[] = new CANTalon[Definitions.NUM_FLY_TALONS];
-	protected static CANTalon intakeTalons[] = new CANTalon[Definitions.NUM_INTAKE_TALONS];
-	protected static DoubleSolenoid doubleSolenoids[] = new DoubleSolenoid[Definitions.NUM_DSOlENOIDS];
+	protected static Relay spikes[] = new Relay[Definitions.NUM_SPIKES];
+
+	protected static DoubleSolenoid doubleSolenoids[] = new DoubleSolenoid[Definitions.NUM_DSOLENOIDS];
 	protected static Solenoid solenoids[] = new Solenoid[Definitions.NUM_SOLENOIDS];
 	protected static DigitalInput limitSwitches[] = new DigitalInput[Definitions.NUM_SWITCHES];
 	protected static Compressor compressor;
@@ -59,11 +61,11 @@ public class TKOHardware
 		{
 			flyTalons[i] = null;
 		}
-		for (int i = 0; i < Definitions.NUM_INTAKE_TALONS; i++)
+		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
 		{
-			intakeTalons[i] = null;
+			spikes[i] = null;
 		}
-		for (int i = 0; i < Definitions.NUM_DSOlENOIDS; i++)
+		for (int i = 0; i < Definitions.NUM_DSOLENOIDS; i++)
 		{
 			doubleSolenoids[i] = null;
 		}
@@ -127,22 +129,10 @@ public class TKOHardware
 				}
 			}
 		}
-		for (int i = 0; i < Definitions.NUM_INTAKE_TALONS; i++)
+		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
 		{
-			if (intakeTalons[i] == null)
-			{
-				try
-				{
-					intakeTalons[i] = new CANTalon(Definitions.INTAKE_TALON_ID[i]);
-					talonModes[Definitions.NUM_DRIVE_TALONS + Definitions.NUM_FLY_TALONS + i] = null; // null means not initialized
-				}
-				catch (AllocationException | CANMessageNotFoundException e)
-				{
-					e.printStackTrace();
-					System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
-					TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR");
-				}
-			}
+			if (spikes[i] == null)
+				spikes[i] = new Relay(Definitions.SPIKE_ID[i]);
 		}
 		if (doubleSolenoids[0] == null)
 			doubleSolenoids[0] = new DoubleSolenoid(Definitions.SHIFTER_A, Definitions.SHIFTER_B);
@@ -169,23 +159,18 @@ public class TKOHardware
 		if (gyro == null)
 		{
 			gyro = new AnalogGyro(Definitions.GYRO_ANALOG_CHANNEL);
-
 			gyro.initGyro();
 			gyro.setSensitivity(7. / 1000.);
 			gyro.reset();
-
 			System.out.println("Gyro initialized: " + Timer.getFPGATimestamp());
-
 		}
+		
 		if (arduinoSignal == null)
-		{
 			arduinoSignal = new AnalogOutput(0);
-		}
 
 		// TODO tune these values
 		configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
 		configFlyTalons(Definitions.LIFT_P, Definitions.LIFT_I, Definitions.LIFT_D, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
-		configIntakeTalons();
 	}
 
 	public static synchronized void configDriveTalons(double p, double I, double d, TalonControlMode mode)
@@ -257,24 +242,9 @@ public class TKOHardware
 		}
 	}
 	
-	public static synchronized void configIntakeTalons()
+	public static synchronized void configSpikes()
 	{
-		CANTalon.TalonControlMode mode = TalonControlMode.PercentVbus;
-		for (int i = 0; i < Definitions.NUM_INTAKE_TALONS; i++)
-		{
-			intakeTalons[i].delete();
-			intakeTalons[i] = null;
-			intakeTalons[i] = new CANTalon(Definitions.INTAKE_TALON_ID[i]);
-			talonModes[Definitions.NUM_DRIVE_TALONS + Definitions.NUM_FLY_TALONS + i] = null;
-			if (intakeTalons[i] != null)
-			{
-				intakeTalons[i].changeControlMode(mode);
-				talonModes[Definitions.NUM_DRIVE_TALONS + Definitions.NUM_FLY_TALONS + i] = mode;
-
-				intakeTalons[i].enableBrakeMode(true);
-				intakeTalons[i].reverseOutput(Definitions.INTAKE_REVERSE_OUTPUT_MODE[i]);
-			}
-		}
+		// TODO necessary?
 	}
 
 	public static synchronized void changeTalonMode(CANTalon target, CANTalon.TalonControlMode newMode, double newP, double newI, double newD)
@@ -367,15 +337,15 @@ public class TKOHardware
 				flyTalons[i] = null;
 			}
 		}
-		for (int i = 0; i < Definitions.NUM_INTAKE_TALONS; i++)
+		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
 		{
-			if (intakeTalons[i] != null)
+			if (spikes[i] != null)
 			{
-				intakeTalons[i].delete();
-				intakeTalons[i] = null;
+				spikes[i].free();
+				spikes[i] = null;
 			}
 		}
-		for (int i = 0; i < Definitions.NUM_DSOlENOIDS; i++)
+		for (int i = 0; i < Definitions.NUM_DSOLENOIDS; i++)
 		{
 			if (doubleSolenoids[i] != null)
 			{
@@ -508,28 +478,21 @@ public class TKOHardware
 		return flyTalons[0];
 	}
 	
-	public static synchronized CANTalon getIntakeTalon(int num) throws TKOException
+	public static synchronized Relay getSpike(int num) throws TKOException
 	{
-		if (num >= Definitions.NUM_INTAKE_TALONS)
+		if (num >= Definitions.NUM_SPIKES)
 		{
-			throw new TKOException("Intake talon requested out of bounds");
+			throw new TKOException("Relay requested out of bounds");
 		}
-		if (intakeTalons[num] != null)
-		{
-			if (intakeTalons[num].getControlMode() == CANTalon.TalonControlMode.Follower)
-				throw new TKOException("ERROR: Follower talon is uninitialized (mode unset)");
-			else if (talonModes[num] == null)
-				throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)");
-			else
-				return intakeTalons[num];
-		}
+		if (spikes[num] != null)
+			return spikes[num];
 		else
-			throw new TKOException("Intake talon " + (num) + "(array value) is null");
+			throw new TKOException("Relay " + (num) + "(array value) is null");
 	}
 
 	public static synchronized DoubleSolenoid getDSolenoid(int num) throws TKOException
 	{
-		if (num >= Definitions.NUM_DSOlENOIDS)
+		if (num >= Definitions.NUM_DSOLENOIDS)
 		{
 			throw new TKOException("Piston requested out of bounds");
 		}
