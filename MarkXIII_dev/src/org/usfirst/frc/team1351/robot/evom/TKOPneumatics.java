@@ -1,15 +1,8 @@
 // Last edited by Ben Kim
-// on 01/20/2015
+// on 01/21/2016
 
-/**
- * In Java, we start each file by saying what package it is part of.
- */
 package org.usfirst.frc.team1351.robot.evom;
 
-/**
- * These import statements are similar to how we would include header files in C++.
- * You'll notice that Eclipse will neatly collapse these lines. Expand it by clicking the plus on the left.
- */
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
@@ -17,25 +10,22 @@ import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-/**
- * Although you could theoretically use wpilibj.*, it would be no bueno.
- * Eclipse makes it easy to import specific classes from WPILib.
- * For example, hovering over a CANTalon object without the import statement gives an error that Eclipse will correct.
+/** PISTONS:
+ * [0] - drivetrain
+ * [1] - flywheel
+ * [2] - intake
+ * [3] - intake
+ * [4] - lift
+ * [0] - lift
+ * [1] - portcullis
  */
 
-/**
- * By now, it should be obvious that the naming convention is to use TKO[name]. Runnable is used by any class executed in a thread.
- */
 public class TKOPneumatics implements Runnable
 {
-	/**
-	 * Refer to ThreadExample.java in robot.util for a detailed explanation.
-	 */
 	public TKOThread pneuThread = null;
 	private static TKOPneumatics m_Instance = null;
-	private boolean manualEnabled = true;
 	long lastShiftTime = System.currentTimeMillis();
-	long toggledPistonTime[] = new long[Definitions.NUM_PISTONS];
+	long toggledPistonTime[] = new long[Definitions.NUM_DSOlENOIDS + Definitions.NUM_SOLENOIDS];
 
 	protected TKOPneumatics()
 	{
@@ -64,11 +54,7 @@ public class TKOPneumatics implements Runnable
 		}
 		return m_Instance;
 	}
-
-	/**
-	 * Inside the start method, we will set the gripper to the default configuration. We must first start the compressor, and then we open
-	 * the "claw" by setting the piston to retracted.
-	 */
+	
 	public synchronized void start()
 	{
 		System.out.println("Starting pneumatics task");
@@ -92,23 +78,6 @@ public class TKOPneumatics implements Runnable
 		System.out.println("Started pneumatics task");
 	}
 
-	public synchronized void reset()
-	{
-		try
-		{
-			TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
-			TKOHardware.getPiston(1).set(Definitions.GRIPPER_CLOSED);
-			TKOHardware.getPiston(2).set(Definitions.WHEELIE_RETRACT);
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Inside the stop method, we must stop the compressor as well.
-	 */
 	public synchronized void stop()
 	{
 		System.out.println("Stopping pneumatics task");
@@ -124,16 +93,23 @@ public class TKOPneumatics implements Runnable
 		}
 		System.out.println("Stopped pneumatics task");
 	}
-
-	public synchronized void setManual()
+	
+	public synchronized void reset()
 	{
-		manualEnabled = true;
+		try
+		{
+			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
+		}
+		catch (TKOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
-	public synchronized void notManual()
-	{
-		manualEnabled = false;
-	}
+//	public synchronized void setManual(boolean b)
+//	{
+//		manualEnabled = b;
+//	}
 
 	public void autoShift()
 	{
@@ -148,13 +124,9 @@ public class TKOPneumatics implements Runnable
 
 			if (TKOHardware.getLeftDrive().getOutputCurrent() > currentThreshLeft
 					|| TKOHardware.getRightDrive().getOutputCurrent() > currentThreshRight)
-			{
-				TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
-			}
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 			else
-			{
-				TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW); // TODO
-			}
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW); // TODO
 			lastShiftTime = System.currentTimeMillis();
 		}
 		catch (TKOException e)
@@ -177,87 +149,39 @@ public class TKOPneumatics implements Runnable
 //		}
 	}
 
-	/**
-	 * The pistonControl() method runs continuously in the run() method. The try-catch loop exists since getPiston(i) can throw a
-	 * TKOException. Joystick input is simple here: one button extends the piston, the other retracts it.
-	 * 
-	 */
-
 	public synchronized void pistonControl()
 	{
 		try
 		{
-			/*
-			 * if (StateMachine.getGripperSwitch()) { System.out.println("Gripper switch activated, closing gripper");
-			 * TKOHardware.getPiston(1).set(DoubleSolenoid.Value.kForward); }
-			 */
-
-			if (manualEnabled) // wheelie
+			// shifting gearbox
+			if (TKOHardware.getJoystick(0).getRawButton(4))
 			{
-				if (TKOHardware.getJoystick(2).getRawButton(2))
-				{
-					if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
-					{
-						Value currVal = TKOHardware.getPiston(2).get();
-						Value newVal = currVal;
-						if (currVal == Value.kForward)
-							newVal = Value.kReverse;
-						else if (currVal == Value.kReverse)
-							newVal = Value.kForward;
-						TKOHardware.getPiston(2).set(newVal);
-						toggledPistonTime[2] = System.currentTimeMillis();
-					}
-				}
-				// if (TKOHardware.getJoystick(2).getRawButton(2))
-				// {
-				// TKOHardware.getPiston(1).set(DoubleSolenoid.Value.kForward);
-				// }
-				// if (TKOHardware.getJoystick(2).getRawButton(3))
-				// {
-				// TKOHardware.getPiston(1).set(DoubleSolenoid.Value.kReverse);
-				// }
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
+				lastShiftTime = System.currentTimeMillis();
 			}
-			if (TKOHardware.getJoystick(3).getRawButton(2)) // gripper
+			else if (TKOHardware.getJoystick(0).getRawButton(5))
 			{
-				if (System.currentTimeMillis() - toggledPistonTime[1] > 250)
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
+				lastShiftTime = System.currentTimeMillis();
+			}
+			else
+				autoShift();
+			
+			/*if (TKOHardware.getJoystick(2).getRawButton(2))
+			{
+				// using same joystick button to extend/retract
+				if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
 				{
-					Value currVal = TKOHardware.getPiston(1).get();
+					Value currVal = TKOHardware.getPiston(2).get();
 					Value newVal = currVal;
 					if (currVal == Value.kForward)
 						newVal = Value.kReverse;
 					else if (currVal == Value.kReverse)
 						newVal = Value.kForward;
-					TKOHardware.getPiston(1).set(newVal);
-					toggledPistonTime[1] = System.currentTimeMillis();
+					TKOHardware.getPiston(2).set(newVal);
+					toggledPistonTime[2] = System.currentTimeMillis();
 				}
-			}
-			// if (TKOHardware.getJoystick(3).getRawButton(2))
-			// {
-			// TKOHardware.getPiston(2).set(DoubleSolenoid.Value.kForward);
-			// }
-			// if (TKOHardware.getJoystick(3).getRawButton(3))
-			// {
-			// TKOHardware.getPiston(2).set(DoubleSolenoid.Value.kReverse);
-			//
-			// }
-			if (TKOHardware.getJoystick(0).getRawButton(4))
-			{
-				TKOHardware.getPiston(0).set(Definitions.SHIFTER_HIGH);
-				lastShiftTime = System.currentTimeMillis();
-			}
-			else if (TKOHardware.getJoystick(0).getRawButton(5))
-			{
-				TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
-				lastShiftTime = System.currentTimeMillis();
-			}
-			else
-				autoShift();
-
-			// if (TKOHardware.getSwitch(2).get())
-			// {
-			// TKOHardware.getPiston(1).set(DoubleSolenoid.Value.kForward);
-			// }
-
+			}*/
 		}
 		catch (Exception e)
 		{
@@ -273,7 +197,7 @@ public class TKOPneumatics implements Runnable
 			while (pneuThread.isThreadRunning())
 			{
 				pistonControl();
-				pickupRollerControl();
+				// pickupRollerControl();
 
 				synchronized (pneuThread)
 				{

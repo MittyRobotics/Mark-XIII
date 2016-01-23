@@ -73,7 +73,8 @@ public class Definitions
 	public static final int NUM_ENCODERS = 3;
 	public static final int NUM_JOYSTICKS = 4;
 
-	public static final int NUM_PISTONS = 3; // number of piston, also is number of solenoids
+	public static final int NUM_DSOlENOIDS = 5;
+	public static final int NUM_SOLENOIDS = 2;
 
 	public static final int NUM_SWITCHES = 7; // 5 for state machine + 2 for gripper top/bottom
 	public static final int PCM_ID = 0;
@@ -113,19 +114,35 @@ public class Definitions
 	{ 5, 5, 5, 5, 5, 5 };
 
 	// Pneumatics constants
+	
+	/** PISTONS:
+	 * [0] - drivetrain
+	 * [1] - flywheel
+	 * [2] - intake
+	 * [3] - intake
+	 * [4] - lift
+	 * [0] - lift
+	 * [1] - portcullis
+	 */
 
 	public static final DoubleSolenoid.Value SHIFTER_LOW = DoubleSolenoid.Value.kForward;
 	public static final DoubleSolenoid.Value SHIFTER_HIGH = DoubleSolenoid.Value.kReverse;
-	public static final DoubleSolenoid.Value GRIPPER_CLOSED = DoubleSolenoid.Value.kReverse;
-	public static final DoubleSolenoid.Value GRIPPER_OPEN = DoubleSolenoid.Value.kForward;
-	public static final DoubleSolenoid.Value WHEELIE_EXTEND = DoubleSolenoid.Value.kForward;
-	public static final DoubleSolenoid.Value WHEELIE_RETRACT = DoubleSolenoid.Value.kReverse;
 
 	public static final int SHIFTER_A = 2; // drive train shifting piston
 	public static final int SHIFTER_B = 3;
-	public static final int WHEELIE_A = 0; // piston for left side of wheelie bar
-	public static final int WHEELIE_B = 1;
-
+	public static final int FLYWHEEL_A = 0;
+	public static final int FLYWHEEL_B = 1;
+	public static final int INTAKE_A = 0;
+	public static final int INTAKE_B = 1;
+	public static final int INTAKE_C = 0;
+	public static final int INTAKE_D = 1;
+	public static final int D_LIFT_A = 0;
+	public static final int D_LIFT_B = 1;
+	public static final int S_LIFT_A = 0;
+	public static final int S_LIFT_B = 1;
+	public static final int PORTCULLIS_A = 0;
+	public static final int PORTCULLIS_B = 1;
+	
 	// Thread definitions
 
 	public static ArrayList<String> threadNames = new ArrayList<String>();
