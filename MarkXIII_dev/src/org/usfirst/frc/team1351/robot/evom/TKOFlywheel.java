@@ -43,24 +43,27 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	
 	//Sets the speed based on a variable speedTarget
 	public double setSpeed(int speedTarget) throws TKOException{
+		//103% of the speed target, a number that represents the upper margin of error for the speed
+		double upperError = speedTarget * 1.03;
+		//97% of the speed target, a number that represents the lower margin of error for the speed.
+		double lowerError = speedTarget * 0.97;
 		timer.start();
 		
 		if (PIDsetpoint < speedTarget){
-			for(double i = PIDsetpoint; i <= speedTarget; i += 90){
-				PIDsetpoint = i;
+			while (PIDsetpoint <= upperError && PIDsetpoint >= lowerError) {
 				TKOHardware.getFlyTalon().set(PIDsetpoint);
-//				flyTalon2.set(TKOHardware.getFlyTalon().get());
+				PIDsetpoint += 250;
 			}
 		} 
-		else if (speedTarget == 0 && PIDsetpoint > 0) {
-			for (double i = PIDsetpoint; i >= speedTarget; i -= 1000) {
-				PIDsetpoint = i;
+		else if (PIDsetpoint > speedTarget){
+			while (PIDsetpoint <= upperError && PIDsetpoint >= lowerError) {
 				TKOHardware.getFlyTalon().set(PIDsetpoint);
+				PIDsetpoint -= 150;
 			}
 		}
 		
 		//when speed is reached, ready to fire
-		if(speedTarget == 9000 && PIDsetpoint >= speedTarget){
+		if(speedTarget > 0 && PIDsetpoint >= speedTarget){
 			System.out.println("Ready to Fire");
 		}
 		
