@@ -41,29 +41,29 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	//to see how long it takes to speed up/slow down
 	Timer timer = new Timer();
 	
+	//TODO Might need to change the margin of error, the speed increase integer, and/or the speed decrease integer eventually.
 	//Sets the speed based on a variable speedTarget
-	public double setSpeed(int speedTarget) throws TKOException{
+	public double setSpeed(int speedTarget, int inc, int dec) throws TKOException{
 		//103% of the speed target, a number that represents the upper margin of error for the speed
 		double upperError = speedTarget * 1.03;
 		//97% of the speed target, a number that represents the lower margin of error for the speed.
 		double lowerError = speedTarget * 0.97;
 		timer.start();
 		
-		if (PIDsetpoint < speedTarget){
-			while (PIDsetpoint <= upperError && PIDsetpoint >= lowerError) {
-				TKOHardware.getFlyTalon().set(PIDsetpoint);
-				PIDsetpoint += 250;
-			}
-		} 
-		else if (PIDsetpoint > speedTarget){
-			while (PIDsetpoint <= upperError && PIDsetpoint >= lowerError) {
-				TKOHardware.getFlyTalon().set(PIDsetpoint);
-				PIDsetpoint -= 150;
-			}
+		//speeds up the talon when it is under the lower margin of error.
+		while (PIDsetpoint <= lowerError) {
+			TKOHardware.getFlyTalon().set(PIDsetpoint);
+			PIDsetpoint += inc;
+		}
+		
+		//slows down the talon when it is over the upper margin of error.
+		while (PIDsetpoint >= upperError) {
+			TKOHardware.getFlyTalon().set(PIDsetpoint);
+			PIDsetpoint -= dec;
 		}
 		
 		//when speed is reached, ready to fire
-		if(speedTarget > 0 && PIDsetpoint >= speedTarget){
+		if(speedTarget > 0 && PIDsetpoint >= lowerError && PIDsetpoint <= upperError){
 			System.out.println("Ready to Fire");
 		}
 		
@@ -155,14 +155,14 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 				
 				//use trigger to speed up
 				while(TKOHardware.getJoystick(3).getTrigger()) {
-					setSpeed(9000);
+					setSpeed(9000, 250, 150);
 				}
 				timer.reset();
 				synchronized (flywheelThread) // synchronized per the thread to make sure that we wait safely
 				{
 					flywheelThread.wait(100); // the wait time that the thread sleeps, in milliseconds
 				}
-				setSpeed(0);
+				setSpeed(0, 250, 150);
 				timer.reset();
 			}
 		} catch (Exception e)
