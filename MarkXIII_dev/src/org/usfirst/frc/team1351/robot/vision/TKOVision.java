@@ -3,12 +3,7 @@
 
 package org.usfirst.frc.team1351.robot.vision;
 
-<<<<<<< HEAD
 import org.usfirst.frc.team1351.robot.util.TKOException;
-=======
-import java.io.IOException;
-
->>>>>>> f1dfa9e5e066dfc2a278d754219e3bffec9cee1e
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
@@ -21,7 +16,6 @@ import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.vision.AxisCamera;
 
 // TODO find a way to toggle USB camera feeds
@@ -50,22 +44,10 @@ public class TKOVision implements Runnable
 	Image binaryFrame;
 	int imaqError;
 	NIVision.ParticleFilterCriteria2 criteria[] = new NIVision.ParticleFilterCriteria2[1];
-<<<<<<< HEAD
 	NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0, 0, 1, 1);
 
 	// Scores scores = new Scores();
 
-=======
-	NIVision.ParticleFilterOptions2 filterOptions = new NIVision.ParticleFilterOptions2(0,0,1,1);
-//	Scores scores = new Scores();
-	
-	private final static String[] GRIP_ARGS = new String[] {
-        "/usr/local/frc/JRE/bin/java", "-jar",
-        "/home/lvuser/grip.jar", "/home/lvuser/project.grip" };
-
-    private final NetworkTable grip = NetworkTable.getTable("grip");
-	
->>>>>>> f1dfa9e5e066dfc2a278d754219e3bffec9cee1e
 	protected TKOVision()
 	{
 		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
@@ -94,17 +76,15 @@ public class TKOVision implements Runnable
 		// visionThread.setPriority(newPriority);
 
 		if (!visionThread.isThreadRunning())
+		{
 			visionThread.setThreadRunning(true);
+		}
 		
-<<<<<<< HEAD
 		//TODO add in init stuff here 
 		cameraChoice = sessionCamFront; 
 		NIVision.IMAQdxConfigureGrab(cameraChoice);
 		NIVision.IMAQdxStartAcquisition(cameraChoice);
 		isCameraInit = true; 
-=======
-		init();
->>>>>>> f1dfa9e5e066dfc2a278d754219e3bffec9cee1e
 
 		System.out.println("Started vision task");
 	}
@@ -121,43 +101,17 @@ public class TKOVision implements Runnable
 
 		System.out.println("Stopped vision task");
 	}
-<<<<<<< HEAD
 
 	public void init()
 	{
 		
-=======
-	
-	private void init()
-	{
-		NIVision.IMAQdxStartAcquisition(session);
-		try
-		{
-			Runtime.getRuntime().exec(GRIP_ARGS);
-		}
-		catch (IOException e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
->>>>>>> f1dfa9e5e066dfc2a278d754219e3bffec9cee1e
 	}
 
 	//The following simple methods are for working with undetermined ids 
 	public void viewCamera(int id)
 	{
-<<<<<<< HEAD
 		NIVision.IMAQdxGrab(id, frame, 1);
 		CameraServer.getInstance().setImage(frame);
-=======
-		NIVision.IMAQdxGrab(session, frame, 1);       
-        CameraServer.getInstance().setImage(frame);
-        
-        for (double area : grip.getNumberArray("targets/area", new double[0]))
-        {
-        	
-        }
->>>>>>> f1dfa9e5e066dfc2a278d754219e3bffec9cee1e
 	}
 	
 	
