@@ -34,7 +34,25 @@ public class TKODrive implements Runnable
 	{
 
 	}
-
+	
+	//screw Ishan
+	public void PIDDrive() throws TKOException {
+		//15 ft per second
+		//TODO fix rpm number (dummy number)
+		double PIDsetpoint = 0;
+		
+		while(PIDsetpoint <= 194) {
+			TKOHardware.getDriveTalon(1).set(PIDsetpoint);
+			PIDsetpoint += 5;
+		}
+		
+		while(PIDsetpoint >= 206) {
+			TKOHardware.getDriveTalon(1).set(PIDsetpoint);
+			PIDsetpoint -= 3;
+		}
+		
+	}
+	
 	public void arcadeDrive()
 	{
 		boolean squaredInputs = true;
