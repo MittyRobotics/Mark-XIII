@@ -56,18 +56,18 @@ public class TKODrive implements Runnable
 		
 		//left side
 		//TODO put lspeed and rspeed somewhere in these if statements (something about nesting and/or &&s)
-		if(PIDsetpointleft < lController.get()) {
+		if(PIDsetpointleft < lspeed) {
 			PIDsetpointleft ++;
 		}
-		if(PIDsetpointleft > lController.get()) {
+		if(PIDsetpointleft > lspeed) {
 			PIDsetpointleft --;
 		}
 		
 		//right side
-		if(PIDsetpointright < rController.get()){
+		if(PIDsetpointright < rspeed){
 			PIDsetpointright ++;
 		}
-		if(PIDsetpointright > rController.get()){
+		if(PIDsetpointright > rspeed){
 			PIDsetpointright --;
 		}
 		
