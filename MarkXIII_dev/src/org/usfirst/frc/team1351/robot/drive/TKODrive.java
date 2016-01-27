@@ -12,10 +12,15 @@ import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 
 public class TKODrive implements Runnable
 {
+	
+	public static PIDController lController;
+	public static PIDController rController;
+	
 	public static synchronized TKODrive getInstance()
 	{
 		if (TKODrive.m_Instance == null)
@@ -35,22 +40,39 @@ public class TKODrive implements Runnable
 
 	}
 	
-	//screw Ishan
-	public void PIDDrive() throws TKOException {
-		//15 ft per second
-		//TODO fix rpm number (dummy number)
-		double PIDsetpoint = 0;
+	public void PIDDrive() throws TKOException{
 		
-		while(PIDsetpoint <= 194) {
-			TKOHardware.getDriveTalon(1).set(PIDsetpoint);
-			PIDsetpoint += 5;
+		double PIDsetpointleft = 0;
+		double PIDsetpointright = 0;
+		double lspeed = 0;
+		double rspeed = 0;
+		double maxspeed = 500;
+		
+		lController = new PIDController(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, TKOHardware.getLeftDrive(), TKOHardware.getLeftDrive());
+		rController = new PIDController(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, TKOHardware.getRightDrive(), TKOHardware.getRightDrive());
+		
+		lspeed = TKOHardware.getJoystick(0).getY() * maxspeed;
+		rspeed = TKOHardware.getJoystick(1).getY() * maxspeed;
+		
+		//left side
+		//TODO put lspeed and rspeed somewhere in these if statements (something about nesting and/or &&s)
+		if(PIDsetpointleft < lController.get()) {
+			PIDsetpointleft ++;
+		}
+		if(PIDsetpointleft > lController.get()) {
+			PIDsetpointleft --;
 		}
 		
-		while(PIDsetpoint >= 206) {
-			TKOHardware.getDriveTalon(1).set(PIDsetpoint);
-			PIDsetpoint -= 3;
+		//right side
+		if(PIDsetpointright < rController.get()){
+			PIDsetpointright ++;
+		}
+		if(PIDsetpointright > rController.get()){
+			PIDsetpointright --;
 		}
 		
+		lController.setSetpoint(PIDsetpointleft);
+		rController.setSetpoint(PIDsetpointright);
 	}
 	
 	public void arcadeDrive()
@@ -260,43 +282,6 @@ public class TKODrive implements Runnable
 		}
 	}
 	
-	private void overTheLipPositioner()
-	{
-		try
-		{
-			TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
-			TKOHardware.getLeftDrive().enableBrakeMode(true);
-			TKOHardware.getRightDrive().enableBrakeMode(true);
-			Timer t = new Timer();
-			t.start();
-//			while ((TKOHardware.getCrateDistance() > Definitions.TRASHCAN_POSITIONING_MAX
-//					|| TKOHardware.getCrateDistance() < Definitions.TRASHCAN_POSITIONING_MIN) && t.get() < 10 && TKOHardware.getJoystick(1).getRawButton(3))
-//			{
-//				if (TKOHardware.getCrateDistance() > Definitions.TRASHCAN_POSITIONING_MAX)
-//				{
-//					System.out.println("TOO FAR");
-//					setLeftRightMotorOutputsPercentVBus(-.1, -.1);
-//				}
-//				else if (TKOHardware.getCrateDistance() < Definitions.TRASHCAN_POSITIONING_MIN)
-//				{
-//					System.out.println("TOO CLOSE");
-//					setLeftRightMotorOutputsPercentVBus(.1, .1);
-//				}
-//			}
-			TKOHardware.getLeftDrive().set(0);
-			TKOHardware.getRightDrive().set(0);
-			t.stop();
-			t.reset();
-			Timer.delay(.25);
-			TKOHardware.getLeftDrive().enableBrakeMode(Definitions.DRIVE_BRAKE_MODE[0]);
-			TKOHardware.getRightDrive().enableBrakeMode(Definitions.DRIVE_BRAKE_MODE[2]);
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
 	@Override
 	public void run()
 	{
