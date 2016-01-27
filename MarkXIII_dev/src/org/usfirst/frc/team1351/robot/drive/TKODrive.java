@@ -12,10 +12,15 @@ import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
+
+import edu.wpi.first.wpilibj.Joystick;
 
 public class TKODrive implements Runnable
 {
+	Joystick xboxController = new Joystick(0);
+	
 	public static synchronized TKODrive getInstance()
 	{
 		if (TKODrive.m_Instance == null)
@@ -111,14 +116,22 @@ public class TKODrive implements Runnable
 	}
 
 	public synchronized void currentModeTankDrive()
-	{
+	{	
+		double leftStick = 0;
+        double rightStick = 0;
+		
 		try
 		{
+			leftStick = (Math.abs(xboxController.getRawAxis(1)) > 0.20) ? xboxController.getRawAxis(1) : 0.0;
+            rightStick = (Math.abs(xboxController.getRawAxis(5)) > 0.20) ? xboxController.getRawAxis(5) : 0.0;
+            
 			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.Current, Definitions.DRIVE_P, Definitions.DRIVE_I,
 					Definitions.DRIVE_D);
 			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.Current, Definitions.DRIVE_P,
 					Definitions.DRIVE_I, Definitions.DRIVE_D);
-			setLeftRightMotorOutputsCurrent(TKOHardware.getJoystick(0).getY(), TKOHardware.getJoystick(1).getY());
+			//setLeftRightMotorOutputsCurrent(TKOHardware.getJoystick(0).getY(), TKOHardware.getJoystick(1).getY()); 
+			
+			setLeftRightMotorOutputsCurrent(leftStick, rightStick);
 		}
 		catch (TKOException e)
 		{
@@ -204,7 +217,7 @@ public class TKODrive implements Runnable
 		TKODataReporting.getInstance().stopCollectingDriveData();
 	}
 
-	private void shimmy()
+	/*private void shimmy()
 	{
 		try
 		{
@@ -240,9 +253,9 @@ public class TKODrive implements Runnable
 		{
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
-	private void overTheLipPositioner()
+	/*private void overTheLipPositioner()
 	{
 		try
 		{
@@ -277,7 +290,7 @@ public class TKODrive implements Runnable
 		{
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 	@Override
 	public void run()
@@ -296,18 +309,19 @@ public class TKODrive implements Runnable
 				// // calibRan = true;
 				// }
 				// tankDrive();
+				TKOLogger.getInstance().addMessage("" + DriverStation.getInstance().getBatteryVoltage());
 				/*if (TKOHardware.getJoystick(3).getTrigger())
 				{
 					setLeftRightMotorOutputsPercentVBus(-0.3, -0.3);
 				}*/
 				
-				if (TKOHardware.getJoystick(1).getRawButton(2))
+				/*if (TKOHardware.getJoystick(1).getRawButton(2))
 				{
-					shimmy();
+					//shimmy();
 					//overTheLipPositioner();
-				}
-				arcadeDrive();
-				// currentModeTankDrive();
+				}*/
+				//arcadeDrive();
+				currentModeTankDrive();
 				synchronized (driveThread)
 				{
 					driveThread.wait(5);
