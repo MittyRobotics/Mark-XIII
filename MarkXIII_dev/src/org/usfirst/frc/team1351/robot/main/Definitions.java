@@ -76,7 +76,7 @@ public class Definitions
 	public static final int NUM_DSOLENOIDS = 5;
 	public static final int NUM_SOLENOIDS = 2;
 
-	public static final int NUM_SWITCHES = 7; // 5 for state machine + 2 for gripper top/bottom
+	public static final int NUM_SWITCHES = 3; // 5 for state machine + 2 for gripper top/bottom
 	public static final int PCM_ID = 0;
 
 	// Flywheel, intake constants
