@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 /*-----------TODO-------------
  * 
  * clean up TKOHardware goddamn
+ * getPriority()
  * 
  */
 
@@ -41,21 +42,17 @@ public class MarkXIII extends SampleRobot
 		TKOHardware.initObjects();
 
 		autonChooser = new SendableChooser();
-//		autonChooser.addDefault("RC, Drive, Turn", new Integer(0));
-//		autonChooser.addObject("RC, Drive", new Integer(1));
-
-//		SmartDashboard.putData("Auton mode chooser", autonChooser);
-//		SmartDashboard.putNumber("Drive P: ", Definitions.AUTON_DRIVE_P);
+		autonChooser.addDefault("Drive", new Integer(0));
+		autonChooser.addObject("Drive, Turn", new Integer(1));
 		
-		try
-		{
-			SmartDashboard.putNumber("CRATE DISTANCE: ", TKOHardware.getCrateDistance());
-			SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
-			SmartDashboard.putBoolean("Bottom switch", TKOHardware.getLiftBottom());
-		} catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
+//		try
+//		{
+//			SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
+//			SmartDashboard.putBoolean("Bottom switch", TKOHardware.getLiftBottom());
+//		} catch (TKOException e)
+//		{
+//			e.printStackTrace();
+//		}
 
 		System.out.println("robotInit() finished");
 	}
@@ -79,16 +76,22 @@ public class MarkXIII extends SampleRobot
 		Molecule molecule = new Molecule();
 		molecule.clear();
 		
-//		if (autonChooser.getSelected().equals(0))
-//		{
-//			molecule.add(new TrashcanGrabAndUp());
-//		} else if (autonChooser.getSelected().equals(8))
-//		{
-//			molecule.add(new TrashcanGrabAndUp());
-//		} else
-//		{
-//			System.out.println("Molecule empty why this");
-//		}
+		double distance = SmartDashboard.getNumber("Drive distance: ");
+		double angle = SmartDashboard.getNumber("Turn angle: ");
+		
+		if (autonChooser.getSelected().equals(0))
+		{
+			molecule.add(new DriveAtom(distance));
+		}
+		else if (autonChooser.getSelected().equals(1))
+		{
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new GyroTurnAtom(angle));
+		}
+		else
+		{
+			System.out.println("Molecule empty why this");
+		}
 
 		System.out.println("Running molecule");
 		molecule.initAndRun();
@@ -123,15 +126,14 @@ public class MarkXIII extends SampleRobot
 			try
 			{
 				TKOHardware.arduinoWrite(1);
-				SmartDashboard.putNumber("CRATE DISTANCE: ", TKOHardware.getCrateDistance());
-				SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
-				SmartDashboard.putBoolean("Bottom switch", TKOHardware.getLiftBottom());
+//				SmartDashboard.putNumber("CRATE DISTANCE: ", TKOHardware.getCrateDistance());
+//				SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
+//				SmartDashboard.putBoolean("Bottom switch", TKOHardware.getLiftBottom());
 			} catch (TKOException e)
 			{
 				e.printStackTrace();
 			}
 			Timer.delay(0.1); // wait for a motor update time
-			// TODO This will make it so robot lags after disabling, need to make it sorta small
 		}
 
 		try
@@ -154,9 +156,6 @@ public class MarkXIII extends SampleRobot
 		}
 	}
 
-	/**
-	 * Runs during test mode
-	 */
 	public void test()
 	{
 		System.out.println("Enabling test!");
