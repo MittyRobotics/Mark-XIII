@@ -1,4 +1,4 @@
-//Last edited by Parks 1/16/16 10:38AM
+//Last edited by Parks 1/27/16 4:44PM DUCK THIS SHITE
 
 package org.usfirst.frc.team1351.robot.drive;
 
@@ -15,8 +15,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 
+import edu.wpi.first.wpilibj.Joystick;
+
 public class TKODrive implements Runnable
 {
+	public static Joystick xboxController = new Joystick(0);
 	
 	public static PIDController lController;
 	public static PIDController rController;
@@ -152,13 +155,21 @@ public class TKODrive implements Runnable
 
 	public synchronized void currentModeTankDrive()
 	{
+		double leftStick = 0.0;
+		double rightStick = 0.0;
+		
 		try
 		{
+			leftStick = (Math.abs(xboxController.getRawAxis(1)) > 0.20) ? xboxController.getRawAxis(1) : 0.0;
+            rightStick = (Math.abs(xboxController.getRawAxis(5)) > 0.20) ? xboxController.getRawAxis(5) : 0.0;
+			
 			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.Current, Definitions.DRIVE_P, Definitions.DRIVE_I,
 					Definitions.DRIVE_D);
 			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.Current, Definitions.DRIVE_P,
 					Definitions.DRIVE_I, Definitions.DRIVE_D);
-			setLeftRightMotorOutputsCurrent(TKOHardware.getJoystick(0).getY(), TKOHardware.getJoystick(1).getY());
+			//setLeftRightMotorOutputsCurrent(TKOHardware.getJoystick(0).getY(), TKOHardware.getJoystick(1).getY());
+			
+			setLeftRightMotorOutputsCurrent(leftStick, rightStick);
 		}
 		catch (TKOException e)
 		{
@@ -304,13 +315,14 @@ public class TKODrive implements Runnable
 					setLeftRightMotorOutputsPercentVBus(-0.3, -0.3);
 				}*/
 				
+				TKOLogger.getInstance().addMessage("" + DriverStation.getInstance().getBatteryVoltage());
+				
 				if (TKOHardware.getJoystick(1).getRawButton(2))
 				{
 					shimmy();
-					//overTheLipPositioner();
 				}
-				arcadeDrive();
-				// currentModeTankDrive();
+				//arcadeDrive();
+				currentModeTankDrive();
 				synchronized (driveThread)
 				{
 					driveThread.wait(5);
