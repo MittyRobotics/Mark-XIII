@@ -1,8 +1,9 @@
 // Last edited by Ben Kim
-// on 2/4/2015
+// on 1/26/16
 
 package org.usfirst.frc.team1351.robot.statemachine;
 
+import org.usfirst.frc.team1351.robot.statemachine.states.*;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
@@ -14,39 +15,29 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class StateMachine implements Runnable
 {
-	// TODO add analog inputs but make them act as digital inputs
-	static Timer m_timer;
+	static Timer timer;
 
-	static DigitalInput m_gripper;
-	static DigitalInput m_pistonRetract_L;
-	static DigitalInput m_pistonExtend_L;
-	static DigitalInput m_pistonRetract_R;
-	static DigitalInput m_pistonExtend_R;
+	static DigitalInput ballSwitch;
+	static DigitalInput intakeSwitch;
+	static DigitalInput shooterSwitch;
+	
+	// TODO should intake be controlled by one solenoid? lmao
+	static DoubleSolenoid shooterPiston;
+	static DoubleSolenoid intakePiston_L;
+	static DoubleSolenoid intakePiston_R;
 
-	static Joystick m_evomStick;
-	static DoubleSolenoid m_gripperPiston;
+	static Joystick stick;
 
 	private InstanceData data = new InstanceData();
-
-	static IStateFunction states[] = new IStateFunction[StateEnum.STATE_ERR.getValue() + 1];
-	//static IStateFunction states[] = new IStateFunction[10];
+	static IStateFunction states[] = new IStateFunction[StateEnum.NUM_STATES.getValue()];
 
 	public static final float PISTON_RETRACT_TIMEOUT = 15.f;
 	public static final float PISTON_EXTEND_TIMEOUT = 15.f;
 
-	// 0b | GS | LR | LE | RR | RE | CP |
-	// 0b |    |    |  8 |    |  2 |    | = 10
-	// 0b | GS | LR | LE | RR | RE | CP |
-	// 0b |    | 16 |    |  4 |    |    | = 20
-	// 0b | GS | LR | LE | RR | RE | CP |
-	// 0b | 32 | 16 |    |  4 |    |    | = 52
-	// 0b | GS | LR | LE | RR | RE | CP |
-	// 0b | 32 |    |  8 |    |  2 |    | = 42
+	// 0b | SS | IS | BS |
+	// 0b |  4 |  2 |  1 | = 7
 
-	public static final int PISTON_EXTENDED = 10;
-	public static final int PISTON_RETRACTED = 20;
-	public static final int RC_FOUND = 52;
-	public static final int READY_TO_LIFT = 42;
+//	public static final int 
 
 	public TKOThread stateThread = null;
 	private static StateMachine m_Instance = null;
@@ -63,60 +54,40 @@ public class StateMachine implements Runnable
 
 	protected void init()
 	{
-		// currentState = new DecideAction();
+		
 	}
 
 	protected StateMachine()
 	{
-		m_timer = new Timer();
+		timer = new Timer();
 
+		// TODO fix arbitrary values
 		try
 		{
-			m_gripper = TKOHardware.getSwitch(2);
-			// m_pistonRetract_L = TKOHardware.getSwitch(3);
-			// m_pistonExtend_L = TKOHardware.getSwitch(4);
-			// m_pistonRetract_R = TKOHardware.getSwitch(5);
-			// m_pistonExtend_R = TKOHardware.getSwitch(6);
-
-			// TODO stick 4 for state machine actions, stick 3 for manual control?
-			m_evomStick = TKOHardware.getJoystick(3);
-			m_gripperPiston = TKOHardware.getPiston(1);
-
+			ballSwitch = TKOHardware.getSwitch(0);
+			intakeSwitch = TKOHardware.getSwitch(1);
+			shooterSwitch = TKOHardware.getSwitch(2);
+			shooterPiston = TKOHardware.getDSolenoid(1);
+			intakePiston_L = TKOHardware.getDSolenoid(2);
+			intakePiston_R = TKOHardware.getDSolenoid(3);
+			stick = TKOHardware.getJoystick(2);
 		}
 		catch (TKOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 //		states[StateEnum.STATE_DECIDE_ACTION.getValue()] = new DecideAction();
 
-		data.curState = StateEnum.STATE_DECIDE_ACTION;
+		data.curState = StateEnum.STATE_EMPTY;
 	}
 
 	public static int getSensorData(InstanceData id)
 	{
-		try
-		{
-			id.state[0] = (m_gripper.get() == false);
-			id.state[1] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kReverse);
-			id.state[2] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
-			id.state[3] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kReverse);
-			id.state[4] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
-//			try
-//			{
-//				id.state[5] = (TKOHardware.cratePresent() == false);
-//			}
-//			catch (TKOException e)
-//			{
-//				e.printStackTrace();
-//			}
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
-
+		id.state[0] = ballSwitch.get();
+		id.state[1] = intakeSwitch.get();
+		id.state[2] = shooterSwitch.get();
+			
 		return createIntFromBoolArray(id);
 	}
 
@@ -135,17 +106,27 @@ public class StateMachine implements Runnable
 
 	public static Timer getTimer()
 	{
-		return m_timer;
+		return timer;
 	}
 
-	public static DoubleSolenoid getGripperSol()
+	public static DoubleSolenoid getShooterPiston()
 	{
-		return m_gripperPiston;
+		return shooterPiston;
 	}
 
+	public static DoubleSolenoid getLeftIntakePiston()
+	{
+		return intakePiston_L;
+	}
+	
+	public static DoubleSolenoid getRightIntakePiston()
+	{
+		return intakePiston_R;
+	}
+	
 	public static Joystick getJoystick()
 	{
-		return m_evomStick;
+		return stick;
 	}
 
 	public static StateEnum runState(StateEnum curState, InstanceData data)
@@ -153,12 +134,12 @@ public class StateMachine implements Runnable
 		return states[curState.getValue()].doState(data);
 	}
 
-	public static synchronized boolean getGripperSwitch() throws TKOException
-	{
-		if (m_gripper == null)
-			throw new TKOException("NULL GRIPPER SWITCH");
-		return !m_gripper.get();
-	}
+//	public static synchronized boolean getGripperSwitch() throws TKOException
+//	{
+//		if (m_gripper == null)
+//			throw new TKOException("NULL GRIPPER SWITCH");
+//		return !m_gripper.get();
+//	}
 
 	public synchronized void start()
 	{

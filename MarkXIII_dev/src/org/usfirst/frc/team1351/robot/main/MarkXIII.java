@@ -83,7 +83,7 @@ public class MarkXIII extends SampleRobot
 		{
 			molecule.add(new DriveAtom(distance));
 		}
-		else if (autonChooser.getSelected().equals(8))
+		else if (autonChooser.getSelected().equals(1))
 		{
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new GyroTurnAtom(angle));
