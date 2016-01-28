@@ -136,15 +136,27 @@ public class TKOVision implements Runnable
 				if (TKOHardware.getJoystick(0).getRawButton(6))
 				{
 					isFrontCamera = !isFrontCamera;
+					//Turns camera "off"
 					isCameraInit = false;
+					//Turns off the camera in use 
 				}
 
 				chooseCamera();
+				//Reinitializes new feed for opposite camera
 				viewCamera(cameraChoice);
+				//feed will be on opposite camera
 				printTable();
+				//prints out information about the camera 
 				synchronized (visionThread)
+				//synchronized prioritizes one thread at a time to "talk" 
+				//to a certain part of TKO hardware  
+				//if not synchronized, then the Talon or other piece of hardware 
+				//would alternate between different threads that are "talking" to it
 				{
 					visionThread.wait(50);
+					//50 is the amount of delay time between cutting the feed
+					// and reinitializing the new feed while switching
+					
 				}
 			}
 		}
@@ -152,6 +164,9 @@ public class TKOVision implements Runnable
 		{
 			e.printStackTrace();
 		}
+		//TKO pre-programs its own exceptions: 
+			//"This file does not exist" if 
+			//a certain file is called but was deleted, renamed, or never created
 	}
 
 	public void printTable()
