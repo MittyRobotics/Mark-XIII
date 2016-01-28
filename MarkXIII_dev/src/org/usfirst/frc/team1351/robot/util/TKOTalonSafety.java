@@ -92,15 +92,15 @@ public class TKOTalonSafety implements Runnable // implements Runnable is import
 					//TKOHardware.getDriveTalon(i).enableControl(); //TODO Unfortunately this might require reconfiguring talon before
 				}
 			}
-			double current = TKOHardware.getLiftTalon().getOutputCurrent();
-			if (current > Definitions.TALON_CURRENT_TIMEOUT[Definitions.NUM_DRIVE_TALONS])
+			//double current = TKOHardware.getLiftTalon().getOutputCurrent();
+			/*if (current > Definitions.TALON_CURRENT_TIMEOUT[Definitions.NUM_DRIVE_TALONS])
 			{
 				TKOLogger.getInstance().addMessage("LIFT TALON CURRENT EXCEPTION: " + current + " AMPS " + TKOHardware.getLiftTalon().getDeviceID() + " ID");
 				System.out.println("LIFT TALON CURRENT EXCEPTION: " + current);
 				//TKOHardware.getLiftTalon().disableControl();
 				Thread.sleep(Definitions.CURRENT_TIMEOUT_LENGTH[Definitions.NUM_DRIVE_TALONS]);
 				//TKOHardware.getLiftTalon().enableControl();
-			}
+			}*/
 		} catch (Exception e)
 		{
 			e.printStackTrace();

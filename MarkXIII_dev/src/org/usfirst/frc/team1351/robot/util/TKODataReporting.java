@@ -171,7 +171,7 @@ public class TKODataReporting implements Runnable // implements Runnable is impo
 				
 				SmartDashboard.putNumber("EncLeft", TKOHardware.getDriveTalon(0).getPosition());
 				SmartDashboard.putNumber("EncRight", TKOHardware.getDriveTalon(2).getPosition());
-				for (CANTalon motor : TKOHardware.getDriveTalons())
+				/*for (CANTalon motor : TKOHardware.getDriveTalons())
 				{
 					int id = motor.getDeviceID();
 					inst.addMessage("Temperature for jag " + motor.getDeviceID() + ": " + motor.getTemperature());
@@ -194,7 +194,7 @@ public class TKODataReporting implements Runnable // implements Runnable is impo
 				SmartDashboard.putNumber("Temperature Jag " + id, motor.getTemperature());
 				SmartDashboard.putNumber("Out_Current Jag " + id, motor.getOutputCurrent());
 				SmartDashboard.putNumber("Out_Voltage Jag " + id, motor.getOutputVoltage());
-				SmartDashboard.putNumber("In_Voltage Jag " + id, motor.getBusVoltage());
+				SmartDashboard.putNumber("In_Voltage Jag " + id, motor.getBusVoltage()); */
 			} catch (Exception e)
 			{
 				e.printStackTrace();
@@ -217,7 +217,7 @@ public class TKODataReporting implements Runnable // implements Runnable is impo
 		SmartDashboard.putNumber("DValTested", currentDTested);
 		try
 		{			
-			for (CANTalon motor : TKOHardware.getDriveTalons())
+			/*for (CANTalon motor : TKOHardware.getDriveTalons())
 			{
 				if (motor == null)
 					continue;
@@ -240,7 +240,7 @@ public class TKODataReporting implements Runnable // implements Runnable is impo
 				SmartDashboard.putNumber("Out_Current Jag " + id, motor.getOutputCurrent());
 				SmartDashboard.putNumber("Out_Voltage Jag " + id, motor.getOutputVoltage());
 				SmartDashboard.putNumber("In_Voltage Jag " + id, motor.getBusVoltage());
-			}
+			}*/
 		} catch (Exception e)
 		{
 			e.printStackTrace();

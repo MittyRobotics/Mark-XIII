@@ -47,7 +47,7 @@ public class MarkXIII extends SampleRobot
 //		SmartDashboard.putData("Auton mode chooser", autonChooser);
 //		SmartDashboard.putNumber("Drive P: ", Definitions.AUTON_DRIVE_P);
 		
-		try
+		/*try
 		{
 			SmartDashboard.putNumber("CRATE DISTANCE: ", TKOHardware.getCrateDistance());
 			SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
@@ -55,7 +55,7 @@ public class MarkXIII extends SampleRobot
 		} catch (TKOException e)
 		{
 			e.printStackTrace();
-		}
+		}*/
 
 		System.out.println("robotInit() finished");
 	}
@@ -120,7 +120,7 @@ public class MarkXIII extends SampleRobot
 
 		while (isOperatorControl() && isEnabled())
 		{
-			try
+			/*try
 			{
 				TKOHardware.arduinoWrite(1);
 				SmartDashboard.putNumber("CRATE DISTANCE: ", TKOHardware.getCrateDistance());
@@ -129,7 +129,7 @@ public class MarkXIII extends SampleRobot
 			} catch (TKOException e)
 			{
 				e.printStackTrace();
-			}
+			}*/
 			Timer.delay(0.1); // wait for a motor update time
 			// TODO This will make it so robot lags after disabling, need to make it sorta small
 		}
