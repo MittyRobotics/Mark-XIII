@@ -51,8 +51,8 @@ public class DriveAtom extends Atom
 			Timer.delay(0.1);
 			TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getPosition());
 			TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getPosition());
-			TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
-			TKOHardware.getPiston(2).set(Definitions.WHEELIE_RETRACT);
+			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
+			TKOHardware.getDSolenoid(2).set(Definitions.WHEELIE_RETRACT);
 		} catch (TKOException e)
 		{
 			e.printStackTrace();
