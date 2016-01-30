@@ -1,0 +1,53 @@
+- button 1: intake (extend & retract)
+- button 2: go for low goal
+- button 3: go for high goal
+
+loading sequence
+	state: empty
+		exit condition: button 1
+		
+	state: extend intake
+		action: set intake piston
+		exit condition: intake switch
+		
+	state: forward spin
+		NOTE: rollers controlled by operator separate from states
+		exit condition: ball switch
+		override condition: button 1
+		
+	state: retry (ball not taken)
+		action: set intake piston
+		exit to "empty"
+
+	state: retract intake
+		action: set intake piston
+		exit condition: intake switch
+		
+	state: choose goal
+		if button 2: extend intake
+		if button 3: extend shooter
+	
+low goal sequence
+	state: extend loaded intake
+		action: set intake piston
+		exit condition: intake switch
+		
+	state: backward spin
+		NOTE: rollers controlled by operator separate from states
+		exit condition: ball switch AND timeout
+		
+	state: low goal done
+		action: set intake piston
+		exit condition: intake switch
+	
+high goal sequence
+	state: extend shooter
+		action: set shooter piston
+		action: start spinning flywheel
+		exit condition: shooter switch
+		
+	state: ready to fire
+		???
+		
+	state: retract shooter
+		???

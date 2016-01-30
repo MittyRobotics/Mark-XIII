@@ -1,5 +1,5 @@
 // Last edited by Ben Kim
-// on 01/20/2015
+// on 01/21/2016
 
 package org.usfirst.frc.team1351.robot.evom;
 
@@ -10,12 +10,22 @@ import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
+/** PISTONS:
+ * [0] - drivetrain
+ * [1] - flywheel
+ * [2] - intake
+ * [3] - intake
+ * [4] - lift
+ * [0] - lift
+ * [1] - portcullis
+ */
+
 public class TKOPneumatics implements Runnable
 {
 	public TKOThread pneuThread = null;
 	private static TKOPneumatics m_Instance = null;
 	long lastShiftTime = System.currentTimeMillis();
-	long toggledPistonTime[] = new long[Definitions.NUM_PISTONS];
+	long toggledPistonTime[] = new long[Definitions.NUM_DSOLENOIDS + Definitions.NUM_SOLENOIDS];
 
 	protected TKOPneumatics()
 	{
@@ -88,9 +98,7 @@ public class TKOPneumatics implements Runnable
 	{
 		try
 		{
-			TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
-			TKOHardware.getPiston(1).set(Definitions.GRIPPER_CLOSED);
-			TKOHardware.getPiston(2).set(Definitions.WHEELIE_RETRACT);
+			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 		}
 		catch (TKOException e)
 		{
@@ -116,9 +124,9 @@ public class TKOPneumatics implements Runnable
 
 			if (TKOHardware.getLeftDrive().getOutputCurrent() > currentThreshLeft
 					|| TKOHardware.getRightDrive().getOutputCurrent() > currentThreshRight)
-				TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 			else
-				TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW); // TODO
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW); // TODO
 			lastShiftTime = System.currentTimeMillis();
 		}
 		catch (TKOException e)
@@ -148,18 +156,18 @@ public class TKOPneumatics implements Runnable
 			// shifting gearbox
 			if (TKOHardware.getJoystick(0).getRawButton(4))
 			{
-				TKOHardware.getPiston(0).set(Definitions.SHIFTER_HIGH);
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
 				lastShiftTime = System.currentTimeMillis();
 			}
 			else if (TKOHardware.getJoystick(0).getRawButton(5))
 			{
-				TKOHardware.getPiston(0).set(Definitions.SHIFTER_LOW);
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 				lastShiftTime = System.currentTimeMillis();
 			}
 			else
 				autoShift();
 			
-			if (TKOHardware.getJoystick(2).getRawButton(2))
+			/*if (TKOHardware.getJoystick(2).getRawButton(2))
 			{
 				// using same joystick button to extend/retract
 				if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
@@ -173,22 +181,7 @@ public class TKOPneumatics implements Runnable
 					TKOHardware.getPiston(2).set(newVal);
 					toggledPistonTime[2] = System.currentTimeMillis();
 				}
-			}
-			if (TKOHardware.getJoystick(3).getRawButton(2))
-			{
-				// using same joystick button to extend/retract
-				if (System.currentTimeMillis() - toggledPistonTime[1] > 250)
-				{
-					Value currVal = TKOHardware.getPiston(1).get();
-					Value newVal = currVal;
-					if (currVal == Value.kForward)
-						newVal = Value.kReverse;
-					else if (currVal == Value.kReverse)
-						newVal = Value.kForward;
-					TKOHardware.getPiston(1).set(newVal);
-					toggledPistonTime[1] = System.currentTimeMillis();
-				}
-			}
+			}*/
 		}
 		catch (Exception e)
 		{
