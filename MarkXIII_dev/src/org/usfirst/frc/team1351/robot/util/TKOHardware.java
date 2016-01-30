@@ -30,6 +30,7 @@ public class TKOHardware
 	 * The idea behind TKOHardware is to have one common class with all the objects we would need.
 	 * The code is highly modular, as seen below where all the arrays are of variable size.
 	 */
+	protected static XboxController xbox;
 	protected static Joystick joysticks[] = new Joystick[Definitions.NUM_JOYSTICKS];
 	protected static CANTalon driveTalons[] = new CANTalon[Definitions.NUM_DRIVE_TALONS];
 	protected static CANTalon flyTalons[] = new CANTalon[Definitions.NUM_FLY_TALONS];
@@ -46,7 +47,8 @@ public class TKOHardware
 
 	public TKOHardware()
 	{
-		for (int i = 0; i < Definitions.NUM_JOYSTICKS; i++)
+		xbox = null;
+		for (int i = 1; i < Definitions.NUM_JOYSTICKS; i++)
 		{
 			joysticks[i] = null;
 		}
@@ -89,7 +91,10 @@ public class TKOHardware
 	public static synchronized void initObjects()
 	{
 		// TODO maybe destroy objects before initializing them?
-		for (int i = 0; i < Definitions.NUM_JOYSTICKS; i++)
+		if (xbox == null)
+			xbox = new XboxController(Definitions.JOYSTICK_ID[0]);
+		
+		for (int i = 1; i < Definitions.NUM_JOYSTICKS; i++)
 		{
 			if (joysticks[i] == null)
 				joysticks[i] = new Joystick(Definitions.JOYSTICK_ID[i]);
@@ -313,6 +318,9 @@ public class TKOHardware
 
 	public static synchronized void destroyObjects()
 	{
+		if (xbox != null)
+			xbox = null;
+		
 		for (int i = 0; i < Definitions.NUM_JOYSTICKS; i++)
 		{
 			if (joysticks[i] != null)
@@ -406,6 +414,13 @@ public class TKOHardware
 		}
 		else
 			throw new TKOException("Digital input " + (num) + "(array value) is null");
+	}
+	
+	public static synchronized XboxController getXboxController() throws TKOException
+	{
+		if (xbox == null)
+			throw new TKOException("ERROR: Xbox controller is null");
+		return xbox;
 	}
 	
 	public static synchronized Joystick getJoystick(int num) throws TKOException
