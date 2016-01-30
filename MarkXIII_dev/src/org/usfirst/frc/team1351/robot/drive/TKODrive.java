@@ -49,18 +49,51 @@ public class TKODrive implements Runnable
 		System.out.println("Stopped drive task");
 	}
 
+	// Tank drive using the two sticks of the xbox controller
+	public void squaredDrive()
+	{
+		double maxSpeed = 0.75;
+	
+		try
+		{
+			double leftY = TKOHardware.getXboxController().getLeftY();
+			double rightY = TKOHardware.getXboxController().getRightY();
+			
+			if( leftY <= (rightY + .1) && leftY >= (rightY - .1) )
+			{
+				leftY = (leftY + rightY) / 2.0; 
+			}
+			
+			leftY = (Math.abs(leftY) > 0.10) ? leftY : 0; 
+			rightY = (Math.abs(rightY) > 0.10) ? rightY : 0; 
+			
+			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus,
+					Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
+			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus,
+					Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
+			
+			setLeftRightMotorOutputsPercentVBus(-1 * maxSpeed * leftY, maxSpeed * rightY);
+		}
+		catch (TKOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	// Arcade drive using the two sticks of the xbox controller
 	public void arcadeDrive()
 	{
 		boolean squaredInputs = true;
 		try
 		{
-			double moveValue = TKOHardware.getJoystick(0).getY();
-			if (TKOHardware.getJoystick(0).getTrigger())
-				moveValue = TKOHardware.getJoystick(0).getY() * 0.6;
+			double moveValue = TKOHardware.getXboxController().getLeftY();
+			if (TKOHardware.getXboxController().getLeftBumper())
+				moveValue = TKOHardware.getXboxController().getLeftY() * 0.6;
 
-			double rotateValue = TKOHardware.getJoystick(1).getX() * 0.8;
-			if (TKOHardware.getJoystick(1).getTrigger())
-				rotateValue = TKOHardware.getJoystick(1).getX() * 0.6;
+			double rotateValue = TKOHardware.getXboxController().getRightX() * 0.8;
+			if (TKOHardware.getXboxController().getLeftBumper())
+				rotateValue = TKOHardware.getXboxController().getRightX() * 0.6;
 
 			if (squaredInputs) // keep sign
 			{
@@ -110,23 +143,6 @@ public class TKODrive implements Runnable
 		}
 	}
 	
-	public void tankDrive()
-	{
-		try
-		{
-			// TODO add an if check
-			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			setLeftRightMotorOutputsPercentVBus(TKOHardware.getJoystick(0).getY(), TKOHardware.getJoystick(1).getY());
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
 	public synchronized void currentModeTankDrive()
 	{
 		try
@@ -135,7 +151,7 @@ public class TKODrive implements Runnable
 				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
 			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.Current,
 				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			setLeftRightMotorOutputsCurrent(TKOHardware.getJoystick(0).getY(), TKOHardware.getJoystick(1).getY());
+			setLeftRightMotorOutputsCurrent(TKOHardware.getXboxController().getLeftY(), TKOHardware.getXboxController().getRightY());
 		}
 		catch (TKOException e)
 		{
@@ -252,10 +268,7 @@ public class TKODrive implements Runnable
 			// boolean calibRan = false;
 			while (driveThread.isThreadRunning())
 			{
-				if (TKOHardware.getJoystick(3).getTrigger())
-					setLeftRightMotorOutputsPercentVBus(-0.3, -0.3);
 				
-				// tankDrive();
 				arcadeDrive();
 				synchronized (driveThread)
 				{
