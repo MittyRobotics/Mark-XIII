@@ -88,11 +88,11 @@ public class TKODrive implements Runnable
 		try
 		{
 			double moveValue = TKOHardware.getXboxController().getLeftY();
-			if (TKOHardware.getXboxController().getLeftBumper())
+			if (TKOHardware.getXboxController().getRightBumper())
 				moveValue = TKOHardware.getXboxController().getLeftY() * 0.6;
 
 			double rotateValue = TKOHardware.getXboxController().getRightX() * 0.8;
-			if (TKOHardware.getXboxController().getLeftBumper())
+			if (TKOHardware.getXboxController().getRightBumper())
 				rotateValue = TKOHardware.getXboxController().getRightX() * 0.6;
 
 			if (squaredInputs) // keep sign
@@ -143,85 +143,6 @@ public class TKODrive implements Runnable
 		}
 	}
 	
-	public synchronized void currentModeTankDrive()
-	{
-		try
-		{
-			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.Current,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.Current,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			setLeftRightMotorOutputsCurrent(TKOHardware.getXboxController().getLeftY(), TKOHardware.getXboxController().getRightY());
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	public synchronized void PIDCurrentCalibration()
-	{
-		double p = 0., i = 0., d = 0.;
-		boolean calibrating = true;
-		long bestTime = Long.MAX_VALUE;
-
-		try
-		{
-			while (calibrating && DriverStation.getInstance().isEnabled())
-			// TODO first run does not actually go until one iteration of loop (maybe fixed now)
-			{
-				TKOHardware.destroyObjects();
-				TKOHardware.initObjects();
-				TKOHardware.configDriveTalons(p, i, d, CANTalon.TalonControlMode.Current);
-				TKOHardware.setAllDriveTalons(0.);
-				System.out.println("Starting PID current calibration commands");
-				// Thread.sleep(250);
-				TKOLogger.getInstance().addData("Pval", p, null, -1);
-				Thread.sleep(1500);
-				TKOHardware.getLeftDrive().set(Definitions.DRIVE_MULTIPLIER_LEFT);
-				TKOHardware.getRightDrive().set(Definitions.DRIVE_MULTIPLIER_RIGHT);
-//				if (p < 10)
-//					TKOLogger.getInstance().addData("MotorSetCommand", System.nanoTime(), "p: 0" + p + " i: 0" + i + " d: 0" + d, j);
-//				else
-//					TKOLogger.getInstance().addData("MotorSetCommand", System.nanoTime(), "p: " + p + " i: " + i + " d: " + d, j);
-				long start = System.currentTimeMillis();
-				int runningTime = 5000;
-				while ((System.currentTimeMillis() - start) < runningTime)
-				{
-					// record the point in time when feedback exceeds target, or is within x% of target
-					if (TKOHardware.getLeftDrive().getOutputCurrent() > Definitions.DRIVE_MULTIPLIER_LEFT)
-					{
-						if (bestTime > System.nanoTime())
-							bestTime = System.nanoTime();
-					}
-					// record final deviation from target at the end of 5 s
-				}
-				TKOHardware.destroyObjects();
-				TKOHardware.initObjects();
-				
-				// TODO what does this whole block mean
-				// p += 1.;
-				// if (p > 15.)
-				i += 0.01;
-				if (i > .1)
-				{
-					i = 0.;
-					p += 1.;
-					if (p > 15.)
-						calibrating = false;
-				}
-				System.out.println("Next iteration");
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		TKOHardware.destroyObjects();
-		TKOHardware.initObjects();
-	}
-	
 	public synchronized void setLeftRightMotorOutputsPercentVBus(double left, double right)
 	{
 		try
@@ -240,25 +161,6 @@ public class TKODrive implements Runnable
 			e.printStackTrace();
 		}
 	}
-
-	public synchronized void setLeftRightMotorOutputsCurrent(double leftMult, double rightMult)
-	{
-		try
-		{
-			if (TKOHardware.getLeftDrive().getControlMode() == CANTalon.TalonControlMode.Current)
-				TKOHardware.getLeftDrive().set(Definitions.DRIVE_MULTIPLIER_LEFT * Definitions.MAX_CURRENT_LEFT * leftMult);
-			else
-				throw new TKORuntimeException("ERROR: Tried running tank drive when not Current mode");
-			if (TKOHardware.getRightDrive().getControlMode() == CANTalon.TalonControlMode.Current)
-				TKOHardware.getRightDrive().set(Definitions.DRIVE_MULTIPLIER_RIGHT * Definitions.MAX_CURRENT_RIGHT * rightMult);
-			else
-				throw new TKORuntimeException("ERROR: Tried running tank drive when not Current mode");
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
-	}
 	
 	@Override
 	public void run()
@@ -268,8 +170,7 @@ public class TKODrive implements Runnable
 			// boolean calibRan = false;
 			while (driveThread.isThreadRunning())
 			{
-				
-				arcadeDrive();
+				squaredDrive();
 				synchronized (driveThread)
 				{
 					driveThread.wait(5);

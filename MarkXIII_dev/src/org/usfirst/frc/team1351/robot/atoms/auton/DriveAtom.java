@@ -82,8 +82,8 @@ public class DriveAtom extends Atom
 				}
 			}
 
-			TKOHardware.getDriveTalon(0).set(distance);
-			TKOHardware.getDriveTalon(2).set(distance);
+			TKOHardware.getLeftDrive().set(distance);
+			TKOHardware.getRightDrive().set(distance);
 
 			double diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance);
 			while (diff > threshold && DriverStation.getInstance().isEnabled())

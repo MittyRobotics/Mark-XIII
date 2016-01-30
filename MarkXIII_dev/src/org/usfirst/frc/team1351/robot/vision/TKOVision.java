@@ -21,16 +21,7 @@ import edu.wpi.first.wpilibj.vision.AxisCamera;
 // TODO find a way to toggle USB camera feeds
 
 public class TKOVision implements Runnable
-{
-	
-	/*
-	 * TODO: MOVE THE FOLLOWING BOOLEAN TO A BETTER PLACE
-	 * IT IS VERY IMPORTANT
-	 * MOVE IT
-	 * ASAP
-	 */
-	
-	
+{	
 	public TKOThread visionThread = null;
 	private static TKOVision m_Instance = null;
 
@@ -67,14 +58,16 @@ public class TKOVision implements Runnable
 		return m_Instance;
 	}
 
-	public void start() //Todo see if this is the way this ought to work? 
+	public void start()
 	{
 		System.out.println("Starting vision task");
 
 		if (!visionThread.isAlive() && m_Instance != null)
+		{
 			visionThread = new TKOThread(m_Instance);
-		// visionThread.setPriority(newPriority);
-
+			visionThread.setPriority(Definitions.getPriority("vision"));
+		}
+		
 		if (!visionThread.isThreadRunning())
 		{
 			visionThread.setThreadRunning(true);
@@ -122,7 +115,7 @@ public class TKOVision implements Runnable
 		{
 			while (visionThread.isThreadRunning())
 			{
-				if(TKOHardware.getJoystick(0).getRawButton(6)) {
+				if(TKOHardware.getXboxController().getLeftBumper()) {
 					isFrontCamera = !isFrontCamera; 
 					isCameraInit = false; 
 				}

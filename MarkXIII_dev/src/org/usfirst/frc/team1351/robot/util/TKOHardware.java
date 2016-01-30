@@ -1,14 +1,9 @@
-// Last edited by Ben Kim
-// on 10/08/2015
-
 package org.usfirst.frc.team1351.robot.util;
 
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 
-import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogOutput;
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.Compressor;
@@ -24,8 +19,6 @@ import edu.wpi.first.wpilibj.util.AllocationException;
 
 public class TKOHardware
 {	
-	// TODO Switch initialization; write getSwitch(int) method
-	
 	/**
 	 * The idea behind TKOHardware is to have one common class with all the objects we would need.
 	 * The code is highly modular, as seen below where all the arrays are of variable size.
@@ -39,7 +32,6 @@ public class TKOHardware
 	protected static Solenoid solenoids[] = new Solenoid[Definitions.NUM_SOLENOIDS];
 	protected static DigitalInput limitSwitches[] = new DigitalInput[Definitions.NUM_SWITCHES];
 	protected static Compressor compressor;
-	protected static BuiltInAccelerometer acc;
 	protected static AnalogGyro gyro;
 	protected static AnalogOutput arduinoSignal = null;
 
@@ -83,7 +75,6 @@ public class TKOHardware
 			talonModes[i] = null;
 		}
 		compressor = null;
-		acc = null;
 		gyro = null;
 		arduinoSignal = null;
 	}
@@ -136,7 +127,7 @@ public class TKOHardware
 		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
 		{
 			if (spikes[i] == null)
-				spikes[i] = new Relay(Definitions.SPIKE_ID[i]);
+				spikes[i] = new Relay(Definitions.ROLLER_ID[i]);
 		}
 		if (doubleSolenoids[0] == null)
 			doubleSolenoids[0] = new DoubleSolenoid(Definitions.SHIFTER_A, Definitions.SHIFTER_B);
@@ -145,9 +136,7 @@ public class TKOHardware
 		if (doubleSolenoids[2] == null)
 			doubleSolenoids[2] = new DoubleSolenoid(Definitions.INTAKE_A, Definitions.INTAKE_B);
 		if (doubleSolenoids[3] == null)
-			doubleSolenoids[3] = new DoubleSolenoid(Definitions.INTAKE_C, Definitions.INTAKE_D);
-		if (doubleSolenoids[4] == null)
-			doubleSolenoids[4] = new DoubleSolenoid(Definitions.D_LIFT_A, Definitions.D_LIFT_B);
+			doubleSolenoids[3] = new DoubleSolenoid(Definitions.D_LIFT_A, Definitions.D_LIFT_B);
 		if (solenoids[0] == null)
 			solenoids[0] = new Solenoid(Definitions.S_LIFT_A, Definitions.S_LIFT_B);
 		if (solenoids[1] == null)
@@ -158,8 +147,7 @@ public class TKOHardware
 
 		if (compressor == null)
 			compressor = new Compressor(Definitions.PCM_ID);
-		if (acc == null)
-			acc = new BuiltInAccelerometer();
+		
 		if (gyro == null)
 		{
 			gyro = new AnalogGyro(Definitions.GYRO_ANALOG_CHANNEL);
@@ -385,10 +373,7 @@ public class TKOHardware
 			compressor.free();
 			compressor = null;
 		}
-
-		if (acc != null)
-			acc = null;
-
+		
 		if (gyro != null)
 		{
 			gyro.free();
@@ -535,16 +520,10 @@ public class TKOHardware
 		return compressor;
 	}
 
-	public static synchronized BuiltInAccelerometer getAcc() throws TKOException
-	{
-		if (acc == null)
-			throw new TKOException("Accelerometer is null");
-		return acc;
-	}
-
 	/**
-	 * IMPORTANT: This method is normally open. This function will return true when the lift is in the bottom, false whenever else. This is
-	 * opposite from the actual behavior of the optical limit switch.
+	 * IMPORTANT: This method is normally open. This function will return true
+	 * when the lift is in the bottom, false whenever else.
+	 * This is opposite from the actual behavior of the optical limit switch.
 	 * 
 	 * @return
 	 * @throws TKOException
@@ -573,7 +552,7 @@ public class TKOHardware
 	public static synchronized void arduinoWrite(double voltage) throws TKOException
 	{
 		if (arduinoSignal == null)
-			throw new TKOException("ARDUINO ANALOGOUT CHANNEL NULL");
+			throw new TKOException("ARDUINO ANALOG OUT CHANNEL NULL");
 		if (voltage < 0. || voltage > 5.)
 			throw new TKOException("VOLTAGE OUT OF BOUNDS");
 		arduinoSignal.setVoltage(voltage);

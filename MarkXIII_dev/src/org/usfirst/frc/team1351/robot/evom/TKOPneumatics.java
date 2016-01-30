@@ -61,7 +61,7 @@ public class TKOPneumatics implements Runnable
 		if (!pneuThread.isAlive() && m_Instance != null)
 		{
 			pneuThread = new TKOThread(m_Instance);
-			pneuThread.setPriority(Definitions.getPriority("gripper"));
+			pneuThread.setPriority(Definitions.getPriority("pneumatics"));
 		}
 		if (!pneuThread.isThreadRunning())
 			pneuThread.setThreadRunning(true);

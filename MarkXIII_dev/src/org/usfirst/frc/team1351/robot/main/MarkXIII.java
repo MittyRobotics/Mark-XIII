@@ -3,9 +3,9 @@
 
 package org.usfirst.frc.team1351.robot.main;
 
-import org.usfirst.frc.team1351.robot.auton.Molecule;
-import org.usfirst.frc.team1351.robot.auton.atom.DriveAtom;
-import org.usfirst.frc.team1351.robot.auton.atom.GyroTurnAtom;
+import org.usfirst.frc.team1351.robot.atoms.Molecule;
+import org.usfirst.frc.team1351.robot.atoms.auton.DriveAtom;
+import org.usfirst.frc.team1351.robot.atoms.auton.GyroTurnAtom;
 import org.usfirst.frc.team1351.robot.drive.TKODrive;
 import org.usfirst.frc.team1351.robot.evom.TKOPneumatics;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
@@ -13,7 +13,7 @@ import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOLEDArduino;
 import org.usfirst.frc.team1351.robot.util.TKOTalonSafety;
-import org.usfirst.frc.team1351.robot.evom.TKOFlywheel;
+import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -91,7 +91,7 @@ public class MarkXIII extends SampleRobot
 		// TKOLEDArduino.getInstance().start();
 		TKOPneumatics.getInstance().start();
 		// TKOPneumatics.getInstance().reset(); //TODO
-
+		
 		Molecule molecule = new Molecule();
 		molecule.clear();
 		

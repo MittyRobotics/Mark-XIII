@@ -32,7 +32,7 @@ public class TKOConveyor implements Runnable
 		if (!conveyorThread.isAlive() && m_Instance != null)
 		{
 			conveyorThread = new TKOThread(m_Instance);
-			conveyorThread.setPriority(Definitions.getPriority("TKOConveyor"));
+			conveyorThread.setPriority(Definitions.getPriority("conveyor"));
 		}
 		if (!conveyorThread.isThreadRunning())
 		{
@@ -70,7 +70,9 @@ public class TKOConveyor implements Runnable
 		{
 			while (conveyorThread.isThreadRunning())
 			{
+				rollerControl();
 				spikeControl();
+				
 				synchronized (conveyorThread)
 				{
 					conveyorThread.wait(100);
@@ -83,16 +85,21 @@ public class TKOConveyor implements Runnable
 		}
 	}
 
+	public synchronized void rollerControl()
+	{
+		
+	}
+	
 	public synchronized void spikeControl()
 	{
 		try
 		{
-			if (TKOHardware.getJoystick(2).getRawButton(4))
+			if (TKOHardware.getJoystick(3).getRawButton(4))
 			{
 				TKOHardware.getSpike(0).set(Relay.Value.kReverse);
 				TKOHardware.getSpike(1).set(Relay.Value.kForward);
 			}
-			else if (TKOHardware.getJoystick(2).getRawButton(5))
+			else if (TKOHardware.getJoystick(3).getRawButton(5))
 			{
 				TKOHardware.getSpike(0).set(Relay.Value.kReverse);
 				TKOHardware.getSpike(1).set(Relay.Value.kForward);

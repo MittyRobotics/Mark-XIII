@@ -1,4 +1,6 @@
 Driver Controls:
-cameraSwitcher -> stick 0 (gamepad) Left Bumper 
+- Left Bumper on xbox: switch camera
+- Right Bumper on xbox: 60% speed
 
 Operator Controls:
+- Buttons 4 & 5 on Stick 4: spin intake in/out

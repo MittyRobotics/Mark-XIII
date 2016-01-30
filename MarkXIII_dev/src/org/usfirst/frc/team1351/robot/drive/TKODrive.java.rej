@@ -1,0 +1,59 @@
+diff a/MarkXIII_dev/src/org/usfirst/frc/team1351/robot/drive/TKODrive.java b/MarkXIII_dev/src/org/usfirst/frc/team1351/robot/drive/TKODrive.java	(rejected hunks)
+@@ -49,18 +49,51 @@
+ 		System.out.println("Stopped drive task");
+ 	}
+ 
++	// Tank drive using the two sticks of the xbox controller
++	public void squaredDrive()
++	{
++		double maxSpeed = 0.75;
++	
++		try
++		{
++			double leftY = TKOHardware.getXboxController().getLeftY();
++			double rightY = TKOHardware.getXboxController().getRightY();
++			
++			if( leftY <= (rightY + .1) && leftY >= (rightY - .1) )
++			{
++				leftY = (leftY + rightY) / 2.0; 
++			}
++			
++			leftY = (Math.abs(leftY) > 0.10) ? leftY : 0; 
++			rightY = (Math.abs(rightY) > 0.10) ? rightY : 0; 
++			
++			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus,
++					Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
++			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus,
++					Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
++			
++			setLeftRightMotorOutputsPercentVBus(-1 * maxSpeed * leftY, maxSpeed * rightY);
++		}
++		catch (TKOException e)
++		{
++			// TODO Auto-generated catch block
++			e.printStackTrace();
++		}
++	}
++	
++	// Arcade drive using the two sticks of the xbox controller
+ 	public void arcadeDrive()
+ 	{
+ 		boolean squaredInputs = true;
+ 		try
+ 		{
+-			double moveValue = TKOHardware.getJoystick(0).getY();
+-			if (TKOHardware.getJoystick(0).getTrigger())
+-				moveValue = TKOHardware.getJoystick(0).getY() * 0.6;
++			double moveValue = TKOHardware.getXboxController().getLeftY();
++			if (TKOHardware.getXboxController().getLeftBumper())
++				moveValue = TKOHardware.getXboxController().getLeftY() * 0.6;
+ 
+-			double rotateValue = TKOHardware.getJoystick(1).getX() * 0.8;
+-			if (TKOHardware.getJoystick(1).getTrigger())
+-				rotateValue = TKOHardware.getJoystick(1).getX() * 0.6;
++			double rotateValue = TKOHardware.getXboxController().getRightX() * 0.8;
++			if (TKOHardware.getXboxController().getLeftBumper())
++				rotateValue = TKOHardware.getXboxController().getRightX() * 0.6;
+ 
+ 			if (squaredInputs) // keep sign
+ 			{

@@ -94,14 +94,13 @@ public class TKOShooter implements Runnable
 		if (!shooterThread.isAlive() && m_Instance != null)
 		{
 			shooterThread = new TKOThread(m_Instance);
-			shooterThread.setPriority(Definitions.getPriority("threadExample"));
-			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.PercentVbus);
-			controller = new PIDController(p, i, d, TKOHardware.getFlyTalon(), TKOHardware.getFlyTalon());
+			shooterThread.setPriority(Definitions.getPriority("shooter"));
 		}
 		if (!shooterThread.isThreadRunning())
 		{
 			shooterThread.setThreadRunning(true);
 		}
+		init();
 	}
 
 	/**
@@ -113,6 +112,20 @@ public class TKOShooter implements Runnable
 		if (shooterThread.isThreadRunning())
 		{
 			shooterThread.setThreadRunning(false);
+		}
+	}
+	
+	private void init()
+	{
+		try
+		{
+			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.PercentVbus);
+			controller = new PIDController(p, i, d, TKOHardware.getFlyTalon(), TKOHardware.getFlyTalon());
+		}
+		catch (TKOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
