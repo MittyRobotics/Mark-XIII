@@ -4,6 +4,7 @@ import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
 
+// soft error cycles through options to return, else becomes hard error
 public class ErrorState implements IStateFunction
 {
 	@Override

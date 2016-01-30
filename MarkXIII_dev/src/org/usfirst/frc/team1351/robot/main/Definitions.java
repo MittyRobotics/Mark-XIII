@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 public class Definitions
 {
 	public static final int CRATE_SENSOR_ID = 69;
-	
+
 	// Autonomous constants
 
 	public static final double TICKS_PER_INCH = 332.5020781;
@@ -114,15 +114,9 @@ public class Definitions
 	{ 5, 5, 5, 5, 5, 5 };
 
 	// Pneumatics constants
-	
-	/** PISTONS:
-	 * [0] - drivetrain
-	 * [1] - flywheel
-	 * [2] - intake
-	 * [3] - intake
-	 * [4] - lift
-	 * [0] - lift
-	 * [1] - portcullis
+
+	/**
+	 * PISTONS: [0] - drivetrain [1] - flywheel [2] - intake [3] - intake [4] - lift [0] - lift [1] - portcullis
 	 */
 
 	public static final DoubleSolenoid.Value SHIFTER_LOW = DoubleSolenoid.Value.kForward;
@@ -142,7 +136,7 @@ public class Definitions
 	public static final int S_LIFT_B = 1;
 	public static final int PORTCULLIS_A = 0;
 	public static final int PORTCULLIS_B = 1;
-	
+
 	// Thread definitions
 
 	public static ArrayList<String> threadNames = new ArrayList<String>();

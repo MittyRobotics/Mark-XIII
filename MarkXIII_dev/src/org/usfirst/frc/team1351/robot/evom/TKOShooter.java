@@ -6,31 +6,14 @@ import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
-//import edu.wpi.first.wpilibj.CounterBase;
-//import edu.wpi.first.wpilibj.Encoder;
-//import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 
-
-/**
- * This is the code to make the flywheel run. It make the spin-spin go zoom-zoom
- * 
- * @author Louis
- * @version 01/23/16
- */
-public class TKOFlywheel implements Runnable // implements Runnable is important to make this class support the Thread (run method)
+public class TKOShooter implements Runnable
 {
-	/*
-	 * This creates an object of the TKOThread class, passing it the runnable of this class (ThreadExample) TKOThread is just a thread that
-	 * makes it easy to make using the thread safe
-	 */
-	public TKOThread flywheelThread = null;
-	private static TKOFlywheel m_Instance = null;
-	
-	//dummy numbers. fix when we know what the ports are going to be
-//	Encoder encoder = new Encoder(1, 2, false, CounterBase.EncodingType.k4X);
-	//PID
+	public TKOThread shooterThread = null;
+	private static TKOShooter m_Instance = null;
+
 	double p = 0;
 	double i = 0;
 	double d = 0;
@@ -77,7 +60,7 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	
 
 	// Typical constructor made protected so that this class is only accessed statically, though that doesnt matter
-	protected TKOFlywheel()
+	protected TKOShooter()
 	{
 	}
 
@@ -85,12 +68,12 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	 * This function makes the class a singleton, so that there can only be one instance of the class even though the class is not static
 	 * This is needed for the Thread to work properly.
 	 */
-	public static synchronized TKOFlywheel getInstance()
+	public static synchronized TKOShooter getInstance()
 	{
 		if (m_Instance == null)
 		{
-			m_Instance = new TKOFlywheel();
-			m_Instance.flywheelThread = new TKOThread(m_Instance);
+			m_Instance = new TKOShooter();
+			m_Instance.shooterThread = new TKOThread(m_Instance);
 		}
 		return m_Instance;
 	}
@@ -106,18 +89,18 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	 * @category
 	 
 	 */
-	public void start() throws TKOException
+	public void start()
 	{
-		if (!flywheelThread.isAlive() && m_Instance != null)
+		if (!shooterThread.isAlive() && m_Instance != null)
 		{
-			flywheelThread = new TKOThread(m_Instance);
-			flywheelThread.setPriority(Definitions.getPriority("threadExample"));
+			shooterThread = new TKOThread(m_Instance);
+			shooterThread.setPriority(Definitions.getPriority("threadExample"));
 			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 			controller = new PIDController(p, i, d, TKOHardware.getFlyTalon(), TKOHardware.getFlyTalon());
 		}
-		if (!flywheelThread.isThreadRunning())
+		if (!shooterThread.isThreadRunning())
 		{
-			flywheelThread.setThreadRunning(true);
+			shooterThread.setThreadRunning(true);
 		}
 	}
 
@@ -127,9 +110,9 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	 */
 	public void stop()
 	{
-		if (flywheelThread.isThreadRunning())
+		if (shooterThread.isThreadRunning())
 		{
-			flywheelThread.setThreadRunning(false);
+			shooterThread.setThreadRunning(false);
 		}
 	}
 
@@ -142,7 +125,7 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 	{
 		try
 		{
-			while (flywheelThread.isThreadRunning())
+			while (shooterThread.isThreadRunning())
 			{
 				System.out.println("THREAD RAN!");
 				//put function calls in here
@@ -158,9 +141,9 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 					setSpeed(9000, 250, 150);
 				}
 				timer.reset();
-				synchronized (flywheelThread) // synchronized per the thread to make sure that we wait safely
+				synchronized (shooterThread) // synchronized per the thread to make sure that we wait safely
 				{
-					flywheelThread.wait(100); // the wait time that the thread sleeps, in milliseconds
+					shooterThread.wait(100); // the wait time that the thread sleeps, in milliseconds
 				}
 				setSpeed(0, 250, 150);
 				timer.reset();
