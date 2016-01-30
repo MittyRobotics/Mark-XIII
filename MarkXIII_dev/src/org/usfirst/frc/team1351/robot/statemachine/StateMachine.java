@@ -23,8 +23,7 @@ public class StateMachine implements Runnable
 	
 	// TODO should intake be controlled by one solenoid? lmao
 	static DoubleSolenoid shooterPiston;
-	static DoubleSolenoid intakePiston_L;
-	static DoubleSolenoid intakePiston_R;
+	static DoubleSolenoid intakePiston;
 
 	static Joystick stick;
 
@@ -68,8 +67,7 @@ public class StateMachine implements Runnable
 			intakeSwitch = TKOHardware.getSwitch(1);
 			shooterSwitch = TKOHardware.getSwitch(2);
 			shooterPiston = TKOHardware.getDSolenoid(1);
-			intakePiston_L = TKOHardware.getDSolenoid(2);
-			intakePiston_R = TKOHardware.getDSolenoid(3);
+			intakePiston = TKOHardware.getDSolenoid(2);
 			stick = TKOHardware.getJoystick(2);
 		}
 		catch (TKOException e)
@@ -114,14 +112,9 @@ public class StateMachine implements Runnable
 		return shooterPiston;
 	}
 
-	public static DoubleSolenoid getLeftIntakePiston()
+	public static DoubleSolenoid getIntakePiston()
 	{
-		return intakePiston_L;
-	}
-	
-	public static DoubleSolenoid getRightIntakePiston()
-	{
-		return intakePiston_R;
+		return intakePiston;
 	}
 	
 	public static Joystick getJoystick()
