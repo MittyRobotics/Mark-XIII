@@ -114,6 +114,8 @@ public class TKOFlywheel implements Runnable // implements Runnable is important
 			flywheelThread.setPriority(Definitions.getPriority("threadExample"));
 			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.PercentVbus);
 			controller = new PIDController(p, i, d, TKOHardware.getFlyTalon(), TKOHardware.getFlyTalon());
+			//TODO chage these numbers. These are probably not the numbers you are looking for.
+			controller.setPID(0.84, 0.005, 0);
 		}
 		if (!flywheelThread.isThreadRunning())
 		{
