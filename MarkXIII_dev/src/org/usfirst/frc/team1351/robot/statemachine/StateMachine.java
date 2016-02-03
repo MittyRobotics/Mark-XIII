@@ -15,6 +15,15 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class StateMachine implements Runnable
 {
+	// 0b | SS | IS | BS |
+	// 0b |    |    |    | = 0
+	// 0b | SS | IS | BS |
+	// 0b |    |  2 |    | = 2
+	// 0b | SS | IS | BS |
+	// 0b |  4 |    |    | = 4
+	// 0b | SS | IS | BS |
+	// 0b |  4 |  2 |    | = 6
+	
 	static Timer timer;
 
 	static DigitalInput ballSwitch;
@@ -32,12 +41,7 @@ public class StateMachine implements Runnable
 
 	public static final float PISTON_RETRACT_TIMEOUT = 15.f;
 	public static final float PISTON_EXTEND_TIMEOUT = 15.f;
-
-	// 0b | SS | IS | BS |
-	// 0b |  4 |  2 |  1 | = 7
-
-//	public static final int 
-
+	
 	public TKOThread stateThread = null;
 	private static StateMachine m_Instance = null;
 

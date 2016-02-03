@@ -8,22 +8,22 @@ import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 
-public class ExtendIntake implements IStateFunction
+public class RetryState implements IStateFunction
 {
 	@Override
 	public StateEnum doState(InstanceData data)
 	{
-		if (StateMachine.createIntFromBoolArray(data) != 0)
+		if (StateMachine.createIntFromBoolArray(data) != 2)
 			return StateEnum.STATE_ERROR;
 		
-		data.curState = StateEnum.STATE_EXTEND_INTAKE;
+		data.curState = StateEnum.STATE_RETRY;
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
-	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kForward);
+	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
 	    int sensors = StateMachine.getSensorData(data);
-	    while (sensors != 2 && sensors == 0)
+	    while (sensors != 0 && sensors == 2)
 	    {
 	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
 	    	{
@@ -36,11 +36,11 @@ public class ExtendIntake implements IStateFunction
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
-	    if (sensors != 2)
+	    if (sensors != 0)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }
 	    
-		return StateEnum.STATE_FORWARD_SPIN;
+		return StateEnum.STATE_EMPTY;
 	}
 }
