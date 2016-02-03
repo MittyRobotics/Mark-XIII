@@ -19,7 +19,8 @@ public class EmptyState implements IStateFunction
 		{
 			while (!(StateMachine.getJoystick().getRawButton(2)))
 			{
-				
+				if (cur != 0)
+					return StateEnum.STATE_ERROR;
 			}
 		    System.out.println("Exiting empty state");
 		    return StateEnum.STATE_EXTEND_INTAKE;

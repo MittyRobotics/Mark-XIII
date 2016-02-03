@@ -1,7 +1,7 @@
 // Last edited by Ben Kim
 // on 01/17/2015
 
-package org.usfirst.frc.team1351.robot.main;
+package org.usfirst.frc.team1351.robot;
 
 import org.usfirst.frc.team1351.robot.atoms.Molecule;
 import org.usfirst.frc.team1351.robot.atoms.auton.DriveAtom;
@@ -45,11 +45,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * one roller for conveyor, one roller for pre-shoot
  */
 
-public class MarkXIII extends SampleRobot
+public class Robot extends SampleRobot
 {
 	SendableChooser autonChooser;
 
-	public MarkXIII()
+	public Robot()
 	{
 		// don't put stuff here, use robotInit();
 	}

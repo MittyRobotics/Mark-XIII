@@ -1,10 +1,11 @@
 package org.usfirst.frc.team1351.robot.evom;
 
+import org.usfirst.frc.team1351.robot.atoms.Molecule;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 /**
- * There are three molecules:
+ * There are three molecule configurations:
  * 1. to lower the drawbridge
  * 2. to raise the portcullis
  * 3. to climb the tower (separate mechanism)
@@ -17,6 +18,9 @@ public class TKOLift implements Runnable
 {
 	private static TKOLift m_Instance = null;
 	public TKOThread liftThread = null;
+	
+//	private int sequence = 0;
+//	private boolean ranLift = false;
 	
 	protected TKOLift()
 	{
@@ -55,11 +59,6 @@ public class TKOLift implements Runnable
 		System.out.println("Stopped lift task");
 	}
 
-	public void climb()
-	{
-		
-	}
-	
 	@Override
 	public void run()
 	{
@@ -67,7 +66,10 @@ public class TKOLift implements Runnable
 		{
 			while (liftThread.isThreadRunning())
 			{
-
+				if ()
+				{
+					
+				}
 				
 				synchronized (liftThread)
 				{

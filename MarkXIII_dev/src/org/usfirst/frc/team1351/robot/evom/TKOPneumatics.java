@@ -10,12 +10,12 @@ import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-/** PISTONS:
+/**
+ * PISTONS:
  * [0] - drivetrain
  * [1] - flywheel
  * [2] - intake
- * [3] - intake
- * [4] - lift
+ * [3] - lift
  * [0] - lift
  * [1] - portcullis
  */
