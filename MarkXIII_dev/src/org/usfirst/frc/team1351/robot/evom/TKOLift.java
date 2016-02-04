@@ -2,7 +2,12 @@ package org.usfirst.frc.team1351.robot.evom;
 
 import org.usfirst.frc.team1351.robot.atoms.Molecule;
 import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.util.TKOException;
+import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 /**
  * There are three molecule configurations:
@@ -16,6 +21,9 @@ import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 public class TKOLift implements Runnable
 {
+	//These are currently imaginary things that might need to be added to TKOHardware.
+	static DigitalInput liftMagSensor1;
+	static DigitalInput liftMagSensor2;
 	private static TKOLift m_Instance = null;
 	public TKOThread liftThread = null;
 	
@@ -25,6 +33,20 @@ public class TKOLift implements Runnable
 	protected TKOLift()
 	{
 		
+	}
+	
+	public static void TKOScissorLift() throws TKOException {
+		//Need 68 in
+		//It's fine(?)
+		//pistons are extended or not, no in between
+		while(liftMagSensor1.get() != true && liftMagSensor2.get() != true) {
+			TKOHardware.getDSolenoid(3).set(Value.kReverse);
+			TKOHardware.getDSolenoid(0).set(Value.kReverse);	
+		}
+		if (liftMagSensor1.get() == true && liftMagSensor2.get() == true) {
+			TKOHardware.getDSolenoid(3).set(Value.kForward);
+			TKOHardware.getDSolenoid(0).set(Value.kForward);
+		}
 	}
 	
 	public static synchronized TKOLift getInstance()
@@ -39,6 +61,8 @@ public class TKOLift implements Runnable
 	
 	public void start()
 	{
+		liftMagSensor1 = new DigitalInput(2);
+		liftMagSensor2 = new DigitalInput(3);
 		System.out.println("Starting lift task");
 		if (!liftThread.isAlive() && m_Instance != null)
 		{
