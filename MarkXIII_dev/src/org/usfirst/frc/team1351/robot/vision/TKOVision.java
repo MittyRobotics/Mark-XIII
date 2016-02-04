@@ -136,27 +136,27 @@ public class TKOVision implements Runnable
 				if (TKOHardware.getJoystick(0).getRawButton(6))
 				{
 					isFrontCamera = !isFrontCamera;
-					//Turns camera "off"
+					// Turns camera "off"
 					isCameraInit = false;
-					//Turns off the camera in use 
+					// Turns off the camera in use
 				}
 
 				chooseCamera();
-				//Reinitializes new feed for opposite camera
+				// Reinitializes new feed for opposite camera
 				viewCamera(cameraChoice);
-				//feed will be on opposite camera
+				// feed will be on opposite camera
 				printTable();
-				//prints out information about the camera 
+				// prints out information about the camera
 				synchronized (visionThread)
-				//synchronized prioritizes one thread at a time to "talk" 
-				//to a certain part of TKO hardware  
-				//if not synchronized, then the Talon or other piece of hardware 
-				//would alternate between different threads that are "talking" to it
+				// synchronized prioritizes one thread at a time to "talk"
+				// to a certain part of TKO hardware
+				// if not synchronized, then the Talon or other piece of hardware
+				// would alternate between different threads that are "talking" to it
 				{
 					visionThread.wait(50);
-					//50 is the amount of delay time between cutting the feed
+					// 50 is the amount of delay time between cutting the feed
 					// and reinitializing the new feed while switching
-					
+
 				}
 			}
 		}
@@ -164,14 +164,14 @@ public class TKOVision implements Runnable
 		{
 			e.printStackTrace();
 		}
-		//TKO pre-programs its own exceptions: 
-			//"This file does not exist" if 
-			//a certain file is called but was deleted, renamed, or never created
+		// TKO pre-programs its own exceptions:
+		// "This file does not exist" if
+		// a certain file is called but was deleted, renamed, or never created
 	}
 
 	public void printTable()
 	{
-		System.out.println("\n \n \n"); 
+		System.out.println("\n \n \n");
 		double[] areas = table.getNumberArray("area", defaultValue);
 		System.out.print("areas: ");
 		for (double area : areas)
@@ -179,7 +179,7 @@ public class TKOVision implements Runnable
 			System.out.print(area + ", ");
 			SmartDashboard.putNumber("Area", area);
 		}
-		
+
 		double[] centerX = table.getNumberArray("centerX", defaultValue);
 		System.out.print("centerX: ");
 		for (double x : centerX)
@@ -203,7 +203,7 @@ public class TKOVision implements Runnable
 			System.out.print(height + ", ");
 			SmartDashboard.putNumber("Height", height);
 		}
-		
+
 		double[] widths = table.getNumberArray("width", defaultValue);
 		System.out.print("width: ");
 		for (double width : widths)
@@ -211,5 +211,40 @@ public class TKOVision implements Runnable
 			System.out.print(width + ", ");
 			SmartDashboard.putNumber("Width", width);
 		}
+
+		tarCenterToEdge = centerX[centerX.length - 1];
+		targetPixelWidth = widths[widths.length - 1];
 	}
+
+	/*
+	 * TODO Test the following | Should be decently working distance calculation stuff | Figure out why they set it up w/ separate distance
+	 * and angle variables
+	 */
+	// to be set by the setDistance() method
+	// shows literal distance from target - learn distance robot must travel
+	double distance = 0; // inches: in real life at the angle from target
+	double floorDistance = 0; // inches via the floor - gives distance robot must travel
+	double targetWidth = 16; // field element: target = 1 ft 4 in
+	double imageWidth = 480; // width in pixels
+	double height = 85; // inches TODO fix this all wrong
+	double cameraAngle = 0; // Shows literal angle of robot from target - to be set by findAngle()
+	double tanFnc = (Math.tan(cameraAngle) / 2);
+	double imageTarget = (imageWidth * targetWidth);
+
+	double tarCenterToEdge = 0; // I think
+	double targetPixelWidth = 0; // To be set by values from the network tables
+
+	double getFloorDistance()
+	{
+		distance = (imageTarget / (2 * targetPixelWidth) * tanFnc);
+		floorDistance = Math.sqrt((distance * distance) - (height * height));
+		return floorDistance;
+	}
+
+	double findRobotAngle()
+	{
+		cameraAngle = ((targetWidth * Math.abs((imageWidth / 2) - tarCenterToEdge)) / (targetPixelWidth * distance));
+		return cameraAngle;
+	}
+
 }
