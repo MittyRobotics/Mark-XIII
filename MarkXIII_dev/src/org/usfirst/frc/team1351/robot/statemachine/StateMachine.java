@@ -80,7 +80,7 @@ public class StateMachine implements Runnable
 
 			// TODO stick 4 for state machine actions, stick 3 for manual control?
 			m_evomStick = TKOHardware.getJoystick(3);
-			m_gripperPiston = TKOHardware.getPiston(1);
+			//m_gripperPiston = TKOHardware.getPiston(1);
 
 		}
 		catch (TKOException e)
@@ -96,26 +96,26 @@ public class StateMachine implements Runnable
 
 	public static int getSensorData(InstanceData id)
 	{
-		try
-		{
-			id.state[0] = (m_gripper.get() == false);
-			id.state[1] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kReverse);
-			id.state[2] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
-			id.state[3] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kReverse);
-			id.state[4] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
-//			try
-//			{
-//				id.state[5] = (TKOHardware.cratePresent() == false);
-//			}
-//			catch (TKOException e)
-//			{
-//				e.printStackTrace();
-//			}
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
+//		try
+//		{
+////			id.state[0] = (m_gripper.get() == false);
+////			id.state[1] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kReverse);
+////			id.state[2] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
+////			id.state[3] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kReverse);
+////			id.state[4] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
+////			try
+////			{
+////				id.state[5] = (TKOHardware.cratePresent() == false);
+////			}
+////			catch (TKOException e)
+////			{
+////				e.printStackTrace();
+////			}
+//		}
+//		catch (TKOException e)
+//		{
+//			e.printStackTrace();
+//		}
 
 		return createIntFromBoolArray(id);
 	}

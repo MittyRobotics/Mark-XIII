@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class Definitions
 {
-	public static final int CRATE_SENSOR_ID = 69;
 	
 	// Autonomous constants
 

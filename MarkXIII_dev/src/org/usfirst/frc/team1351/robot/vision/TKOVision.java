@@ -5,6 +5,7 @@ package org.usfirst.frc.team1351.robot.vision;
 
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
+import org.usfirst.frc.team1351.robot.util.XboxController;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
@@ -15,6 +16,7 @@ import com.ni.vision.NIVision.Range;
 import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -123,6 +125,7 @@ public class TKOVision implements Runnable
 				NIVision.IMAQdxConfigureGrab(cameraChoice);
 				NIVision.IMAQdxStartAcquisition(cameraChoice);
 			}
+			isCameraInit = true;
 		}
 	}
 
@@ -133,7 +136,7 @@ public class TKOVision implements Runnable
 		{
 			while (visionThread.isThreadRunning())
 			{
-				if (TKOHardware.getJoystick(0).getRawButton(6))
+				if (TKOHardware.getXboxController().getButtonY())
 				{
 					isFrontCamera = !isFrontCamera;
 					// Turns camera "off"
@@ -145,7 +148,7 @@ public class TKOVision implements Runnable
 				// Reinitializes new feed for opposite camera
 				viewCamera(cameraChoice);
 				// feed will be on opposite camera
-				printTable();
+				// printTable();
 				// prints out information about the camera
 				synchronized (visionThread)
 				// synchronized prioritizes one thread at a time to "talk"
@@ -160,6 +163,7 @@ public class TKOVision implements Runnable
 				}
 			}
 		}
+
 		catch (InterruptedException | TKOException e)
 		{
 			e.printStackTrace();
