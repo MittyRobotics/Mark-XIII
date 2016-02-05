@@ -23,12 +23,11 @@ public class Robot extends SampleRobot {
     
     public void robotInit() {
         autonChooser = new SendableChooser();
-        autonChooser.addDefault("Don't pick this one", new Integer(0));
-        autonChooser.addObject("LowBar", new Integer(1));
-        autonChooser.addObject("Position 2", new Integer(2));
-        autonChooser.addObject("Position 3", new Integer(3));
-        autonChooser.addObject("Position 4", new Integer(4));
-        autonChooser.addObject("Position 5", new Integer(5));
+        autonChooser.addObject("Low Bar", new Integer(0));
+        autonChooser.addObject("Position 2", new Integer(1));
+        autonChooser.addObject("Position 3", new Integer(2));
+        autonChooser.addObject("Position 4", new Integer(3));
+        autonChooser.addObject("Position 5", new Integer(4));
     }
 
     public void autonomous() {
@@ -39,25 +38,21 @@ public class Robot extends SampleRobot {
     	
     	switch(autoSelected) {
     	default:
-            Molecule molecule = new Molecule();
-            molecule.clear();
-            if (autonChooser.getSelected().equals(0))
-    		{
-    			System.out.println("You weren't supposed to pick this one :/");
-    		}
-    		else if (autonChooser.getSelected().equals(1))
+            Molecule molecule = new Molecule(); // creates a new molecule
+            molecule.clear(); // verifies that the molecule is empty
+    		if (autonChooser.getSelected().equals(0)) // instructions for getting from the low bar to the left batter
     		{
                 molecule.add(new DriveAtom(108.44));
                 molecule.add(new GyroTurnAtom(60));
                 molecule.add(new DriveAtom(139.37));
     		}
-    		else if (autonChooser.getSelected().equals(2))
+    		else if (autonChooser.getSelected().equals(1)) // instructions for getting from position #2 to the left batter
     		{
     			molecule.add(new DriveAtom(137.66));
     			molecule.add(new GyroTurnAtom(60));
     			molecule.add(new DriveAtom(81.7));
     		}
-    		else if(autonChooser.getSelected().equals(3))
+    		else if(autonChooser.getSelected().equals(2)) // instructions for getting from position #3 to the middle batter
     		{
     			molecule.add(new DriveAtom(48));
     			molecule.add(new GyroTurnAtom(90));
@@ -65,7 +60,7 @@ public class Robot extends SampleRobot {
     			molecule.add(new GyroTurnAtom(-90));
     			molecule.add(new DriveAtom(117.5));
     		}
-    		else if(autonChooser.getSelected().equals(4))
+    		else if(autonChooser.getSelected().equals(3)) // instructions for getting from position #4 to the middle batter
     		{
     			molecule.add(new DriveAtom(48));
     			molecule.add(new GyroTurnAtom(-90));
@@ -73,7 +68,7 @@ public class Robot extends SampleRobot {
     			molecule.add(new GyroTurnAtom(90));
     			molecule.add(new DriveAtom(117.5));
     		}
-    		else if(autonChooser.getSelected().equals(5))
+    		else if(autonChooser.getSelected().equals(4)) // instructions for getting from position #5 to the right batter
     		{
     			molecule.add(new DriveAtom(48));
     			molecule.add(new GyroTurnAtom(90));
@@ -87,7 +82,7 @@ public class Robot extends SampleRobot {
     		{
     			System.out.println("The molecule is empty :/");
     		}
-            molecule.initAndRun();
+            molecule.initAndRun(); // initializes and runs the molecule
             break;
     	}
     }
