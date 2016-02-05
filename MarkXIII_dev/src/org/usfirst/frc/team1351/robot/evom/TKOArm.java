@@ -32,13 +32,20 @@ public class TKOArm implements Runnable{
 	
 	void TKOCreep() throws TKOException {
 		//3.183 revs needed (~37.7)
-		//figure out how to make it creep (use DriveAtom somehow?)
+		//TODO figure out how to make it creep (use DriveAtom somehow?)
 	}
 	
 	void TKOPortcullis () throws TKOException {
 		armMove();
-		//TODO put in DriveAtom
+		TKOCreep();
 		armMove();
+	}
+	
+	void TKODrawbridge() throws TKOException {
+		armMove();
+		TKOCreep();
+		armMove();
+		TKOCreep();
 	}
 	
 	public synchronized TKOArm getInstance()
