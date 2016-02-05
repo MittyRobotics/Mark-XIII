@@ -3,6 +3,7 @@
 
 package org.usfirst.frc.team1351.robot.statemachine;
 
+import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.statemachine.states.*;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
@@ -30,7 +31,6 @@ public class StateMachine implements Runnable
 	static DigitalInput intakeSwitch;
 	static DigitalInput shooterSwitch;
 	
-	// TODO should intake be controlled by one solenoid? lmao
 	static DoubleSolenoid shooterPiston;
 	static DoubleSolenoid intakePiston;
 
@@ -41,6 +41,7 @@ public class StateMachine implements Runnable
 
 	public static final float PISTON_RETRACT_TIMEOUT = 15.f;
 	public static final float PISTON_EXTEND_TIMEOUT = 15.f;
+	public static final float LOW_GOAL_TIMEOUT = 5.f;
 	
 	public TKOThread stateThread = null;
 	private static StateMachine m_Instance = null;
@@ -144,7 +145,7 @@ public class StateMachine implements Runnable
 		if (!stateThread.isAlive() && m_Instance != null)
 		{
 			stateThread = new TKOThread(m_Instance);
-			// stateThread.setPriority(Definitions.getPriority("gripper"));
+			stateThread.setPriority(Definitions.getPriority("shooter"));
 		}
 		if (!stateThread.isThreadRunning())
 			stateThread.setThreadRunning(true);
