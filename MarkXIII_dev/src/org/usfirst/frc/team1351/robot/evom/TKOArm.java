@@ -37,7 +37,7 @@ public class TKOArm implements Runnable{
 	
 	void TKOPortcullis () throws TKOException {
 		armMove();
-		
+		//TODO put in DriveAtom
 		armMove();
 	}
 	
