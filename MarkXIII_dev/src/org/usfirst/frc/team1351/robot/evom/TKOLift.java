@@ -35,22 +35,24 @@ public class TKOLift implements Runnable
 		
 	}
 	
-	public static void TKOScissorLift() throws TKOException {
+	public static void TKOClimb() throws TKOException {
 		//Need 68 in
 		//It's fine(?)
 		//pistons are extended or not, no in between
-		while(liftMagSensor1.get() != true && liftMagSensor2.get() != true) {
+		boolean hasGrabbed = false;
+		if (liftMagSensor1.get() != true && liftMagSensor2.get() != true && hasGrabbed == false) {
 			TKOHardware.getDSolenoid(3).set(Value.kReverse);
 			TKOHardware.getDSolenoid(0).set(Value.kReverse);	
 		}
 		if (liftMagSensor1.get() == true && liftMagSensor2.get() == true) {
+			hasGrabbed = true;
 			TKOHardware.getDSolenoid(3).set(Value.kForward);
 			TKOHardware.getDSolenoid(0).set(Value.kForward);
 		}
 	}
 	
 	public static synchronized TKOLift getInstance()
-	{
+	{ 
 		if (TKOLift.m_Instance == null)
 		{
 			m_Instance = new TKOLift();
