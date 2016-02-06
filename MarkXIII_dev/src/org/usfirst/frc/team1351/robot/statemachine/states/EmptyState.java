@@ -13,7 +13,7 @@ public class EmptyState implements IStateFunction
 		System.out.println("Entering: Empty state");
 		
 		int cur = StateMachine.createIntFromBoolArray(data);
-		System.out.println(cur);
+		System.out.println("Sensors: " + cur);
 		
 		if (cur == 0)
 		{

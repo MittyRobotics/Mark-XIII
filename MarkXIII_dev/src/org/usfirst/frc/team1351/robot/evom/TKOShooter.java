@@ -150,9 +150,9 @@ public class TKOShooter implements Runnable
 				 */
 				
 				//use trigger to speed up
-				while(TKOHardware.getJoystick(3).getTrigger()) {
+				/*while(TKOHardware.getJoystick(3).getTrigger()) {
 					setSpeed(9000, 250, 150);
-				}
+				}*/
 				timer.reset();
 				synchronized (shooterThread) // synchronized per the thread to make sure that we wait safely
 				{

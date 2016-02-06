@@ -37,7 +37,7 @@ public class StateMachine implements Runnable
 	static Joystick stick;
 
 	private InstanceData data = new InstanceData();
-	static IStateFunction states[] = new IStateFunction[StateEnum.NUM_STATES.getValue()];
+	static IStateFunction states[] = new IStateFunction[StateEnum.STATE_ERROR.getValue()];
 
 	public static final float PISTON_RETRACT_TIMEOUT = 15.f;
 	public static final float PISTON_EXTEND_TIMEOUT = 15.f;
@@ -87,8 +87,10 @@ public class StateMachine implements Runnable
 
 	public static int getSensorData(InstanceData id)
 	{
-		id.state[0] = ballSwitch.get();
+		id.state[0] = (ballSwitch.get() == false);
 		id.state[1] = intakeSwitch.get();
+//		id.state[1] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
+//		id.state[2] = (TKOHardware.getPiston(2).get() == DoubleSolenoid.Value.kForward);
 		id.state[2] = shooterSwitch.get();
 			
 		return createIntFromBoolArray(id);
@@ -97,7 +99,7 @@ public class StateMachine implements Runnable
 	public static int createIntFromBoolArray(InstanceData id)
 	{
 		int num = 0;
-		for (int i = 0; i < StateEnum.NUM_STATES.getValue() - 1; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			if (id.state[i])
 			{
@@ -170,7 +172,7 @@ public class StateMachine implements Runnable
 			while (stateThread.isThreadRunning())
 			{
 				runState(data.curState, data);
-				System.out.println("RUNNING STATE: " + data.curState);
+//				System.out.println("RUNNING STATE: " + data.curState);
 
 				synchronized (stateThread)
 				{

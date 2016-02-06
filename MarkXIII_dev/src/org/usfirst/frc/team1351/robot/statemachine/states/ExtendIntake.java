@@ -13,6 +13,8 @@ public class ExtendIntake implements IStateFunction
 	@Override
 	public StateEnum doState(InstanceData data)
 	{
+		System.out.println("Entering: Extend intake state");
+		
 		if (StateMachine.createIntFromBoolArray(data) != 0)
 			return StateEnum.STATE_ERROR;
 		
@@ -29,6 +31,7 @@ public class ExtendIntake implements IStateFunction
 	    	{
 	    		StateMachine.getTimer().stop();
 	            StateMachine.getTimer().reset();
+	            System.out.println("ERROR: piston timeout");
 	            return StateEnum.STATE_ERROR;
 	    	}
 	    	Timer.delay(0.1);

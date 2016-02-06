@@ -14,8 +14,7 @@ public enum StateEnum
 	STATE_EXTEND_SHOOTER(9),
 	STATE_READY_TO_FIRE(10),
 	STATE_RETRACT_SHOOTER(11),
-	NUM_STATES(12),
-	STATE_ERROR(13);
+	STATE_ERROR(12);
 
 	private int value;
 

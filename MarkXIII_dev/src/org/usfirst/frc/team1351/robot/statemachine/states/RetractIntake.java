@@ -13,7 +13,8 @@ public class RetractIntake implements IStateFunction
 	@Override
 	public StateEnum doState(InstanceData data)
 	{
-		if (StateMachine.createIntFromBoolArray(data) != 6)
+		System.out.println("Entering: Retract intake state");
+		if (StateMachine.createIntFromBoolArray(data) != 3)
 			return StateEnum.STATE_ERROR;
 		
 		data.curState = StateEnum.STATE_RETRACT_INTAKE;
@@ -23,12 +24,13 @@ public class RetractIntake implements IStateFunction
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
 	    int sensors = StateMachine.getSensorData(data);
-	    while (sensors != 4 && sensors == 6)
+	    while (sensors != 1 && sensors == 3)
 	    {
 	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
 	    	{
 	    		StateMachine.getTimer().stop();
 	            StateMachine.getTimer().reset();
+	            System.out.println("ERROR: piston timeout");
 	            return StateEnum.STATE_ERROR;
 	    	}
 	    	Timer.delay(0.1);
@@ -36,7 +38,7 @@ public class RetractIntake implements IStateFunction
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
-	    if (sensors != 4)
+	    if (sensors != 1)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }
