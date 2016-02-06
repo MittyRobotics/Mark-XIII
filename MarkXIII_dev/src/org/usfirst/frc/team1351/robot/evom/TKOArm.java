@@ -31,7 +31,7 @@ public class TKOArm implements Runnable{
 	}
 	
 	void TKOCreep() throws TKOException {
-		//3.183 revs needed (~37.7)
+		//3.183 revs needed (~40")
 		//TODO figure out how to make it creep (use DriveAtom somehow?)
 	}
 	
