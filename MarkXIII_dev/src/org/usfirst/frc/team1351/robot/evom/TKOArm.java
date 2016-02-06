@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1351.robot.evom;
 
+import org.usfirst.frc.team1351.robot.drive.TKODrive;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
@@ -7,7 +8,8 @@ import org.usfirst.frc.team1351.robot.util.TKOThread;
 import org.usfirst.frc.team1351.robot.util.ThreadExample;
 
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TKOArm implements Runnable{
 
@@ -30,9 +32,24 @@ public class TKOArm implements Runnable{
 		}
 	}
 	
+	
+	double p, i, d, distance, incrementer, threshold;
 	void TKOCreep() throws TKOException {
 		//3.183 revs needed (~40")
 		//TODO figure out how to make it creep (use DriveAtom somehow?)
+		TKODrive.getInstance().setCreepAtomRunning(true); 
+		
+		p = SmartDashboard.getNumber("Drive P: ");
+		i = SmartDashboard.getNumber("Drive I: ");
+		d = SmartDashboard.getNumber("Drive D: ");
+		distance = -795.75; 
+		incrementer = Definitions.DRIVE_ATOM_INCREMENTER;
+		threshold = 75; // we can be within approx. half an inch
+		TKOHardware.autonInit(p, i, d);
+		System.out.println("Starting Creep Stuff");
+		
+		
+		TKODrive.getInstance().setCreepAtomRunning(false); 
 	}
 	
 	void TKOPortcullis () throws TKOException {

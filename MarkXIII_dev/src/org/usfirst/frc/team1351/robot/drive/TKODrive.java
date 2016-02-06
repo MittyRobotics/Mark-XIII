@@ -14,7 +14,7 @@ public class TKODrive implements Runnable
 {
 	private static TKODrive m_Instance = null;
 	public TKOThread driveThread = null;
-	
+
 	public static synchronized TKODrive getInstance()
 	{
 		if (TKODrive.m_Instance == null)
@@ -25,8 +25,10 @@ public class TKODrive implements Runnable
 		return m_Instance;
 	}
 
-	protected TKODrive() {}
-	
+	protected TKODrive()
+	{
+	}
+
 	public void start()
 	{
 		System.out.println("Starting drive task");
@@ -53,25 +55,26 @@ public class TKODrive implements Runnable
 	public void squaredDrive()
 	{
 		double maxSpeed = 0.75;
-	
+
 		try
 		{
 			double leftY = TKOHardware.getXboxController().getLeftY();
 			double rightY = TKOHardware.getXboxController().getRightY();
-			
-			if( leftY <= (rightY + .1) && leftY >= (rightY - .1) )
+
+			if (leftY <= (rightY + .1) && leftY >= (rightY - .1))
 			{
-				leftY = (leftY + rightY) / 2.0; 
+				leftY = (leftY + rightY) / 2.0;
 			}
-			
-			leftY = (Math.abs(leftY) > 0.10) ? leftY : 0; 
-			rightY = (Math.abs(rightY) > 0.10) ? rightY : 0; 
-			
-			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus,
-					Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus,
-					Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			
+
+			leftY = (Math.abs(leftY) > 0.10) ? leftY : 0;
+			rightY = (Math.abs(rightY) > 0.10) ? rightY : 0;
+
+			// TODO What the hell is this?
+			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus, Definitions.DRIVE_P,
+					Definitions.DRIVE_I, Definitions.DRIVE_D);
+			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus, Definitions.DRIVE_P,
+					Definitions.DRIVE_I, Definitions.DRIVE_D);
+
 			setLeftRightMotorOutputsPercentVBus(-1 * maxSpeed * leftY, maxSpeed * rightY);
 		}
 		catch (TKOException e)
@@ -80,7 +83,7 @@ public class TKODrive implements Runnable
 			e.printStackTrace();
 		}
 	}
-	
+
 	// Arcade drive using the two sticks of the xbox controller
 	public void arcadeDrive()
 	{
@@ -104,7 +107,7 @@ public class TKODrive implements Runnable
 			double max = Math.max(moveValue, rotateValue);
 			double diff = moveValue - rotateValue;
 			double leftMotorSpeed, rightMotorSpeed;
-			
+
 			if (moveValue > 0.0)
 			{
 				if (rotateValue > 0.0)
@@ -131,10 +134,10 @@ public class TKODrive implements Runnable
 					rightMotorSpeed = -diff;
 				}
 			}
-			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
+			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus, Definitions.DRIVE_P,
+					Definitions.DRIVE_I, Definitions.DRIVE_D);
+			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus, Definitions.DRIVE_P,
+					Definitions.DRIVE_I, Definitions.DRIVE_D);
 			setLeftRightMotorOutputsPercentVBus(leftMotorSpeed, rightMotorSpeed);
 		}
 		catch (TKOException e)
@@ -142,7 +145,7 @@ public class TKODrive implements Runnable
 			e.printStackTrace();
 		}
 	}
-	
+
 	public synchronized void setLeftRightMotorOutputsPercentVBus(double left, double right)
 	{
 		try
@@ -161,7 +164,14 @@ public class TKODrive implements Runnable
 			e.printStackTrace();
 		}
 	}
-	
+
+	boolean creepAtomRunning = false;
+
+	public void setCreepAtomRunning(boolean setting)
+	{
+		creepAtomRunning = setting;
+	}
+
 	@Override
 	public void run()
 	{
@@ -170,7 +180,11 @@ public class TKODrive implements Runnable
 			// boolean calibRan = false;
 			while (driveThread.isThreadRunning())
 			{
-				squaredDrive();
+				if (!creepAtomRunning)
+				{
+					// TODO why the hell does squared drive set the mode???? Mebbe fix?
+					squaredDrive();
+				}
 				synchronized (driveThread)
 				{
 					driveThread.wait(5);
