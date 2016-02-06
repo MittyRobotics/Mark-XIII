@@ -148,7 +148,7 @@ public class TKOVision implements Runnable
 				// Reinitializes new feed for opposite camera
 				viewCamera(cameraChoice);
 				// feed will be on opposite camera
-				// printTable();
+				printTable();
 				// prints out information about the camera
 				synchronized (visionThread)
 				// synchronized prioritizes one thread at a time to "talk"
@@ -164,7 +164,7 @@ public class TKOVision implements Runnable
 			}
 		}
 
-		catch (InterruptedException | TKOException e)
+		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}
@@ -175,49 +175,40 @@ public class TKOVision implements Runnable
 
 	public void printTable()
 	{
+		double def = 0;
 		System.out.println("\n \n \n");
-		double[] areas = table.getNumberArray("area", defaultValue);
+		double areas = table.getNumber("area", def);
 		System.out.print("areas: ");
-		for (double area : areas)
-		{
-			System.out.print(area + ", ");
-			SmartDashboard.putNumber("Area", area);
-		}
 
-		double[] centerX = table.getNumberArray("centerX", defaultValue);
+		System.out.print(areas + ", ");
+		SmartDashboard.putNumber("Area", areas);
+
+		double centerX = table.getNumber("x", def);
 		System.out.print("centerX: ");
-		for (double x : centerX)
-		{
-			System.out.print(x + ", ");
-			SmartDashboard.putNumber("Center X", x);
-		}
 
-		double[] centerY = table.getNumberArray("centerY", defaultValue);
+		System.out.print(centerX + ", ");
+		SmartDashboard.putNumber("Center X", centerX);
+
+		double centerY = table.getNumber("y", def);
 		System.out.print("centerY: ");
-		for (double cY : centerY)
-		{
-			System.out.print(cY + ", ");
-			SmartDashboard.putNumber("Center Y", cY);
-		}
 
-		double[] heights = table.getNumberArray("height", defaultValue);
+		System.out.print(centerY + ", ");
+		SmartDashboard.putNumber("Center Y", centerY);
+
+		double heights = table.getNumber("height", def);
 		System.out.print("height: ");
-		for (double height : heights)
-		{
+		
 			System.out.print(height + ", ");
 			SmartDashboard.putNumber("Height", height);
-		}
 
-		double[] widths = table.getNumberArray("width", defaultValue);
+		double widths = table.getNumber("width", def);
 		System.out.print("width: ");
-		for (double width : widths)
-		{
-			System.out.print(width + ", ");
-			SmartDashboard.putNumber("Width", width);
-		}
 
-		tarCenterToEdge = centerX[centerX.length - 1];
-		targetPixelWidth = widths[widths.length - 1];
+			System.out.print(widths + ", ");
+			SmartDashboard.putNumber("Width", widths);
+
+		tarCenterToEdge = centerX;
+		targetPixelWidth = widths;
 	}
 
 	/*
