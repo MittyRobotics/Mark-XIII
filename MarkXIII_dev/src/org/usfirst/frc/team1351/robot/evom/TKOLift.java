@@ -92,10 +92,6 @@ public class TKOLift implements Runnable
 		{
 			while (liftThread.isThreadRunning())
 			{
-				if ()
-				{
-					
-				}
 				
 				synchronized (liftThread)
 				{

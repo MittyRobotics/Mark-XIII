@@ -22,22 +22,19 @@ public class TKOArm implements Runnable
 
 	}
 
-	boolean armUp = false;
 	public TKOThread exampleThread = null;
 	private TKOArm m_Instance = null;
 	double driveSetpoint = 0;
 
-	void armMove() throws TKOException
+	void armMove(boolean armUp) throws TKOException //If armUp is true, moves up. Else, moves down 
 	{
 		if (armUp == false)
 		{
 			TKOHardware.getDSolenoid(1).set(Value.kReverse);
-			armUp = true;
 		}
 		else
 		{
 			TKOHardware.getDSolenoid(1).set(Value.kForward);
-			armUp = false;
 		}
 	}
 
@@ -46,14 +43,15 @@ public class TKOArm implements Runnable
 	void TKOCreep() throws TKOException
 	{
 		// 3.183 revs needed (~40")
-		// TODO figure out how to make it creep (use DriveAtom somehow?)
+		// TODO Test this, ensure it works and robot doesn't get stuck 
 		TKODrive.getInstance().setCreepAtomRunning(true);
 
 		p = SmartDashboard.getNumber("Drive P: ");
 		i = SmartDashboard.getNumber("Drive I: ");
 		d = SmartDashboard.getNumber("Drive D: ");
 		// arms on the back
-		distance = -795.75;
+		distance = TKOHardware.getLeftDrive().getPosition() - 795.75; //This helps account for the current position on the encoders
+		//TODO determine whether or not to zero the encoders before doing this - would it affect anything? Would make this easier 
 		incrementer = Definitions.DRIVE_ATOM_INCREMENTER;
 		threshold = 75; // we can be within approx. half an inch
 		TKOHardware.autonInit(p, i, d);
@@ -71,6 +69,12 @@ public class TKOArm implements Runnable
 						+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
 				Timer.delay(0.001);
 			}
+			TKOHardware.getLeftDrive().set(distance); 
+			TKOHardware.getRightDrive().set(distance); 
+			while(Math.abs(TKOHardware.getLeftDrive().getPosition()) < (Math.abs(distance) - threshold) ) {
+				Timer.delay(0.001);
+			}
+			
 			TKODrive.getInstance().setCreepAtomRunning(false);
 		}
 		catch (TKOException e)
@@ -81,16 +85,16 @@ public class TKOArm implements Runnable
 
 	void TKOPortcullis() throws TKOException
 	{
-		armMove();
+		armMove(false); //Moves up, then creeps and moves back down 
 		TKOCreep();
-		armMove();
+		armMove(true);
 	}
 
 	void TKODrawbridge() throws TKOException
 	{
-		armMove();
+		armMove(false); //Arm goes up, creeps forward, arm drops, and robot creeps forwards to have it stand on the drawbridge 
 		TKOCreep();
-		armMove();
+		armMove(true);
 		TKOCreep();
 	}
 
