@@ -1,14 +1,14 @@
 
 package org.usfirst.frc.team1351.robot;
 
-
 import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import org.usfirst.frc.team1351.robot.DriveAtom;
 import org.usfirst.frc.team1351.robot.GyroTurnAtom;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 
 public class Robot extends SampleRobot {
 
@@ -20,7 +20,7 @@ public class Robot extends SampleRobot {
     
     public void robotInit() {
         autonChooser = new SendableChooser();
-        autonChooser.addObject("Low Bar", new Integer(0));
+        autonChooser.addDefault("Low Bar", new Integer(0));
         autonChooser.addObject("Position 2", new Integer(1));
         autonChooser.addObject("Position 3", new Integer(2));
         autonChooser.addObject("Position 4", new Integer(3));
@@ -37,6 +37,8 @@ public class Robot extends SampleRobot {
     	default:
             Molecule molecule = new Molecule(); // creates a new molecule
             molecule.clear(); // verifies that the molecule is empty
+            int autonSelection = (int) SmartDashboard.getNumber("Choose a position");
+            autonChooser.equals(autonSelection);
     		if (autonChooser.getSelected().equals(0)) // instructions for getting from the low bar to the left batter
     		{
                 molecule.add(new DriveAtom(108.44));
