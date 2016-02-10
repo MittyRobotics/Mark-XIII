@@ -16,30 +16,30 @@ public class LowGoalDone implements IStateFunction
 	{
 		System.out.println("Entering: Low goal done state");
 		
-		if (StateMachine.createIntFromBoolArray(data) != 2)
+		if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
 			return StateEnum.STATE_ERROR;
 		
-		data.curState = StateEnum.STATE_RETRACT_INTAKE;
+		data.curState = StateEnum.STATE_LOW_GOAL_DONE;
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
-	    int sensors = StateMachine.getSensorData(data);
-	    while (sensors != 0 && sensors == 2)
+	    while (data.sensorValues != StateMachine.EMPTY && data.sensorValues == StateMachine.INTAKE_EXTENDED)
 	    {
-	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
+	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_RETRACT_TIMEOUT)
 	    	{
 	    		StateMachine.getTimer().stop();
 	            StateMachine.getTimer().reset();
 	            return StateEnum.STATE_ERROR;
 	    	}
 	    	Timer.delay(0.1);
+	    	data.sensorValues = StateMachine.getSensorData(data);
 	    }
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
-	    if (sensors != 0)
+	    if (data.sensorValues != StateMachine.EMPTY)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }

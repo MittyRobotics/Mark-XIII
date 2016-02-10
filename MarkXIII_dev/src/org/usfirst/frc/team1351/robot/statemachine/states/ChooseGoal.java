@@ -14,11 +14,10 @@ public class ChooseGoal implements IStateFunction
 	{
 		System.out.println("Entering: Choose goal state");
 		
-		int cur = StateMachine.getSensorData(data);
-		if (cur != 1)
+		if (data.sensorValues != StateMachine.BALL_IN)
 		    return StateEnum.STATE_ERROR;
 		
-		while (cur == 1)
+		while (data.sensorValues == StateMachine.BALL_IN)
 		{
 			if (StateMachine.getJoystick().getRawButton(6))
 			{
@@ -32,6 +31,7 @@ public class ChooseGoal implements IStateFunction
 			}
 			
 			Timer.delay(0.1);
+			data.sensorValues = StateMachine.getSensorData(data);
 		}
 		
 	    return StateEnum.STATE_ERROR;

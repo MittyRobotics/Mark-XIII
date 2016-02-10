@@ -16,28 +16,25 @@ public class BackwardSpin implements IStateFunction
 	{	
 		System.out.println("Entering: Backward spin state");
 		
-		if (StateMachine.createIntFromBoolArray(data) != 3)
+		if (data.sensorValues != StateMachine.GOT_BALL)
 			return StateEnum.STATE_ERROR;
 		
-		data.curState = StateEnum.STATE_FORWARD_SPIN;
-	    int sensors = StateMachine.getSensorData(data);
+		data.curState = StateEnum.STATE_BACKWARD_SPIN;
 	    
-	    while (sensors != 2 && sensors == 3)
-	    {
-	    	// operator controls rollers during this loop
-	    	Timer.delay(0.1);
-	    }
-	    
-	    StateMachine.getTimer().reset();
+		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
-	    while (StateMachine.getTimer().get() < StateMachine.LOW_GOAL_TIMEOUT)
+	    while (data.sensorValues != StateMachine.INTAKE_EXTENDED &&
+	    		data.sensorValues == StateMachine.GOT_BALL &&
+	    		StateMachine.getTimer().get() < StateMachine.BALL_SWITCH_TIMEOUT)
 	    {
+	    	// operator should be spinning rollers right now
 	    	Timer.delay(0.1);
-	    	// waits for 5 seconds after ball is no longer in robot
-	    	// accounts for bounce time?
+	    	data.sensorValues = StateMachine.getSensorData(data);
 	    }
 
-	    if (sensors != 2)
+	    StateMachine.getTimer().stop();
+	    StateMachine.getTimer().reset();
+	    if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }

@@ -4,7 +4,6 @@
 package org.usfirst.frc.team1351.robot.statemachine;
 
 import org.usfirst.frc.team1351.robot.main.Definitions;
-import org.usfirst.frc.team1351.robot.statemachine.states.*;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
@@ -17,13 +16,7 @@ import edu.wpi.first.wpilibj.Timer;
 public class StateMachine implements Runnable
 {
 	// 0b | SS | IS | BS |
-	// 0b |    |    |    | = 0
-	// 0b | SS | IS | BS |
-	// 0b |    |  2 |    | = 2
-	// 0b | SS | IS | BS |
-	// 0b |  4 |    |    | = 4
-	// 0b | SS | IS | BS |
-	// 0b |  4 |  2 |    | = 6
+	// 0b |  4 |  2 |  1 | = 
 	
 	static Timer timer;
 
@@ -37,11 +30,21 @@ public class StateMachine implements Runnable
 	static Joystick stick;
 
 	private InstanceData data = new InstanceData();
+	
+	// equivalent to num_states
 	static IStateFunction states[] = new IStateFunction[StateEnum.STATE_ERROR.getValue()];
 
-	public static final float PISTON_RETRACT_TIMEOUT = 15.f;
-	public static final float PISTON_EXTEND_TIMEOUT = 15.f;
-	public static final float LOW_GOAL_TIMEOUT = 5.f;
+	public static final float PISTON_RETRACT_TIMEOUT = 5.f;
+	public static final float PISTON_EXTEND_TIMEOUT = 5.f;
+	public static final float BALL_SWITCH_TIMEOUT = 5.f;
+	
+	// included for readability purposes
+	public static final int EMPTY = 0;
+	public static final int INTAKE_EXTENDED = 2;
+	public static final int GOT_BALL = 3;
+	public static final int BALL_IN = 1;
+	public static final int SHOOTER_EXTENDED = 5;
+	public static final int DONE_FIRING = 4;
 	
 	public TKOThread stateThread = null;
 	private static StateMachine m_Instance = null;
@@ -54,11 +57,6 @@ public class StateMachine implements Runnable
 			m_Instance.stateThread = new TKOThread(m_Instance);
 		}
 		return m_Instance;
-	}
-
-	protected void init()
-	{
-		
 	}
 
 	protected StateMachine()
@@ -79,36 +77,27 @@ public class StateMachine implements Runnable
 		{
 			e.printStackTrace();
 		}
-
-//		states[StateEnum.STATE_DECIDE_ACTION.getValue()] = new DecideAction();
-
+		
+		data.numSensors = 3;
+		data.sensorValues = 0;
 		data.curState = StateEnum.STATE_EMPTY;
 	}
 
 	public static int getSensorData(InstanceData id)
 	{
-		id.state[0] = (ballSwitch.get() == false);
-		id.state[1] = intakeSwitch.get();
-//		id.state[1] = (TKOHardware.getPiston(1).get() == DoubleSolenoid.Value.kForward);
-//		id.state[2] = (TKOHardware.getPiston(2).get() == DoubleSolenoid.Value.kForward);
-		id.state[2] = shooterSwitch.get();
-			
-		return createIntFromBoolArray(id);
-	}
-
-	public static int createIntFromBoolArray(InstanceData id)
-	{
 		int num = 0;
-		for (int i = 0; i < 3; i++)
-		{
-			if (id.state[i])
-			{
-				num |= 1 << i;
-			}
-		}
+		int i = 0;
+		num |= convert(!ballSwitch.get(), i++);
+		num |= convert(!intakeSwitch.get(), i++);
+		num |= convert(!shooterSwitch.get(), i++);
 		return num;
 	}
-
+	
+	private static int convert(boolean sv, int place)
+	{
+		return sv ? 1 << place : 0;
+	}
+	
 	public static Timer getTimer()
 	{
 		return timer;
@@ -134,13 +123,6 @@ public class StateMachine implements Runnable
 		return states[curState.getValue()].doState(data);
 	}
 
-//	public static synchronized boolean getGripperSwitch() throws TKOException
-//	{
-//		if (m_gripper == null)
-//			throw new TKOException("NULL GRIPPER SWITCH");
-//		return !m_gripper.get();
-//	}
-
 	public synchronized void start()
 	{
 		System.out.println("Starting state machine task");
@@ -151,9 +133,7 @@ public class StateMachine implements Runnable
 		}
 		if (!stateThread.isThreadRunning())
 			stateThread.setThreadRunning(true);
-
-		init();
-
+		
 		System.out.println("Started state machine task");
 	}
 
@@ -176,7 +156,7 @@ public class StateMachine implements Runnable
 
 				synchronized (stateThread)
 				{
-					stateThread.wait(20); // how long is this wait?
+					stateThread.wait(20);
 				}
 			}
 		}

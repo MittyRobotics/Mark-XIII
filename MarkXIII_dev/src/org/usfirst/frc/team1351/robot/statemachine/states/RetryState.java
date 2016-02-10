@@ -13,7 +13,7 @@ public class RetryState implements IStateFunction
 	@Override
 	public StateEnum doState(InstanceData data)
 	{
-		if (StateMachine.createIntFromBoolArray(data) != 2)
+		if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
 			return StateEnum.STATE_ERROR;
 		
 		data.curState = StateEnum.STATE_RETRY;
@@ -22,8 +22,7 @@ public class RetryState implements IStateFunction
 	    
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
-	    int sensors = StateMachine.getSensorData(data);
-	    while (sensors != 0 && sensors == 2)
+	    while (data.sensorValues != StateMachine.EMPTY && data.sensorValues == StateMachine.INTAKE_EXTENDED)
 	    {
 	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
 	    	{
@@ -32,11 +31,12 @@ public class RetryState implements IStateFunction
 	            return StateEnum.STATE_ERROR;
 	    	}
 	    	Timer.delay(0.1);
+	    	data.sensorValues = StateMachine.getSensorData(data);
 	    }
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
-	    if (sensors != 0)
+	    if (data.sensorValues != 0)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }

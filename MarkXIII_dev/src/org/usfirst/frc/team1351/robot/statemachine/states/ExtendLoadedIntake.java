@@ -15,7 +15,7 @@ public class ExtendLoadedIntake implements IStateFunction
 	{
 		System.out.println("Entering: Extend loaded intake state");
 		
-		if (StateMachine.createIntFromBoolArray(data) != 1)
+		if (data.sensorValues != StateMachine.BALL_IN)
 			return StateEnum.STATE_ERROR;
 		
 		data.curState = StateEnum.STATE_EXTEND_LOADED_INTAKE;
@@ -24,8 +24,7 @@ public class ExtendLoadedIntake implements IStateFunction
 	    
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kForward);
 		
-	    int sensors = StateMachine.getSensorData(data);
-	    while (sensors != 3 && sensors == 1)
+	    while (data.sensorValues != StateMachine.GOT_BALL && data.sensorValues == StateMachine.BALL_IN)
 	    {
 	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
 	    	{
@@ -35,11 +34,12 @@ public class ExtendLoadedIntake implements IStateFunction
 	            return StateEnum.STATE_ERROR;
 	    	}
 	    	Timer.delay(0.1);
+	    	data.sensorValues = StateMachine.getSensorData(data);
 	    }
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
-	    if (sensors != 3)
+	    if (data.sensorValues != StateMachine.GOT_BALL)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }

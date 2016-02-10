@@ -1,39 +1,38 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
-import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
 import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
-import org.usfirst.frc.team1351.robot.util.TKOException;
-import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ExtendShooter implements IStateFunction
+public class HighGoalDone implements IStateFunction
 {
 	@Override
 	public StateEnum doState(InstanceData data)
 	{
-		System.out.println("Entering: Extend shooter state");
+		System.out.println("Entering: High goal done state");
 		
-		if (data.sensorValues != StateMachine.BALL_IN)
+		if (data.sensorValues != StateMachine.SHOOTER_EXTENDED)
 			return StateEnum.STATE_ERROR;
 		
-		data.curState = StateEnum.STATE_EXTEND_SHOOTER;
+		data.curState = StateEnum.STATE_HIGH_GOAL_DONE;
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
+	    // TKOConveyor function to move ball into flywheel
+	    // timer delay??
 	    // TKOShooter function to set flywheel speed back to 0
+	    // check that data.sensorValues has gone from SHOOTER_EXTENDED to DONE_FIRING?
 	    
-	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kForward);
+	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
-	    while (data.sensorValues != StateMachine.SHOOTER_EXTENDED &&
-	    		data.sensorValues == StateMachine.BALL_IN)
+	    while (data.sensorValues != StateMachine.EMPTY &&
+	    		data.sensorValues == StateMachine.DONE_FIRING)
 	    {
-	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
+	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_RETRACT_TIMEOUT)
 	    	{
 	    		StateMachine.getTimer().stop();
 	            StateMachine.getTimer().reset();
@@ -45,11 +44,11 @@ public class ExtendShooter implements IStateFunction
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
-	    if (data.sensorValues != StateMachine.SHOOTER_EXTENDED)
+	    if (data.sensorValues != StateMachine.EMPTY)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }
 	    
-		return StateEnum.STATE_READY_TO_FIRE;
+		return StateEnum.STATE_EMPTY;
 	}
 }

@@ -15,23 +15,25 @@ public class ForwardSpin implements IStateFunction
 	public StateEnum doState(InstanceData data)
 	{	
 		System.out.println("Entering: Forward spin state");
-		if (StateMachine.createIntFromBoolArray(data) != 2)
+		if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
 			return StateEnum.STATE_ERROR;
 		
 		data.curState = StateEnum.STATE_FORWARD_SPIN;
-	    int sensors = StateMachine.getSensorData(data);
 	    
-	    while (sensors != 3 && sensors == 2)
+	    while (data.sensorValues != StateMachine.GOT_BALL &&
+	    		data.sensorValues == StateMachine.INTAKE_EXTENDED)
 	    {
+	    	// operator should be spinning rollers right now
 	    	if (StateMachine.getJoystick().getRawButton(11)) // override
 	    	{
 	    		System.out.println("Override: retry chosen by operator");
 	    		return StateEnum.STATE_RETRY;
 	    	}
 	    	Timer.delay(0.1);
+	    	data.sensorValues = StateMachine.getSensorData(data);
 	    }
 
-	    if (sensors != 3)
+	    if (data.sensorValues != StateMachine.GOT_BALL)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }
