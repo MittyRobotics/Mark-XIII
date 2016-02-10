@@ -30,21 +30,20 @@ public class Robot extends SampleRobot {
     public void autonomous() {
     	
     	String autoSelected = (String) autonChooser.getSelected();
-//		String autoSelected = SmartDashboard.getString("Auto Selector", defaultAuto);
 		System.out.println("Auto selected: " + autoSelected);
     	
     	switch(autoSelected) {
     	default:
             Molecule molecule = new Molecule(); // creates a new molecule
             molecule.clear(); // verifies that the molecule is empty
-            int autonSelection = (int) SmartDashboard.getNumber("Choose a position");
+            /** int autonSelection = (int) SmartDashboard.getNumber("Choose a position");
             autonChooser.equals(autonSelection);
     		if (autonChooser.getSelected().equals(0)) // instructions for getting from the low bar to the left batter
-    		{
+    		{ */
                 molecule.add(new DriveAtom(108.44));
                 molecule.add(new GyroTurnAtom(60));
                 molecule.add(new DriveAtom(139.37));
-    		}
+    		/** }
     		else if (autonChooser.getSelected().equals(1)) // instructions for getting from position #2 to the left batter
     		{
     			molecule.add(new DriveAtom(137.66));
@@ -80,7 +79,7 @@ public class Robot extends SampleRobot {
     		else
     		{
     			System.out.println("The molecule is empty :/");
-    		}
+    		} */
             molecule.initAndRun(); // initializes and runs the molecule
             break;
     	}
