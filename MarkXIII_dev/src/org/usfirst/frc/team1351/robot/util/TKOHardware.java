@@ -27,7 +27,8 @@ public class TKOHardware
 	protected static Joystick joysticks[] = new Joystick[Definitions.NUM_JOYSTICKS];
 	protected static CANTalon driveTalons[] = new CANTalon[Definitions.NUM_DRIVE_TALONS];
 	protected static CANTalon flyTalons[] = new CANTalon[Definitions.NUM_FLY_TALONS];
-	protected static Relay spikes[] = new Relay[Definitions.NUM_SPIKES];
+//	protected static Relay spikes[] = new Relay[Definitions.NUM_SPIKES];
+	protected static CANTalon conveyorTalons[] = new CANTalon[Definitions.NUM_CONVEYOR_TALONS]; 
 	protected static DoubleSolenoid doubleSolenoids[] = new DoubleSolenoid[Definitions.NUM_DSOLENOIDS];
 	protected static Solenoid solenoids[] = new Solenoid[Definitions.NUM_SOLENOIDS];
 	protected static DigitalInput limitSwitches[] = new DigitalInput[Definitions.NUM_SWITCHES];
@@ -54,9 +55,12 @@ public class TKOHardware
 		{
 			flyTalons[i] = null;
 		}
-		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
-		{
-			spikes[i] = null;
+//		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
+//		{
+//			spikes[i] = null;
+//		}
+		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++) {
+			conveyorTalons[i] = null; 
 		}
 		for (int i = 0; i < Definitions.NUM_DSOLENOIDS; i++)
 		{
@@ -124,10 +128,27 @@ public class TKOHardware
 				}
 			}
 		}
-		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
+//		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
+//		{
+//			if (spikes[i] == null)
+//				spikes[i] = new Relay(Definitions.ROLLER_ID[i]);
+//		}
+		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++)
 		{
-			if (spikes[i] == null)
-				spikes[i] = new Relay(Definitions.ROLLER_ID[i]);
+			if (conveyorTalons[i] == null)
+			{
+				try
+				{
+					conveyorTalons[i] = new CANTalon(Definitions.CONVEYOR_ID[i]); // TODO filler values
+					talonModes[Definitions.NUM_DRIVE_TALONS + i] = null; // null means not initialized
+				}
+				catch (AllocationException | CANMessageNotFoundException e)
+				{
+					e.printStackTrace();
+					System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
+					TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR");
+				}
+			}
 		}
 		if (doubleSolenoids[0] == null)
 			doubleSolenoids[0] = new DoubleSolenoid(Definitions.SHIFTER_A, Definitions.SHIFTER_B);
@@ -234,9 +255,44 @@ public class TKOHardware
 		}
 	}
 	
+	private static synchronized void configConveyorTalons(double P, double I, double D, TalonControlMode mode)
+	{
+		for (int j = 0; j < Definitions.NUM_CONVEYOR_TALONS; j++)
+		{
+			conveyorTalons[j].delete();
+			conveyorTalons[j] = null;
+			conveyorTalons[j] = new CANTalon(Definitions.CONVEYOR_ID[j]);
+			talonModes[Definitions.NUM_FLY_TALONS + j] = null;
+			if (conveyorTalons[j] != null)
+			{
+				if ((Definitions.NUM_FLY_TALONS + j) == 7) // if follower
+				{
+					conveyorTalons[j].changeControlMode(CANTalon.TalonControlMode.Follower);
+					conveyorTalons[j].set(Definitions.NUM_FLY_TALONS + j - 1); // set to follow the CANTalon with id j - 1
+					talonModes[Definitions.NUM_FLY_TALONS + j] = CANTalon.TalonControlMode.Follower;
+				}
+				else
+				// if not follower
+				{
+//					if (!(mode instanceof CANTalon.TalonControlMode))
+//						throw new TKORuntimeException("CODE ERROR! Wrong control mode used");
+					//TODO Check, test, and fix this entire function 
+					conveyorTalons[j].changeControlMode(mode);
+					conveyorTalons[j].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE);
+					conveyorTalons[j].setPID(P, I, D);
+					talonModes[Definitions.NUM_FLY_TALONS + j] = mode;
+				}
+//				liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
+//				liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
+				conveyorTalons[j].setExpiration(10000.);
+				conveyorTalons[j].setSafetyEnabled(false);
+			}
+		}
+	}
+	
 	public static synchronized void configSpikes()
 	{
-		// TODO necessary?
+		// TODO necessary? TODO nope 
 	}
 
 	public static synchronized void changeTalonMode(CANTalon target, CANTalon.TalonControlMode newMode, double newP, double newI, double newD)
@@ -259,6 +315,22 @@ public class TKOHardware
 
 		target.changeControlMode(newMode);
 		target.setPID(newP, newI, newD);
+		target.enableControl();
+		talonModes[target.getDeviceID()] = newMode;
+
+		System.out.println("CHANGED TALON [" + target.getDeviceID() + "] TO [" + target.getControlMode().getValue() + "]");
+	}
+	
+	public static synchronized void changeTalonMode(CANTalon target, CANTalon.TalonControlMode newMode)
+			throws TKOException
+	{
+		if (target == null)
+			throw new TKOException("ERROR Attempted to change mode of null CANTalon");
+
+		// if (target.getControlMode() != CANTalon.TalonControlMode.Position && target.getControlMode() != CANTalon.TalonControlMode.Speed)
+		target.setFeedbackDevice(Definitions.DEF_ENCODER_TYPE);
+
+		target.changeControlMode(newMode);
 		target.enableControl();
 		talonModes[target.getDeviceID()] = newMode;
 
@@ -332,12 +404,20 @@ public class TKOHardware
 				flyTalons[i] = null;
 			}
 		}
-		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
+//		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
+//		{
+//			if (spikes[i] != null)
+//			{
+//				spikes[i].free();
+//				spikes[i] = null;
+//			}
+//		}
+		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++)
 		{
-			if (spikes[i] != null)
+			if (conveyorTalons[i] != null)
 			{
-				spikes[i].free();
-				spikes[i] = null;
+				conveyorTalons[i].delete();
+				conveyorTalons[i] = null;
 			}
 		}
 		for (int i = 0; i < Definitions.NUM_DSOLENOIDS; i++)
@@ -477,17 +557,32 @@ public class TKOHardware
 		return flyTalons[0];
 	}
 	
-	public static synchronized Relay getSpike(int num) throws TKOException
+	public static synchronized CANTalon getConveyorTalon(int num) throws TKOException //TODO check and test this - crappily added
 	{
-		if (num >= Definitions.NUM_SPIKES)
-		{
-			throw new TKOException("Relay requested out of bounds");
-		}
-		if (spikes[num] != null)
-			return spikes[num];
-		else
-			throw new TKOException("Relay " + (num) + "(array value) is null");
+		if (conveyorTalons[0] == null || conveyorTalons[1] == null || conveyorTalons[2] == null)
+			throw new TKOException("Conveyor Talon is null");
+
+		if (talonModes[Definitions.NUM_FLY_TALONS + 0] == null)
+			throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)");
+		if (talonModes[Definitions.NUM_FLY_TALONS + 1] != CANTalon.TalonControlMode.Follower)
+			throw new TKOException("ERROR: Follower talon is uninitialized (mode unset)");
+		if(talonModes[Definitions.NUM_FLY_TALONS + 2] == null) 
+			throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)"); 
+		
+		return conveyorTalons[num];
 	}
+	
+//	public static synchronized Relay getSpike(int num) throws TKOException
+//	{
+//		if (num >= Definitions.NUM_SPIKES)
+//		{
+//			throw new TKOException("Relay requested out of bounds");
+//		}
+//		if (spikes[num] != null)
+//			return spikes[num];
+//		else
+//			throw new TKOException("Relay " + (num) + "(array value) is null");
+//	}
 
 	public static synchronized DoubleSolenoid getDSolenoid(int num) throws TKOException
 	{

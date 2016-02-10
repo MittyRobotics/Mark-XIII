@@ -28,6 +28,7 @@ public class TKOArm implements Runnable
 
 	void armMove(boolean armUp) throws TKOException //If armUp is true, moves up. Else, moves down 
 	{
+		//TODO Add in some kind of check using the camera to throw hard and soft errors... Kinda important lol 
 		if (armUp == false)
 		{
 			TKOHardware.getDSolenoid(1).set(Value.kReverse);

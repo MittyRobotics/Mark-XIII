@@ -5,6 +5,7 @@ import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
+import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.Relay;
 
 public class TKOConveyor implements Runnable
@@ -52,10 +53,10 @@ public class TKOConveyor implements Runnable
 	{
 		try
 		{
-			for (int i = 0; i < Definitions.NUM_SPIKES; i++)
-			{
-				TKOHardware.getSpike(i).set(Relay.Value.kOff);
-			}
+			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(0), CANTalon.TalonControlMode.PercentVbus);
+			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(1), CANTalon.TalonControlMode.Follower);
+			TKOHardware.getConveyorTalon(1).set(TKOHardware.getConveyorTalon(0).getDeviceID());
+			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(2), CANTalon.TalonControlMode.PercentVbus);
 		}
 		catch (TKOException e)
 		{
@@ -71,8 +72,6 @@ public class TKOConveyor implements Runnable
 			while (conveyorThread.isThreadRunning())
 			{
 				rollerControl();
-				spikeControl();
-				
 				synchronized (conveyorThread)
 				{
 					conveyorThread.wait(100);
@@ -89,29 +88,44 @@ public class TKOConveyor implements Runnable
 	{
 		
 	}
-	
-	public synchronized void spikeControl()
+
+	public synchronized void startConveyorForward()
 	{
 		try
 		{
-			if (TKOHardware.getJoystick(3).getRawButton(4))
-			{
-				TKOHardware.getSpike(0).set(Relay.Value.kReverse);
-				TKOHardware.getSpike(1).set(Relay.Value.kForward);
-			}
-			else if (TKOHardware.getJoystick(3).getRawButton(5))
-			{
-				TKOHardware.getSpike(0).set(Relay.Value.kReverse);
-				TKOHardware.getSpike(1).set(Relay.Value.kForward);
-			}
-			else
-			{
-				TKOHardware.getSpike(0).set(Relay.Value.kOff);
-				TKOHardware.getSpike(1).set(Relay.Value.kOff);
-			}
+			TKOHardware.getConveyorTalon(2).enableControl();
+			TKOHardware.getConveyorTalon(2).set(0.75);
 		}
 		catch (TKOException e)
 		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // TODO Safety
+	}
+
+	public synchronized void startConveyorBackward()
+	{
+		try
+		{
+			TKOHardware.getConveyorTalon(2).enableControl();
+			TKOHardware.getConveyorTalon(2).set(-0.75);
+		}
+		catch (TKOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}// TODO Safety
+	}
+
+	public synchronized void stopConveyor()
+	{
+		try
+		{
+			TKOHardware.getConveyorTalon(2).disableControl();
+		}
+		catch (TKOException e)
+		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

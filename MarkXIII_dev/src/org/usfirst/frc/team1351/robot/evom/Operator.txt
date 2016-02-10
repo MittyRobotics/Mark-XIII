@@ -1,6 +1,10 @@
 Driver Controls:
-- Left Bumper on xbox: switch camera
-- Right Bumper on xbox: 60% speed
+- Left Bumper on xbox: switch camera? 
+- Triggers on xbox: 60% speed
 
 Operator Controls:
-- Buttons 4 & 5 on Stick 4: spin intake in/out
+- One button to work the intake 
+- One button to fire the ball
+- One button to get out of soft errors 
+
+Currently have Button 4 and 5 on the rightmost joystick for operation of the intake should probs fix lol 

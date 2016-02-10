@@ -57,7 +57,7 @@ public class Definitions
 	{ 0, 1, 2, 3 };
 	public static final int[] FLY_TALON_ID =
 	{ 4, 5 };
-	public static final int[] ROLLER_ID =	// 2 are spikes, 1 is talon?
+	public static final int[] CONVEYOR_ID =	// 2 are spikes, 1 is talon?
 	{ 6, 7, 8 };
 	public static final int[] JOYSTICK_ID =
 	{ 0, 1, 2, 3 };
@@ -65,7 +65,8 @@ public class Definitions
 	public static final int NUM_ANALOG = 2;
 	public static final int NUM_DRIVE_TALONS = 4;
 	public static final int NUM_FLY_TALONS = 2;
-	public static final int NUM_SPIKES = 3;
+//	public static final int NUM_SPIKES = 3;
+	public static final int NUM_CONVEYOR_TALONS = 3; 
 	public static final int ALL_TALONS = 0; // TODO fix this
 
 	public static final int NUM_ENCODERS = 3;
