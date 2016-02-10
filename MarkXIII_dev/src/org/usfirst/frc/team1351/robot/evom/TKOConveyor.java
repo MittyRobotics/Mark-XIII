@@ -74,7 +74,7 @@ public class TKOConveyor implements Runnable
 				rollerControl();
 				synchronized (conveyorThread)
 				{
-					conveyorThread.wait(100);
+					conveyorThread.wait(50);
 				}
 			}
 		}
@@ -86,7 +86,23 @@ public class TKOConveyor implements Runnable
 
 	public synchronized void rollerControl()
 	{
-		
+		try
+		{
+			if(TKOHardware.getJoystick(3).getRawButton(4)) {
+				TKOHardware.getConveyorTalon(0).set(0.75); //TODO safety 
+			}
+			else if(TKOHardware.getJoystick(3).getRawButton(5)) {
+				TKOHardware.getConveyorTalon(0).set(-0.75); 
+			}
+			else {
+				TKOHardware.getConveyorTalon(0).set(0); 
+			}
+		}
+		catch (TKOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public synchronized void startConveyorForward()
