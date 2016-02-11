@@ -1,6 +1,6 @@
 Driver Controls:
 - Left Bumper on xbox: switch camera? 
-- Triggers on xbox: 60% speed
+- Triggers on xbox: Variable% speed
 
 Operator Controls:
 - One button to work the intake 

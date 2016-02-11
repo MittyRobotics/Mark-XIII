@@ -83,6 +83,40 @@ public class TKODrive implements Runnable
 			e.printStackTrace();
 		}
 	}
+	
+	public void squaredXbox() {
+		try
+		{
+			//Get the squared inputs from xBox controller  
+			double leftMove = Math.pow(TKOHardware.getXboxController().getLeftY(), 2); 
+			double rightMove = Math.pow(TKOHardware.getXboxController().getRightY(), 2);  
+			//Just gets the sign - positive or negative
+			double leftSign = Math.abs(leftMove) / leftMove;
+			double rightSign = Math.abs(rightMove) / rightMove; 
+			
+			//Averages the value so it will move more smoothly hopefully 
+			if(leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05) {
+				leftMove = (leftMove + rightMove) / 2; 
+				rightMove = leftMove; 
+			}
+			
+			leftSign = leftSign * 0.5 * (1.0 - TKOHardware.getXboxController().getLeftTrigger()); 
+			rightSign = rightSign * 0.5 * (1.0 - TKOHardware.getXboxController().getRightTrigger()); 
+			
+			//TODO Really Fix this stuff, this isn't normal.... plz. 
+			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus, Definitions.DRIVE_P,
+					Definitions.DRIVE_I, Definitions.DRIVE_D);
+			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus, Definitions.DRIVE_P,
+					Definitions.DRIVE_I, Definitions.DRIVE_D);
+			
+			setLeftRightMotorOutputsPercentVBus(leftMove * leftSign, rightMove * rightSign);
+		}
+		catch (TKOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+	}
 
 	// Arcade drive using the two sticks of the xbox controller
 	public void arcadeDrive()
@@ -183,7 +217,7 @@ public class TKODrive implements Runnable
 				if (!creepAtomRunning)
 				{
 					// TODO why the hell does squared drive set the mode???? Mebbe fix?
-					squaredDrive();
+					squaredXbox();
 				}
 				synchronized (driveThread)
 				{
