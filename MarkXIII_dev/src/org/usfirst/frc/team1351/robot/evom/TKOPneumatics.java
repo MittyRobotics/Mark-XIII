@@ -135,20 +135,6 @@ public class TKOPneumatics implements Runnable
 		}
 	}
 
-	public synchronized void pickupRollerControl()
-	{
-//		try
-//		{
-//			TKOHardware.getPickupTalon(1).set(TKOHardware.getJoystick(2).getY() * 0.5);
-//			TKOHardware.getPickupTalon(0).set(-TKOHardware.getJoystick(3).getY() * 0.5);
-//		}
-//		catch (TKOException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-	}
-
 	public synchronized void pistonControl()
 	{
 		try
@@ -195,10 +181,9 @@ public class TKOPneumatics implements Runnable
 		try
 		{
 			while (pneuThread.isThreadRunning())
-			{
+			{	
 				pistonControl();
-				// pickupRollerControl();
-
+				
 				synchronized (pneuThread)
 				{
 					pneuThread.wait(20);

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
+import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
@@ -21,6 +22,8 @@ public class BackwardSpin implements IStateFunction
 		
 		data.curState = StateEnum.STATE_BACKWARD_SPIN;
 	    
+		TKOConveyor.getInstance().startConveyorBackward();
+		
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    while (data.sensorValues != StateMachine.INTAKE_EXTENDED &&

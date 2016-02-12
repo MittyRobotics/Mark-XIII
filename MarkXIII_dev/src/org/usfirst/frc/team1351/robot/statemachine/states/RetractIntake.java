@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
+import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
@@ -21,6 +22,7 @@ public class RetractIntake implements IStateFunction
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
+	    TKOConveyor.getInstance().stopConveyor();
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
 	    while (data.sensorValues!= StateMachine.BALL_IN && data.sensorValues == StateMachine.GOT_BALL)

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
+import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
@@ -22,8 +23,7 @@ public class RetractShooter implements IStateFunction
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 
-	    // TKOShooter function to set flywheel speed back to 0
-	    
+	    TKOShooter.getInstance().setSpeed(0., 250.);
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
 	    while (data.sensorValues != StateMachine.BALL_IN &&

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
+import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
@@ -19,6 +20,8 @@ public class ForwardSpin implements IStateFunction
 			return StateEnum.STATE_ERROR;
 		
 		data.curState = StateEnum.STATE_FORWARD_SPIN;
+		
+		TKOConveyor.getInstance().startConveyorForward();
 	    
 	    while (data.sensorValues != StateMachine.GOT_BALL &&
 	    		data.sensorValues == StateMachine.INTAKE_EXTENDED)

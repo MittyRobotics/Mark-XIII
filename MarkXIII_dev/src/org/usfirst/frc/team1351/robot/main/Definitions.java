@@ -92,6 +92,10 @@ public class Definitions
 	public static final CANTalon.FeedbackDevice FLY_ENCODER_TYPE = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final int LIFT_GRIPPER_SWITCH = 2;
 
+	public static final double SHOOTER_kP = 0.;
+	public static final double SHOOTER_kI = 0.;
+	public static final double SHOOTER_kD = 0.;
+	
 	public static final double LIFT_P = 1.1; // 1
 	public static final double LIFT_I = 0.02; // 0.005
 	public static final double LIFT_D = 0.1; // 0.1

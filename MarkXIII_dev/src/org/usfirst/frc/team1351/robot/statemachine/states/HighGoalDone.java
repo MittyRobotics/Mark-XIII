@@ -1,5 +1,7 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
+import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
+import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
@@ -22,11 +24,14 @@ public class HighGoalDone implements IStateFunction
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
-	    // TKOConveyor function to move ball into flywheel
-	    // timer delay??
-	    // TKOShooter function to set flywheel speed back to 0
-	    // check that data.sensorValues has gone from SHOOTER_EXTENDED to DONE_FIRING?
-	    
+	    // TODO test this entire block...
+	    TKOConveyor.getInstance().startConveyorForward();
+	    Timer.delay(2.0);
+	    TKOShooter.getInstance().setSpeed(0., 250.);
+	    data.sensorValues = StateMachine.getSensorData(data);
+	    if (data.sensorValues != StateMachine.DONE_FIRING)
+	    	Timer.delay(1.0);
+	    TKOConveyor.getInstance().stopConveyor();
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
 	    while (data.sensorValues != StateMachine.EMPTY &&

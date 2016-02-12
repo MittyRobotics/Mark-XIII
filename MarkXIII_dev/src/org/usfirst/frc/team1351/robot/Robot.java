@@ -20,31 +20,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/** Questions:
- * low goal?
- * idling wheel?
- * sensors for conveyor?
- */
-
-/** Projects:
- * router working - Parks
- * state machine - Ben, Ishan
- * lift molecule - Tiina, Aditi
- * climbing molecule - Peri, Louis
- */
-
-/** TODO
- * get new router working
- * button to reverse drive controls
- * spin rollers while climbing
- * brake mode: wheels can't spin while climbing
- * auto climb
- * need to (auto) drive while lifting portcullis
- * 
- * intake 2 rollers
- * one roller for conveyor, one roller for pre-shoot
- */
-
 public class Robot extends SampleRobot
 {
 	SendableChooser autonChooser;

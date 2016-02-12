@@ -5,12 +5,9 @@ import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
 import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
-import org.usfirst.frc.team1351.robot.util.TKOException;
-import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ExtendShooter implements IStateFunction
 {
@@ -26,8 +23,7 @@ public class ExtendShooter implements IStateFunction
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
-	    // TKOShooter function to set flywheel speed back to 0
-	    
+	    TKOShooter.getInstance().setSpeed(2000., 250.);
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kForward);
 		
 	    while (data.sensorValues != StateMachine.SHOOTER_EXTENDED &&

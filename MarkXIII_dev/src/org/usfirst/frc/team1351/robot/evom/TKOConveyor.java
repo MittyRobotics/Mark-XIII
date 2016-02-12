@@ -72,6 +72,9 @@ public class TKOConveyor implements Runnable
 			while (conveyorThread.isThreadRunning())
 			{
 				rollerControl();
+				
+				// joystick buttons to call arm functions go here
+				
 				synchronized (conveyorThread)
 				{
 					conveyorThread.wait(50);
@@ -137,6 +140,7 @@ public class TKOConveyor implements Runnable
 	{
 		try
 		{
+			TKOHardware.getConveyorTalon(2).set(0.0);
 			TKOHardware.getConveyorTalon(2).disableControl();
 		}
 		catch (TKOException e)

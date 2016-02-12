@@ -615,21 +615,6 @@ public class TKOHardware
 		return compressor;
 	}
 
-	/**
-	 * IMPORTANT: This method is normally open. This function will return true
-	 * when the lift is in the bottom, false whenever else.
-	 * This is opposite from the actual behavior of the optical limit switch.
-	 * 
-	 * @return
-	 * @throws TKOException
-	 */
-//	public static synchronized boolean getLiftTop() throws TKOException
-//	{
-//		if (limitSwitches[1] == null)
-//			throw new TKOException("NULL TOP LIMIT SWITCH");
-//		return !limitSwitches[1].get();
-//	}
-
 	public static synchronized AnalogGyro getGyro() throws TKOException
 	{
 		if (gyro == null)
