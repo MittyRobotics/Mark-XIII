@@ -1,43 +1,53 @@
 // Last edited by Ben Kim
-// on 1/26/16
+// on 2/12/16
 
 package org.usfirst.frc.team1351.robot.statemachine;
 
-import org.usfirst.frc.team1351.robot.statemachine.states.*;
+import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
+import org.usfirst.frc.team1351.robot.statemachine.states.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class StateMachine implements Runnable
 {
+	// 0b | SS | IS | BS |
+	// 0b |  4 |  2 |  1 | = 
+	
 	static Timer timer;
 
-	static DigitalInput ballSwitch;
-	static DigitalInput intakeSwitch;
-	static DigitalInput shooterSwitch;
+	static DigitalInput ballSwitch = null;
+	static DigitalInput intakeSwitch = null;
+	static DigitalInput shooterSwitch = null;
 	
-	// TODO should intake be controlled by one solenoid? lmao
-	static DoubleSolenoid shooterPiston;
-	static DoubleSolenoid intakePiston;
+	static DoubleSolenoid shooterPiston = null;
+	static DoubleSolenoid intakePiston = null;
 
-	static Joystick stick;
+	static Joystick stick = null;
 
 	private InstanceData data = new InstanceData();
-	static IStateFunction states[] = new IStateFunction[StateEnum.NUM_STATES.getValue()];
+	
+	// equivalent to num_states
+	static IStateFunction states[] = new IStateFunction[StateEnum.STATE_ERROR.getValue() + 1];
 
-	public static final float PISTON_RETRACT_TIMEOUT = 15.f;
-	public static final float PISTON_EXTEND_TIMEOUT = 15.f;
-
-	// 0b | SS | IS | BS |
-	// 0b |  4 |  2 |  1 | = 7
-
-//	public static final int 
-
+	public static final float PISTON_RETRACT_TIMEOUT = 10.f;
+	public static final float PISTON_EXTEND_TIMEOUT = 10.f;
+	public static final float BALL_SWITCH_TIMEOUT = 5.f;
+	
+	// included for readability purposes
+	public static final int EMPTY = 0;
+	public static final int INTAKE_EXTENDED = 2;
+	public static final int GOT_BALL = 3;
+	public static final int BALL_IN = 1;
+	public static final int SHOOTER_EXTENDED = 5;
+	public static final int DONE_FIRING = 4;
+	
 	public TKOThread stateThread = null;
 	private static StateMachine m_Instance = null;
 
@@ -49,11 +59,6 @@ public class StateMachine implements Runnable
 			m_Instance.stateThread = new TKOThread(m_Instance);
 		}
 		return m_Instance;
-	}
-
-	protected void init()
-	{
-		
 	}
 
 	protected StateMachine()
@@ -74,52 +79,45 @@ public class StateMachine implements Runnable
 		{
 			e.printStackTrace();
 		}
-
-//		states[StateEnum.STATE_DECIDE_ACTION.getValue()] = new DecideAction();
-
+		
+		states[StateEnum.STATE_EMPTY.getValue()] = new EmptyState();
+		states[StateEnum.STATE_EXTEND_INTAKE.getValue()] = new ExtendIntake();
+		states[StateEnum.STATE_FORWARD_SPIN.getValue()] = new ForwardSpin();
+		states[StateEnum.STATE_RETRY.getValue()] = new RetryState();
+		states[StateEnum.STATE_RETRACT_INTAKE.getValue()] = new RetractIntake();
+		states[StateEnum.STATE_CHOOSE_GOAL.getValue()] = new ChooseGoal();
+		states[StateEnum.STATE_EXTEND_LOADED_INTAKE.getValue()] = new ExtendLoadedIntake();
+		states[StateEnum.STATE_BACKWARD_SPIN.getValue()] = new BackwardSpin();
+		states[StateEnum.STATE_LOW_GOAL_DONE.getValue()] = new LowGoalDone();
+		states[StateEnum.STATE_EXTEND_SHOOTER.getValue()] = new ExtendShooter();
+		states[StateEnum.STATE_READY_TO_FIRE.getValue()] = new ReadyToFire();
+		states[StateEnum.STATE_RETRACT_SHOOTER.getValue()] = new RetractShooter();
+		states[StateEnum.STATE_HIGH_GOAL_DONE.getValue()] = new HighGoalDone();
+		states[StateEnum.STATE_ERROR.getValue()] = new ErrorState();
+		
+		data.numSensors = 3;
+		data.sensorValues = 0;
 		data.curState = StateEnum.STATE_EMPTY;
+		
+//		SmartDashboard.putBoolean("Ball Switch: ", false);
+//		SmartDashboard.putBoolean("Intake Switch: ", false);
+//		SmartDashboard.putBoolean("Shooter Switch: ", false);
+		
 	}
 
 	public static int getSensorData(InstanceData id)
 	{
-		id.state[0] = ballSwitch.get();
-		id.state[1] = intakeSwitch.get();
-		id.state[2] = shooterSwitch.get();
-			
-		return createIntFromBoolArray(id);
-	}
-
-	public static int createIntFromBoolArray(InstanceData id)
-	{
 		int num = 0;
-		for (int i = 0; i < StateEnum.NUM_STATES.getValue() - 1; i++)
-		{
-			if (id.state[i])
-			{
-				num |= 1 << i;
-			}
-		}
+		int i = 0;
+		num |= convert(!ballSwitch.get(), i++);
+		num |= convert(!intakeSwitch.get(), i++);
+		num |= convert(!shooterSwitch.get(), i++);
 		return num;
 	}
-
-	public static Timer getTimer()
-	{
-		return timer;
-	}
-
-	public static DoubleSolenoid getShooterPiston()
-	{
-		return shooterPiston;
-	}
-
-	public static DoubleSolenoid getIntakePiston()
-	{
-		return intakePiston;
-	}
 	
-	public static Joystick getJoystick()
+	private static int convert(boolean sv, int place)
 	{
-		return stick;
+		return sv ? 1 << place : 0;
 	}
 
 	public static StateEnum runState(StateEnum curState, InstanceData data)
@@ -127,26 +125,17 @@ public class StateMachine implements Runnable
 		return states[curState.getValue()].doState(data);
 	}
 
-//	public static synchronized boolean getGripperSwitch() throws TKOException
-//	{
-//		if (m_gripper == null)
-//			throw new TKOException("NULL GRIPPER SWITCH");
-//		return !m_gripper.get();
-//	}
-
 	public synchronized void start()
 	{
 		System.out.println("Starting state machine task");
 		if (!stateThread.isAlive() && m_Instance != null)
 		{
 			stateThread = new TKOThread(m_Instance);
-			// stateThread.setPriority(Definitions.getPriority("gripper"));
+			stateThread.setPriority(Definitions.getPriority("shooter"));
 		}
 		if (!stateThread.isThreadRunning())
 			stateThread.setThreadRunning(true);
-
-		init();
-
+		
 		System.out.println("Started state machine task");
 	}
 
@@ -164,18 +153,66 @@ public class StateMachine implements Runnable
 		{
 			while (stateThread.isThreadRunning())
 			{
-				runState(data.curState, data);
-				System.out.println("RUNNING STATE: " + data.curState);
-
+				data.curState = runState(data.curState, data);
+				// System.out.println("data.curState: " + data.curState);
+				
+				if (stick.getRawButton(8))
+				{
+					System.out.println("STATE MACHINE RESET");
+					data.sensorValues = getSensorData(data);
+					data.curState = StateEnum.STATE_EMPTY;
+				}
+				
 				synchronized (stateThread)
 				{
-					stateThread.wait(20); // how long is this wait?
+					stateThread.wait(20);
 				}
+				
+				// button 2: extend intake OR go to retry state (override)
+				// button 10: choose low goal
+				// button 11: choose high goal
+				// trigger: move ball into shooter (fire)
+				// button 3: retract shooter (override)
+				// button 8: reset state machine (only ICE)
 			}
 		}
 		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
+	}
+	
+	public static Timer getTimer()
+	{
+		return timer;
+	}
+
+	public static DoubleSolenoid getShooterPiston()
+	{
+		return shooterPiston;
+	}
+
+	public static DoubleSolenoid getIntakePiston()
+	{
+		return intakePiston;
+	}
+	
+	public static boolean getBallSwitch()
+	{
+		return !ballSwitch.get();
+	}
+	
+	public static boolean getIntakeSwitch()
+	{
+		return !intakeSwitch.get();
+	}
+	public static boolean getShooterSwitch()
+	{
+		return !shooterSwitch.get();
+	}
+	
+	public static Joystick getJoystick()
+	{
+		return stick;
 	}
 }

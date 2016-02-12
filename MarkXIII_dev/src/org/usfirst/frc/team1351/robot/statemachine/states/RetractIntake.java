@@ -8,25 +8,24 @@ import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 
-public class ExtendIntake implements IStateFunction
+public class RetractIntake implements IStateFunction
 {
 	@Override
 	public StateEnum doState(InstanceData data)
 	{
-		System.out.println("Entering: Extend intake state");
-		
-		if (data.sensorValues != StateMachine.EMPTY)
+		System.out.println("Entering: Retract intake state");
+		if (data.sensorValues != StateMachine.GOT_BALL)
 			return StateEnum.STATE_ERROR;
 		
-		data.curState = StateEnum.STATE_EXTEND_INTAKE;
+		data.curState = StateEnum.STATE_RETRACT_INTAKE;
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
-	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kForward);
+	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
-	    while (data.sensorValues != StateMachine.INTAKE_EXTENDED && data.sensorValues == StateMachine.EMPTY)
+	    while (data.sensorValues!= StateMachine.BALL_IN && data.sensorValues == StateMachine.GOT_BALL)
 	    {
-	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
+	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_RETRACT_TIMEOUT)
 	    	{
 	    		StateMachine.getTimer().stop();
 	            StateMachine.getTimer().reset();
@@ -39,11 +38,11 @@ public class ExtendIntake implements IStateFunction
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
-	    if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
+	    if (data.sensorValues != StateMachine.BALL_IN)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }
 	    
-		return StateEnum.STATE_FORWARD_SPIN;
+		return StateEnum.STATE_CHOOSE_GOAL;
 	}
 }

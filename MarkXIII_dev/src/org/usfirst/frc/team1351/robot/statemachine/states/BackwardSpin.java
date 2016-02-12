@@ -5,38 +5,33 @@ import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
 import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 
-public class ExtendIntake implements IStateFunction
+// rollers controlled independent from state machine
+
+public class BackwardSpin implements IStateFunction
 {
 	@Override
 	public StateEnum doState(InstanceData data)
-	{
-		System.out.println("Entering: Extend intake state");
+	{	
+		System.out.println("Entering: Backward spin state");
 		
-		if (data.sensorValues != StateMachine.EMPTY)
+		if (data.sensorValues != StateMachine.GOT_BALL)
 			return StateEnum.STATE_ERROR;
 		
-		data.curState = StateEnum.STATE_EXTEND_INTAKE;
+		data.curState = StateEnum.STATE_BACKWARD_SPIN;
+	    
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
-	    
-	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kForward);
-		
-	    while (data.sensorValues != StateMachine.INTAKE_EXTENDED && data.sensorValues == StateMachine.EMPTY)
+	    while (data.sensorValues != StateMachine.INTAKE_EXTENDED &&
+	    		data.sensorValues == StateMachine.GOT_BALL &&
+	    		StateMachine.getTimer().get() < StateMachine.BALL_SWITCH_TIMEOUT)
 	    {
-	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
-	    	{
-	    		StateMachine.getTimer().stop();
-	            StateMachine.getTimer().reset();
-	            System.out.println("ERROR: piston timeout");
-	            return StateEnum.STATE_ERROR;
-	    	}
+	    	// operator should be spinning rollers right now
 	    	Timer.delay(0.1);
 	    	data.sensorValues = StateMachine.getSensorData(data);
 	    }
-	    
+
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
 	    if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
@@ -44,6 +39,6 @@ public class ExtendIntake implements IStateFunction
 	        return StateEnum.STATE_ERROR;
 	    }
 	    
-		return StateEnum.STATE_FORWARD_SPIN;
+		return StateEnum.STATE_LOW_GOAL_DONE;
 	}
 }

@@ -1,36 +1,42 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
+import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
 import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
+import org.usfirst.frc.team1351.robot.util.TKOException;
+import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ExtendIntake implements IStateFunction
+public class ExtendShooter implements IStateFunction
 {
 	@Override
 	public StateEnum doState(InstanceData data)
 	{
-		System.out.println("Entering: Extend intake state");
+		System.out.println("Entering: Extend shooter state");
 		
-		if (data.sensorValues != StateMachine.EMPTY)
+		if (data.sensorValues != StateMachine.BALL_IN)
 			return StateEnum.STATE_ERROR;
 		
-		data.curState = StateEnum.STATE_EXTEND_INTAKE;
+		data.curState = StateEnum.STATE_EXTEND_SHOOTER;
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
+	    // TKOShooter function to set flywheel speed back to 0
+	    
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kForward);
 		
-	    while (data.sensorValues != StateMachine.INTAKE_EXTENDED && data.sensorValues == StateMachine.EMPTY)
+	    while (data.sensorValues != StateMachine.SHOOTER_EXTENDED &&
+	    		data.sensorValues == StateMachine.BALL_IN)
 	    {
 	    	if (StateMachine.getTimer().get() > StateMachine.PISTON_EXTEND_TIMEOUT)
 	    	{
 	    		StateMachine.getTimer().stop();
 	            StateMachine.getTimer().reset();
-	            System.out.println("ERROR: piston timeout");
 	            return StateEnum.STATE_ERROR;
 	    	}
 	    	Timer.delay(0.1);
@@ -39,11 +45,11 @@ public class ExtendIntake implements IStateFunction
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
-	    if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
+	    if (data.sensorValues != StateMachine.SHOOTER_EXTENDED)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }
 	    
-		return StateEnum.STATE_FORWARD_SPIN;
+		return StateEnum.STATE_READY_TO_FIRE;
 	}
 }
