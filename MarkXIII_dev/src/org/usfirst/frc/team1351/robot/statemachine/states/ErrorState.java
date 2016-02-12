@@ -10,12 +10,11 @@ public class ErrorState implements IStateFunction
 	@Override
 	public StateEnum doState(InstanceData data)
 	{
-		if (data.curState == StateEnum.STATE_ERROR)
-			return StateEnum.STATE_ERROR;
+		System.out.println("Entering: ERROR");
 		
-		System.out.println("Entering soft error state");
+		if (data.curState != StateEnum.STATE_ERROR)
+			System.out.println("curState is not error?");
 		
-		System.out.println("YIKES! Entered hard error state");
 		return StateEnum.STATE_ERROR;
 	}	
 }

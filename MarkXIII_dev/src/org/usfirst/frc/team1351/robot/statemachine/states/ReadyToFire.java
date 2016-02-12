@@ -18,12 +18,12 @@ public class ReadyToFire implements IStateFunction
 		
 		if (data.sensorValues == StateMachine.SHOOTER_EXTENDED)
 		{
-			while (!(StateMachine.getJoystick().getRawButton(8)))
+			while (!(StateMachine.getJoystick().getTrigger()))
 			{
 				if (data.sensorValues != StateMachine.SHOOTER_EXTENDED)
 					return StateEnum.STATE_ERROR;
 				
-				if (StateMachine.getJoystick().getRawButton(9))
+				if (StateMachine.getJoystick().getRawButton(3))
 				{
 					System.out.println("Operator override");
 					return StateEnum.STATE_RETRACT_SHOOTER;

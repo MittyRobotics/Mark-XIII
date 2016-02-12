@@ -24,7 +24,7 @@ public class ForwardSpin implements IStateFunction
 	    		data.sensorValues == StateMachine.INTAKE_EXTENDED)
 	    {
 	    	// operator should be spinning rollers right now
-	    	if (StateMachine.getJoystick().getRawButton(11)) // override
+	    	if (StateMachine.getJoystick().getRawButton(2)) // override
 	    	{
 	    		System.out.println("Override: retry chosen by operator");
 	    		return StateEnum.STATE_RETRY;
