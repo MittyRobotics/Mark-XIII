@@ -1,5 +1,6 @@
 Driver Controls:
-- Left Bumper on xbox: switch camera? 
+- Right/Left Bumpers on xbox: Low/High gears respectively - does this even work lol? 
+- Y Button on Xbox: Switch Camera  
 - Triggers on xbox: Variable% speed
 
 Operator Controls:

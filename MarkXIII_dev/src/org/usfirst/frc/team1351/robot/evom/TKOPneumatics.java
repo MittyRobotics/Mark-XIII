@@ -154,12 +154,12 @@ public class TKOPneumatics implements Runnable
 		try
 		{
 			// shifting gearbox
-			if (TKOHardware.getJoystick(0).getRawButton(4))
+			if (TKOHardware.getXboxController().getRightBumper())
 			{
 				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
 				lastShiftTime = System.currentTimeMillis();
 			}
-			else if (TKOHardware.getJoystick(0).getRawButton(5))
+			else if (TKOHardware.getXboxController().getLeftBumper())
 			{
 				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 				lastShiftTime = System.currentTimeMillis();
