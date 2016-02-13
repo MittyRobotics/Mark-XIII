@@ -161,9 +161,11 @@ public class Robot extends SampleRobot
 	public void test()
 	{
 		System.out.println("Enabling test!");
-
+		
 		TKOPneumatics.getInstance().start();
 		TKOPneumatics.getInstance().setManual(true);
+		TKOConveyor.getInstance().start();
+		TKOConveyor.getInstance().setManual(true);
 		
 		while (isEnabled() && isTest())
 		{
@@ -172,6 +174,8 @@ public class Robot extends SampleRobot
 		
 		try
 		{
+			TKOConveyor.getInstance().stop();
+			TKOConveyor.getInstance().conveyorThread.join();
 			TKOPneumatics.getInstance().stop();
 			TKOPneumatics.getInstance().pneuThread.join();
 		}

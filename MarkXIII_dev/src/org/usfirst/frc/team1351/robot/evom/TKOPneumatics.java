@@ -3,14 +3,13 @@
 
 package org.usfirst.frc.team1351.robot.evom;
 
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 import org.usfirst.frc.team1351.robot.evom.TKOArm;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import edu.wpi.first.wpilibj.Solenoid;
 
 /**
  * PISTONS:
@@ -29,7 +28,7 @@ public class TKOPneumatics implements Runnable
 	long lastShiftTime = System.currentTimeMillis();
 	long toggledPistonTime[] = new long[Definitions.NUM_DSOLENOIDS + Definitions.NUM_SOLENOIDS];
 	private boolean testEnabled = false;
-	
+
 	protected TKOPneumatics()
 	{
 		try
@@ -57,7 +56,7 @@ public class TKOPneumatics implements Runnable
 		}
 		return m_Instance;
 	}
-	
+
 	public synchronized void start()
 	{
 		System.out.println("Starting pneumatics task");
@@ -96,7 +95,7 @@ public class TKOPneumatics implements Runnable
 		}
 		System.out.println("Stopped pneumatics task");
 	}
-	
+
 	public synchronized void reset()
 	{
 		try
@@ -137,14 +136,14 @@ public class TKOPneumatics implements Runnable
 	{
 		testEnabled = b;
 	}
-	
+
 	public synchronized void pistonControl()
 	{
 		try
 		{
 			if (testEnabled)
 			{
-				if (TKOHardware.getJoystick(1).getRawButton(4))
+				if (TKOHardware.getJoystick(1).getRawButton(2))
 				{
 					if (System.currentTimeMillis() - toggledPistonTime[1] > 250)
 					{
@@ -158,7 +157,7 @@ public class TKOPneumatics implements Runnable
 						toggledPistonTime[1] = System.currentTimeMillis();
 					}
 				}
-				
+
 				if (TKOHardware.getJoystick(1).getRawButton(3))
 				{
 					if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
@@ -173,8 +172,8 @@ public class TKOPneumatics implements Runnable
 						toggledPistonTime[2] = System.currentTimeMillis();
 					}
 				}
-				
-				if (TKOHardware.getJoystick(1).getRawButton(2))
+
+				if (TKOHardware.getJoystick(1).getTrigger())
 				{
 					if (System.currentTimeMillis() - toggledPistonTime[5] > 250)
 					{
@@ -188,10 +187,10 @@ public class TKOPneumatics implements Runnable
 						toggledPistonTime[5] = System.currentTimeMillis();
 					}
 				}
-				
+
 				return;
 			}
-			
+
 			// shifting gearbox
 			if (TKOHardware.getXboxController().getRightBumper())
 			{
@@ -205,7 +204,7 @@ public class TKOPneumatics implements Runnable
 			}
 			else
 				autoShift();
-			
+
 		}
 		catch (Exception e)
 		{
@@ -219,9 +218,15 @@ public class TKOPneumatics implements Runnable
 		try
 		{
 			while (pneuThread.isThreadRunning())
-			{		
+			{
 				pistonControl();
-				
+
+				if (TKOHardware.getXboxController().getButtonB())
+					TKOArm.getInstance().breachPortcullis();
+
+				if (TKOHardware.getXboxController().getButtonY())
+					TKOArm.getInstance().breachCheval();
+
 				synchronized (pneuThread)
 				{
 					pneuThread.wait(20);

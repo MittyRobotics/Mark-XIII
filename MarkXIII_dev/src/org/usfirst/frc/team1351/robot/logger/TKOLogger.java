@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 public class TKOLogger implements Runnable
@@ -24,7 +24,8 @@ public class TKOLogger implements Runnable
 	private String dataDumpFileName = "data";
 	public long startTime;
 	public long dataBufferSize = 0;
-	//private long writeCounter = 0;
+
+	// private long writeCounter = 0;
 
 	protected TKOLogger()
 	{
@@ -106,7 +107,8 @@ public class TKOLogger implements Runnable
 				m_DataLogFile.println("DataDescriptor,TimeElap(ns),Value,AdditionalComment,Motor");
 			}
 			br.close();
-		} catch (IOException e)
+		}
+		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
@@ -172,11 +174,12 @@ public class TKOLogger implements Runnable
 					m_DataLogFile.println(s);
 				}
 			}
-		} catch (NullPointerException e)
+		}
+		catch (NullPointerException e)
 		{
 			e.printStackTrace();
 		}
-		//writeCounter++;
+		// writeCounter++;
 		/*
 		 * if (writeCounter % 1000 == 0 && loggerThread.isThreadRunning()) { m_LogFile.flush(); m_DataLogFile.flush(); }
 		 */
@@ -192,7 +195,7 @@ public class TKOLogger implements Runnable
 				writeFromQueue();
 				// System.out.println("LOGGER THREAD RAN!");
 
-				if (m_MessageBuffer.isEmpty() && m_DataBuffer.isEmpty()) //TODO make sure this doesnt slow down other threads
+				if (m_MessageBuffer.isEmpty() && m_DataBuffer.isEmpty()) // TODO make sure this doesnt slow down other threads
 				{
 					synchronized (loggerThread)
 					{
@@ -201,7 +204,8 @@ public class TKOLogger implements Runnable
 				}
 			}
 			System.out.println("Leaving run method in TKOLogger...");
-		} catch (InterruptedException e)
+		}
+		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}

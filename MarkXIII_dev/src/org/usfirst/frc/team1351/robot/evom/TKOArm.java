@@ -1,8 +1,8 @@
 package org.usfirst.frc.team1351.robot.evom;
 
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.drive.TKODrive;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
-import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
@@ -17,6 +17,7 @@ public class TKOArm
 
 	double driveSetpoint = 0;
 	double p, i, d, distance, incrementer, threshold;
+	private boolean doneBreaching = true;
 
 	public TKOArm()
 	{
@@ -34,35 +35,51 @@ public class TKOArm
 
 	public void breachPortcullis()
 	{
-		armMove(false); // Moves up, then creeps and moves back down
+		if (doneBreaching == false)
+			return;
+		doneBreaching = false;
+		TKODrive.getInstance().isCreep(true);
+		moveArmDown();
 		TKOCreep();
-		armMove(true);
+		moveArmUp();
+		TKODrive.getInstance().isCreep(false);
 		TKODrive.getInstance().init();
+		doneBreaching = true;
 	}
 
 	public void breachCheval()
 	{
-		armMove(false); // Arm goes up, creeps forward, arm drops, and robot creeps forwards to have it stand on the drawbridge
+		if (doneBreaching == false)
+			return;
+		doneBreaching = false;
+		TKODrive.getInstance().isCreep(true);
+		moveArmUp();
 		TKOCreep();
-		armMove(true);
+		moveArmDown();
 		TKOCreep();
+		moveArmUp();
+		TKODrive.getInstance().isCreep(false);
 		TKODrive.getInstance().init();
+		doneBreaching = true;
 	}
-
-	public synchronized void armMove(boolean armUp)
-	// If armUp is true, moves up. Else, moves down
+	
+	public synchronized void moveArmUp()
 	{
 		try
 		{
-			// TODO Add in some kind of check using the camera to throw hard and soft errors... Kinda important lol
-			if (armUp == false)
-			{
-				TKOHardware.getDSolenoid(1).set(Value.kReverse);
-			}
-			else
-			{
-				TKOHardware.getDSolenoid(1).set(Value.kForward);
-			}
+			TKOHardware.getDSolenoid(1).set(Value.kReverse);
+		}
+		catch (TKOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	public synchronized void moveArmDown()
+	{
+		try
+		{
+			TKOHardware.getDSolenoid(1).set(Value.kForward);
 		}
 		catch (TKOException e)
 		{
@@ -74,7 +91,6 @@ public class TKOArm
 	{
 		// 3.183 revs needed (~40")
 		// TODO Test this, ensure it works and robot doesn't get stuck
-		TKODrive.getInstance().isCreep(true);
 
 		p = SmartDashboard.getNumber("Drive P: ");
 		i = SmartDashboard.getNumber("Drive I: ");
@@ -114,7 +130,5 @@ public class TKOArm
 		{
 			e.printStackTrace();
 		}
-
-		TKODrive.getInstance().isCreep(false);
 	}
 }

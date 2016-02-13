@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1351.robot.util;
 
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 
 /**
  * This is an example of how to make a class that runs as a thread. The most important reason for making TKOThread was to make the thread

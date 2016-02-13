@@ -1,11 +1,20 @@
 Driver Controls:
 - Right/Left Bumpers on xbox: Low/High gears respectively - does this even work lol? 
-- Y Button on Xbox: Switch Camera  
+- Xbox, Select: Switch Camera  
 - Triggers on xbox: Variable% speed
+- Xbox, Button B: breach portcullis
+- Xbox, Button Y: breach cheval
+
+For Testing:
+- Stick 1, Button 2: toggle shooter
+- Stick 1, Button 3: toggle intake
+- Stick 1, Trigger: toggle arm
+- Stick 1, Button 4-5: conveyor forward/backward
 
 Operator Controls:
-- One button to work the intake 
-- One button to fire the ball
-- One button to get out of soft errors 
-
-Currently have Button 4 and 5 on the rightmost joystick for operation of the intake should probs fix lol 
+- Stick 3, Button 4-5: roller intake in/out
+- Stick 2, Button 2: extend intake OR go to retry state (override)
+- Stick 2, Button 10-11: choose low goal/high goal
+- Stick 2, Trigger: move ball into shooter (fire)
+- Stick 2, Button 3: retract shooter (override)
+- Stick 2, Button 8: reset state machine (DANGER)

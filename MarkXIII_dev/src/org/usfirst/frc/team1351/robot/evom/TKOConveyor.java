@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1351.robot.evom;
 
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
@@ -11,6 +11,7 @@ public class TKOConveyor implements Runnable
 {
 	public TKOThread conveyorThread = null;
 	private static TKOConveyor m_Instance = null;
+	private boolean testEnabled = false;
 
 	protected TKOConveyor()
 	{
@@ -63,6 +64,11 @@ public class TKOConveyor implements Runnable
 		}
 	}
 
+	public synchronized void setManual(boolean b)
+	{
+		testEnabled = b;
+	}
+	
 	@Override
 	public void run()
 	{
@@ -71,9 +77,19 @@ public class TKOConveyor implements Runnable
 			while (conveyorThread.isThreadRunning())
 			{
 				rollerControl();
-				
-				// joystick buttons to call arm functions go here
-				
+
+				if (testEnabled)
+				{
+					TKOShooter.getInstance().manualSpin();
+					
+					if (TKOHardware.getJoystick(1).getRawButton(4))
+						startConveyorBackward();
+					else if (TKOHardware.getJoystick(1).getRawButton(5))
+						startConveyorForward();
+					else
+						stopConveyor();
+				}
+
 				synchronized (conveyorThread)
 				{
 					conveyorThread.wait(50);
@@ -90,19 +106,21 @@ public class TKOConveyor implements Runnable
 	{
 		try
 		{
-			if(TKOHardware.getJoystick(3).getRawButton(4)) {
-				TKOHardware.getConveyorTalon(0).set(0.75); //TODO safety 
+			if (TKOHardware.getJoystick(3).getRawButton(4))
+			{
+				TKOHardware.getConveyorTalon(0).set(0.75);
 			}
-			else if(TKOHardware.getJoystick(3).getRawButton(5)) {
-				TKOHardware.getConveyorTalon(0).set(-0.75); 
+			else if (TKOHardware.getJoystick(3).getRawButton(5))
+			{
+				TKOHardware.getConveyorTalon(0).set(-0.75);
 			}
-			else {
-				TKOHardware.getConveyorTalon(0).set(0); 
+			else
+			{
+				TKOHardware.getConveyorTalon(0).set(0);
 			}
 		}
 		catch (TKOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -116,9 +134,8 @@ public class TKOConveyor implements Runnable
 		}
 		catch (TKOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} // TODO Safety
+		}
 	}
 
 	public synchronized void startConveyorBackward()
@@ -130,9 +147,8 @@ public class TKOConveyor implements Runnable
 		}
 		catch (TKOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}// TODO Safety
+		}
 	}
 
 	public synchronized void stopConveyor()
@@ -144,7 +160,6 @@ public class TKOConveyor implements Runnable
 		}
 		catch (TKOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

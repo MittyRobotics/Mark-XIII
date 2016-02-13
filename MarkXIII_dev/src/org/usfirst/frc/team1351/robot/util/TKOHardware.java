@@ -1,7 +1,7 @@
 package org.usfirst.frc.team1351.robot.util;
 
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
-import org.usfirst.frc.team1351.robot.main.Definitions;
 
 import edu.wpi.first.wpilibj.AnalogOutput;
 import edu.wpi.first.wpilibj.CANTalon;

@@ -3,7 +3,7 @@
 
 package org.usfirst.frc.team1351.robot.statemachine;
 
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
@@ -167,13 +167,6 @@ public class StateMachine implements Runnable
 				{
 					stateThread.wait(20);
 				}
-				
-				// button 2: extend intake OR go to retry state (override)
-				// button 10: choose low goal
-				// button 11: choose high goal
-				// trigger: move ball into shooter (fire)
-				// button 3: retract shooter (override)
-				// button 8: reset state machine (only ICE)
 			}
 		}
 		catch (Exception e)

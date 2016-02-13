@@ -1,7 +1,7 @@
 // Last edited by Ben Kim
 // on 01/17/2015
 
-package org.usfirst.frc.team1351.robot.main;
+package org.usfirst.frc.team1351.robot;
 
 import java.util.ArrayList;
 import java.util.HashMap;

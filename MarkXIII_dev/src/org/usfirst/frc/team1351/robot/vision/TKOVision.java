@@ -3,9 +3,9 @@
 
 package org.usfirst.frc.team1351.robot.vision;
 
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
-import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import com.ni.vision.NIVision;
@@ -133,7 +133,7 @@ public class TKOVision implements Runnable
 		{
 			while (visionThread.isThreadRunning())
 			{
-				if (TKOHardware.getXboxController().getButtonY())
+				if (TKOHardware.getXboxController().getBackButton())
 				{
 					isFrontCamera = !isFrontCamera;
 					//Turns camera "off"

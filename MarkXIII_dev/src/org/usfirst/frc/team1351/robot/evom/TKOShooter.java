@@ -1,11 +1,12 @@
 package org.usfirst.frc.team1351.robot.evom;
 
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -17,7 +18,7 @@ public class TKOShooter
 	private double PIDsetpoint = 0.;
 
 	private Timer timer = new Timer();
-	
+
 	protected TKOShooter()
 	{
 		try
@@ -41,22 +42,38 @@ public class TKOShooter
 		return m_Instance;
 	}
 
+	public synchronized void manualSpin()
+	{
+		try
+		{
+			TKOHardware.getFlyTalon().changeControlMode(TalonControlMode.Speed);
+			TKOHardware.getFlyTalon().set(0.5 * (1 - TKOHardware.getJoystick(1).getRawAxis(2)) * 2.5);
+			System.out.println("Flywheel speed: " + TKOHardware.getFlyTalon().getSpeed());
+			Timer.delay(0.1);
+		}
+		catch (TKOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	// TODO change incrementer, margin of error
 	public synchronized void spinUp(double speedTarget, double inc)
 	{
 		// 3% margin of error
 		double upperError = speedTarget * 1.03;
 		double lowerError = speedTarget * 0.97;
-		
+
 		timer.reset();
-		
+
 		try
 		{
-			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.Position);
+			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.Speed);
+
 			/*
 			 * In Speed mode, outputValue is in position change / 10ms
 			 */
-			
+
 			timer.start();
 			if (PIDsetpoint <= lowerError)
 			{
@@ -76,6 +93,7 @@ public class TKOShooter
 					Timer.delay(0.05);
 				}
 			}
+			TKOHardware.getFlyTalon().set(speedTarget);
 			timer.stop();
 		}
 		catch (TKOException e)
@@ -84,7 +102,7 @@ public class TKOShooter
 			e.printStackTrace();
 		}
 	}
-	
+
 	public synchronized void spinDown()
 	{
 		try
