@@ -197,20 +197,6 @@ public class StateMachine implements Runnable
 		return intakePiston;
 	}
 	
-	public static boolean getBallSwitch()
-	{
-		return !ballSwitch.get();
-	}
-	
-	public static boolean getIntakeSwitch()
-	{
-		return !intakeSwitch.get();
-	}
-	public static boolean getShooterSwitch()
-	{
-		return !shooterSwitch.get();
-	}
-	
 	public static Joystick getJoystick()
 	{
 		return stick;

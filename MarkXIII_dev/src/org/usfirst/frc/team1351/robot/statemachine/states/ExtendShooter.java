@@ -23,7 +23,7 @@ public class ExtendShooter implements IStateFunction
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
-	    TKOShooter.getInstance().setSpeed(2000., 250.);
+	    TKOShooter.getInstance().spinUp(2000., 250.);
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kForward);
 		
 	    while (data.sensorValues != StateMachine.SHOOTER_EXTENDED &&

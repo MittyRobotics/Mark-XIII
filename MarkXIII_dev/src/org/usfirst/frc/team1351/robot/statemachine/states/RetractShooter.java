@@ -23,7 +23,7 @@ public class RetractShooter implements IStateFunction
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 
-	    TKOShooter.getInstance().setSpeed(0., 250.);
+	    TKOShooter.getInstance().spinDown();
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
 	    while (data.sensorValues != StateMachine.BALL_IN &&

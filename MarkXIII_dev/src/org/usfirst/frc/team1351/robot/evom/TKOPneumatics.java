@@ -7,8 +7,10 @@ import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
+import org.usfirst.frc.team1351.robot.evom.TKOArm;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Solenoid;
 
 /**
  * PISTONS:
@@ -26,7 +28,8 @@ public class TKOPneumatics implements Runnable
 	private static TKOPneumatics m_Instance = null;
 	long lastShiftTime = System.currentTimeMillis();
 	long toggledPistonTime[] = new long[Definitions.NUM_DSOLENOIDS + Definitions.NUM_SOLENOIDS];
-
+	private boolean testEnabled = false;
+	
 	protected TKOPneumatics()
 	{
 		try
@@ -106,11 +109,6 @@ public class TKOPneumatics implements Runnable
 		}
 	}
 
-//	public synchronized void setManual(boolean b)
-//	{
-//		manualEnabled = b;
-//	}
-
 	public void autoShift()
 	{
 		try
@@ -135,10 +133,65 @@ public class TKOPneumatics implements Runnable
 		}
 	}
 
+	public synchronized void setManual(boolean b)
+	{
+		testEnabled = b;
+	}
+	
 	public synchronized void pistonControl()
 	{
 		try
 		{
+			if (testEnabled)
+			{
+				if (TKOHardware.getJoystick(1).getRawButton(4))
+				{
+					if (System.currentTimeMillis() - toggledPistonTime[1] > 250)
+					{
+						Value currVal = TKOHardware.getDSolenoid(1).get();
+						Value newVal = currVal;
+						if (currVal == Value.kForward)
+							newVal = Value.kReverse;
+						else if (currVal == Value.kReverse)
+							newVal = Value.kForward;
+						TKOHardware.getDSolenoid(1).set(newVal);
+						toggledPistonTime[1] = System.currentTimeMillis();
+					}
+				}
+				
+				if (TKOHardware.getJoystick(1).getRawButton(3))
+				{
+					if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
+					{
+						Value currVal = TKOHardware.getDSolenoid(2).get();
+						Value newVal = currVal;
+						if (currVal == Value.kForward)
+							newVal = Value.kReverse;
+						else if (currVal == Value.kReverse)
+							newVal = Value.kForward;
+						TKOHardware.getDSolenoid(2).set(newVal);
+						toggledPistonTime[2] = System.currentTimeMillis();
+					}
+				}
+				
+				if (TKOHardware.getJoystick(1).getRawButton(2))
+				{
+					if (System.currentTimeMillis() - toggledPistonTime[5] > 250)
+					{
+						boolean currVal = TKOHardware.getSolenoid(1).get();
+						boolean newVal = currVal;
+						if (currVal)
+							newVal = false;
+						else if (!currVal)
+							newVal = true;
+						TKOHardware.getSolenoid(1).set(newVal);
+						toggledPistonTime[5] = System.currentTimeMillis();
+					}
+				}
+				
+				return;
+			}
+			
 			// shifting gearbox
 			if (TKOHardware.getXboxController().getRightBumper())
 			{
@@ -153,21 +206,6 @@ public class TKOPneumatics implements Runnable
 			else
 				autoShift();
 			
-			/*if (TKOHardware.getJoystick(2).getRawButton(2))
-			{
-				// using same joystick button to extend/retract
-				if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
-				{
-					Value currVal = TKOHardware.getPiston(2).get();
-					Value newVal = currVal;
-					if (currVal == Value.kForward)
-						newVal = Value.kReverse;
-					else if (currVal == Value.kReverse)
-						newVal = Value.kForward;
-					TKOHardware.getPiston(2).set(newVal);
-					toggledPistonTime[2] = System.currentTimeMillis();
-				}
-			}*/
 		}
 		catch (Exception e)
 		{
@@ -181,7 +219,7 @@ public class TKOPneumatics implements Runnable
 		try
 		{
 			while (pneuThread.isThreadRunning())
-			{	
+			{		
 				pistonControl();
 				
 				synchronized (pneuThread)

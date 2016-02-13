@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1351.robot.drive;
 
-import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
@@ -8,7 +7,6 @@ import org.usfirst.frc.team1351.robot.util.TKORuntimeException;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class TKODrive implements Runnable
 {

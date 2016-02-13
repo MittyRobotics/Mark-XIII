@@ -6,7 +6,6 @@ import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.Relay;
 
 public class TKOConveyor implements Runnable
 {

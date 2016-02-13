@@ -27,7 +27,7 @@ public class HighGoalDone implements IStateFunction
 	    // TODO test this entire block...
 	    TKOConveyor.getInstance().startConveyorForward();
 	    Timer.delay(2.0);
-	    TKOShooter.getInstance().setSpeed(0., 250.);
+	    TKOShooter.getInstance().spinDown();
 	    data.sensorValues = StateMachine.getSensorData(data);
 	    if (data.sensorValues != StateMachine.DONE_FIRING)
 	    	Timer.delay(1.0);

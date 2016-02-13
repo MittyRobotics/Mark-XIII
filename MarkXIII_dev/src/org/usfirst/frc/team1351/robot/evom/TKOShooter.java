@@ -53,6 +53,9 @@ public class TKOShooter
 		try
 		{
 			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.Position);
+			/*
+			 * In Speed mode, outputValue is in position change / 10ms
+			 */
 			
 			timer.start();
 			if (PIDsetpoint <= lowerError)

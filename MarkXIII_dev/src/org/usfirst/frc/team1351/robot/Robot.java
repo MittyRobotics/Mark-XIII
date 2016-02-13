@@ -4,16 +4,16 @@
 package org.usfirst.frc.team1351.robot;
 
 import org.usfirst.frc.team1351.robot.atoms.Molecule;
-import org.usfirst.frc.team1351.robot.atoms.auton.DriveAtom;
-import org.usfirst.frc.team1351.robot.atoms.auton.GyroTurnAtom;
+import org.usfirst.frc.team1351.robot.atoms.auton.*;
 import org.usfirst.frc.team1351.robot.drive.TKODrive;
+import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.evom.TKOPneumatics;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
+import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOLEDArduino;
 import org.usfirst.frc.team1351.robot.util.TKOTalonSafety;
-import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -33,20 +33,24 @@ public class Robot extends SampleRobot
 	{
 		System.out.println("-----WELCOME TO MarkXIII 2016-----");
 		System.out.println("-----SYSTEM BOOT: " + Timer.getFPGATimestamp() + "-----");
+
 		TKOHardware.initObjects();
 
 		autonChooser = new SendableChooser();
 		autonChooser.addDefault("Drive", new Integer(0));
 		autonChooser.addObject("Drive, Turn", new Integer(1));
-		
-//		try
-//		{
-//			SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
-//			SmartDashboard.putBoolean("Bottom switch", TKOHardware.getLiftBottom());
-//		} catch (TKOException e)
-//		{
-//			e.printStackTrace();
-//		}
+		SmartDashboard.putData("Auton chooser", autonChooser);
+
+		try
+		{
+			SmartDashboard.putBoolean("Ball switch", !TKOHardware.getSwitch(0).get());
+			SmartDashboard.putBoolean("Intake switch", !TKOHardware.getSwitch(1).get());
+			SmartDashboard.putBoolean("Shooter switch", !TKOHardware.getSwitch(2).get());
+		}
+		catch (TKOException e)
+		{
+			e.printStackTrace();
+		}
 
 		System.out.println("robotInit() finished");
 	}
@@ -65,14 +69,14 @@ public class Robot extends SampleRobot
 		// TKOTalonSafety.getInstance().start();
 		// TKOLEDArduino.getInstance().start();
 		TKOPneumatics.getInstance().start();
-		// TKOPneumatics.getInstance().reset(); //TODO
-		
+		TKOPneumatics.getInstance().reset(); // TODO
+
 		Molecule molecule = new Molecule();
 		molecule.clear();
-		
+
 		double distance = SmartDashboard.getNumber("Drive distance: ");
 		double angle = SmartDashboard.getNumber("Turn angle: ");
-		
+
 		if (autonChooser.getSelected().equals(0))
 		{
 			molecule.add(new DriveAtom(distance));
@@ -95,11 +99,10 @@ public class Robot extends SampleRobot
 		{
 			TKOPneumatics.getInstance().stop();
 			TKOPneumatics.getInstance().pneuThread.join();
-			// TKODataReporting.getInstance().stop();
-			// TKODataReporting.getInstance().dataReportThread.join();
 			TKOLogger.getInstance().stop();
 			TKOLogger.getInstance().loggerThread.join();
-		} catch (InterruptedException e)
+		}
+		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}
@@ -111,19 +114,19 @@ public class Robot extends SampleRobot
 		TKOLogger.getInstance().start();
 		TKODrive.getInstance().start();
 		TKOPneumatics.getInstance().start();
+		TKOConveyor.getInstance().start();
+		StateMachine.getInstance().start();
 		// TKODataReporting.getInstance().start();
 		TKOTalonSafety.getInstance().start();
 		TKOLEDArduino.getInstance().start();
-		
+
 		while (isOperatorControl() && isEnabled())
 		{
 			try
 			{
 				TKOHardware.arduinoWrite(1);
-//				SmartDashboard.putNumber("CRATE DISTANCE: ", TKOHardware.getCrateDistance());
-//				SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
-//				SmartDashboard.putBoolean("Bottom switch", TKOHardware.getLiftBottom());
-			} catch (TKOException e)
+			}
+			catch (TKOException e)
 			{
 				e.printStackTrace();
 			}
@@ -136,6 +139,10 @@ public class Robot extends SampleRobot
 			TKOLEDArduino.getInstance().ledArduinoThread.join();
 			TKOTalonSafety.getInstance().stop();
 			TKOTalonSafety.getInstance().safetyCheckerThread.join();
+			StateMachine.getInstance().stop();
+			StateMachine.getInstance().stateThread.join();
+			TKOConveyor.getInstance().stop();
+			TKOConveyor.getInstance().conveyorThread.join();
 			// TKODataReporting.getInstance().stop();
 			// TKODataReporting.getInstance().dataReportThread.join();
 			TKOPneumatics.getInstance().stop();
@@ -144,7 +151,8 @@ public class Robot extends SampleRobot
 			TKODrive.getInstance().driveThread.join();
 			TKOLogger.getInstance().stop();
 			TKOLogger.getInstance().loggerThread.join();
-		} catch (InterruptedException e)
+		}
+		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}
@@ -153,10 +161,23 @@ public class Robot extends SampleRobot
 	public void test()
 	{
 		System.out.println("Enabling test!");
+
+		TKOPneumatics.getInstance().start();
+		TKOPneumatics.getInstance().setManual(true);
 		
 		while (isEnabled() && isTest())
 		{
-			
+			Timer.delay(0.1);
+		}
+		
+		try
+		{
+			TKOPneumatics.getInstance().stop();
+			TKOPneumatics.getInstance().pneuThread.join();
+		}
+		catch (InterruptedException e)
+		{
+			e.printStackTrace();
 		}
 	}
 }

@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.can.CANMessageNotFoundException;
@@ -117,7 +116,7 @@ public class TKOHardware
 			{
 				try
 				{
-					flyTalons[i] = new CANTalon(Definitions.FLY_TALON_ID[i]); // TODO filler values
+					flyTalons[i] = new CANTalon(Definitions.FLY_TALON_ID[i]);
 					talonModes[Definitions.NUM_DRIVE_TALONS + i] = null; // null means not initialized
 				}
 				catch (AllocationException | CANMessageNotFoundException e)
@@ -139,7 +138,7 @@ public class TKOHardware
 			{
 				try
 				{
-					conveyorTalons[i] = new CANTalon(Definitions.CONVEYOR_ID[i]); // TODO filler values
+					conveyorTalons[i] = new CANTalon(Definitions.CONVEYOR_ID[i]);
 					talonModes[Definitions.NUM_DRIVE_TALONS + i] = null; // null means not initialized
 				}
 				catch (AllocationException | CANMessageNotFoundException e)
@@ -181,7 +180,6 @@ public class TKOHardware
 		if (arduinoSignal == null)
 			arduinoSignal = new AnalogOutput(0);
 
-		// TODO tune these values
 		configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
 		configFlyTalons(Definitions.LIFT_P, Definitions.LIFT_I, Definitions.LIFT_D, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
 	}
@@ -288,11 +286,6 @@ public class TKOHardware
 				conveyorTalons[j].setSafetyEnabled(false);
 			}
 		}
-	}
-	
-	public static synchronized void configSpikes()
-	{
-		// TODO necessary? TODO nope 
 	}
 
 	public static synchronized void changeTalonMode(CANTalon target, CANTalon.TalonControlMode newMode, double newP, double newI, double newD)
