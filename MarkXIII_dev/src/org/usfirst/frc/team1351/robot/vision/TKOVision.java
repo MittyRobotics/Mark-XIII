@@ -171,6 +171,10 @@ public class TKOVision implements Runnable
 		// TKO pre-programs its own exceptions:
 		// "This file does not exist" if
 		// a certain file is called but was deleted, renamed, or never created
+ catch (TKOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void printTable()
@@ -209,6 +213,7 @@ public class TKOVision implements Runnable
 
 		tarCenterToEdge = centerX;
 		targetPixelWidth = widths;
+		targetPixelHeight = heights; 
 	}
 
 	/*
@@ -228,6 +233,7 @@ public class TKOVision implements Runnable
 
 	double tarCenterToEdge = 0; // I think
 	double targetPixelWidth = 0; // To be set by values from the network tables
+	double targetPixelHeight = 0; 
 
 	double getFloorDistance()
 	{
@@ -240,6 +246,21 @@ public class TKOVision implements Runnable
 	{
 		cameraAngle = ((targetWidth * Math.abs((imageWidth / 2) - tarCenterToEdge)) / (targetPixelWidth * distance));
 		return cameraAngle;
+	}
+	
+	//Original Equation: d = wR/2ntan(a/2)
+	double heightDistance() {
+		return 9488.347/targetPixelHeight;
+	}
+	
+	double widthDistance() {
+		return 13121.945/targetPixelWidth;
+	}
+	
+	//Original Equation: theta = arcsin(((2x/R)-1)tan(a/2))
+	double turnAngle() {
+		double theta = Math.asin(((0.488*tarCenterToEdge) - 156.074)/320);
+		return theta;
 	}
 
 }
