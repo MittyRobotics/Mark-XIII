@@ -23,9 +23,9 @@ public class DriveAtom extends Atom
 	public DriveAtom(double _dist)
 	{
 
-		p = SmartDashboard.getNumber("Drive P: ");
-		i = SmartDashboard.getNumber("Drive I: ");
-		d = SmartDashboard.getNumber("Drive D: ");
+		p = 0.5; // SmartDashboard.getNumber("Drive P: ");
+		i = 0.0; // SmartDashboard.getNumber("Drive I: ");
+		d = 0.0; // SmartDashboard.getNumber("Drive D: ");
 
 		distance = _dist;
 		incrementer = Definitions.DRIVE_ATOM_INCREMENTER;

@@ -31,10 +31,10 @@ public class GyroTurnAtom extends Atom
 		angle = _angle;
 		threshold = 5;
 		// incrementer = Definitions.TURN_ATOM_INCREMENTER;
-		incrementer = SmartDashboard.getNumber("Turn Incrementer: ");
-		p = SmartDashboard.getNumber("Turn P: ");
-		i = SmartDashboard.getNumber("Turn I: ") / 1000.;
-		d = SmartDashboard.getNumber("Turn D: ");
+		incrementer = 0.1; // SmartDashboard.getNumber("Turn Incrementer: ");
+		p = 0.5; // SmartDashboard.getNumber("Turn P: ");
+		i = 0.0; // SmartDashboard.getNumber("Turn I: ") / 1000.;
+		d = 0.0; // SmartDashboard.getNumber("Turn D: ");
 	}
 
 	public void init()
