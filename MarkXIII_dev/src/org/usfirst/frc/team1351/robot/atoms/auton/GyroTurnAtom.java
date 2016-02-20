@@ -5,8 +5,8 @@ import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
@@ -21,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class GyroTurnAtom extends Atom
 {
 	PIDController pid;
-	AnalogGyro gyro;
+	ADXRS450_Gyro gyro;
 	double angle, incrementer, threshold;
 	double p, i, d;
 

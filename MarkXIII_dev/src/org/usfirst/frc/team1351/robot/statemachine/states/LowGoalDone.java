@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
-import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
@@ -9,7 +8,6 @@ import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
 
-// essentially the same as RetractIntake but with different exit
 public class LowGoalDone implements IStateFunction
 {
 	@Override
@@ -24,7 +22,6 @@ public class LowGoalDone implements IStateFunction
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
 	    
-	    TKOConveyor.getInstance().stopConveyor();
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 		
 	    while (data.sensorValues != StateMachine.EMPTY && data.sensorValues == StateMachine.INTAKE_EXTENDED)

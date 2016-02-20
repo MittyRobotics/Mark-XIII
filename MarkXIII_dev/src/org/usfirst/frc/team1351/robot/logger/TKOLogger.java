@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -19,7 +20,7 @@ public class TKOLogger implements Runnable
 	private PrintWriter m_LogFile, m_DataLogFile;
 	private static TKOLogger m_Instance = null;
 	public TKOThread loggerThread = null;
-	private String directory = "/home/lvuser/logs/"; // TODO THIS IS ACTUAL
+	private String directory = "/home/lvuser/";
 	private String logFileName = "log";
 	private String dataDumpFileName = "data";
 	public long startTime;
@@ -75,6 +76,11 @@ public class TKOLogger implements Runnable
 		// String str = "Time: " + DriverStation.getInstance().getMatchTime() + ";Message: " + message;
 		String str = "Time(s): " + ((System.nanoTime() - startTime) / 1000000000) + " Message:" + message;
 		m_MessageBuffer.add(str);
+	}
+	
+	public void addMessage(String format, Object... args)
+	{
+		m_MessageBuffer.add(String.format(format, args));
 	}
 
 	public void addData(String dataType, double value, String additionalComment, int motor)

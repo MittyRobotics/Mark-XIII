@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
+import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
@@ -16,18 +17,15 @@ public class ReadyToFire implements IStateFunction
 
 		data.curState = StateEnum.STATE_READY_TO_FIRE;
 		
-		if (data.sensorValues == StateMachine.SHOOTER_EXTENDED)
+		TKOShooter.getInstance().spinUp(StateMachine.speed, StateMachine.incrementer);
+		StateMachine.getInstance().startLogging(true);
+		
+		if (data.sensorValues == StateMachine.GOT_BALL)
 		{
 			while (!(StateMachine.getJoystick().getTrigger()))
 			{
-				if (data.sensorValues != StateMachine.SHOOTER_EXTENDED)
+				if (data.sensorValues != StateMachine.GOT_BALL)
 					return StateEnum.STATE_ERROR;
-				
-				if (StateMachine.getJoystick().getRawButton(3))
-				{
-					System.out.println("Operator override");
-					return StateEnum.STATE_RETRACT_SHOOTER;
-				}	
 				
 				Timer.delay(0.1);
 				data.sensorValues = StateMachine.getSensorData(data);

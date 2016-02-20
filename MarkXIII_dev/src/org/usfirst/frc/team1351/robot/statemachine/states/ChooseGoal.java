@@ -14,20 +14,20 @@ public class ChooseGoal implements IStateFunction
 	{
 		System.out.println("Entering: Choose goal state");
 		
-		if (data.sensorValues != StateMachine.BALL_IN)
+		if (data.sensorValues != StateMachine.GOT_BALL)
 		    return StateEnum.STATE_ERROR;
 		
-		while (data.sensorValues == StateMachine.BALL_IN)
+		while (data.sensorValues == StateMachine.GOT_BALL)
 		{
 			if (StateMachine.getJoystick().getRawButton(10))
 			{
 				System.out.println("Low goal sequence selected");
-				return StateEnum.STATE_EXTEND_LOADED_INTAKE;
+				return StateEnum.STATE_BACKWARD_SPIN;
 			}
 			if (StateMachine.getJoystick().getRawButton(11))
 			{
 				System.out.println("High goal sequence selected");
-				return StateEnum.STATE_EXTEND_SHOOTER;
+				return StateEnum.STATE_READY_TO_FIRE;
 			}
 			
 			Timer.delay(0.1);

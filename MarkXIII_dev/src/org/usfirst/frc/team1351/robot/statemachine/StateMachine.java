@@ -7,6 +7,7 @@ import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
+import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.statemachine.states.*;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -17,16 +18,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class StateMachine implements Runnable
 {
-	// 0b | SS | IS | BS |
-	// 0b |  4 |  2 |  1 | = 
-	
 	static Timer timer;
 
 	static DigitalInput ballSwitch = null;
 	static DigitalInput intakeSwitch = null;
-	static DigitalInput shooterSwitch = null;
-	
-	static DoubleSolenoid shooterPiston = null;
+
 	static DoubleSolenoid intakePiston = null;
 
 	static Joystick stick = null;
@@ -44,12 +40,13 @@ public class StateMachine implements Runnable
 	public static final int EMPTY = 0;
 	public static final int INTAKE_EXTENDED = 2;
 	public static final int GOT_BALL = 3;
-	public static final int BALL_IN = 1;
-	public static final int SHOOTER_EXTENDED = 5;
-	public static final int DONE_FIRING = 4;
 	
 	public TKOThread stateThread = null;
 	private static StateMachine m_Instance = null;
+
+	public static double speed = 0.0;
+	public static double incrementer = 0.0;
+	private boolean logging = false;
 
 	public static synchronized StateMachine getInstance()
 	{
@@ -70,8 +67,6 @@ public class StateMachine implements Runnable
 		{
 			ballSwitch = TKOHardware.getSwitch(0);
 			intakeSwitch = TKOHardware.getSwitch(1);
-			shooterSwitch = TKOHardware.getSwitch(2);
-			shooterPiston = TKOHardware.getDSolenoid(1);
 			intakePiston = TKOHardware.getDSolenoid(2);
 			stick = TKOHardware.getJoystick(2);
 		}
@@ -84,18 +79,14 @@ public class StateMachine implements Runnable
 		states[StateEnum.STATE_EXTEND_INTAKE.getValue()] = new ExtendIntake();
 		states[StateEnum.STATE_FORWARD_SPIN.getValue()] = new ForwardSpin();
 		states[StateEnum.STATE_RETRY.getValue()] = new RetryState();
-		states[StateEnum.STATE_RETRACT_INTAKE.getValue()] = new RetractIntake();
 		states[StateEnum.STATE_CHOOSE_GOAL.getValue()] = new ChooseGoal();
-		states[StateEnum.STATE_EXTEND_LOADED_INTAKE.getValue()] = new ExtendLoadedIntake();
 		states[StateEnum.STATE_BACKWARD_SPIN.getValue()] = new BackwardSpin();
 		states[StateEnum.STATE_LOW_GOAL_DONE.getValue()] = new LowGoalDone();
-		states[StateEnum.STATE_EXTEND_SHOOTER.getValue()] = new ExtendShooter();
 		states[StateEnum.STATE_READY_TO_FIRE.getValue()] = new ReadyToFire();
-		states[StateEnum.STATE_RETRACT_SHOOTER.getValue()] = new RetractShooter();
 		states[StateEnum.STATE_HIGH_GOAL_DONE.getValue()] = new HighGoalDone();
 		states[StateEnum.STATE_ERROR.getValue()] = new ErrorState();
 		
-		data.numSensors = 3;
+		data.numSensors = 2;
 		data.sensorValues = 0;
 		data.curState = StateEnum.STATE_EMPTY;
 		
@@ -103,6 +94,9 @@ public class StateMachine implements Runnable
 //		SmartDashboard.putBoolean("Intake Switch: ", false);
 //		SmartDashboard.putBoolean("Shooter Switch: ", false);
 		
+		// TODO where to put this?
+		SmartDashboard.putNumber("Speed: ", speed);
+		SmartDashboard.putNumber("Incrementer: ", incrementer);
 	}
 
 	public static int getSensorData(InstanceData id)
@@ -111,7 +105,6 @@ public class StateMachine implements Runnable
 		int i = 0;
 		num |= convert(!ballSwitch.get(), i++);
 		num |= convert(!intakeSwitch.get(), i++);
-		num |= convert(!shooterSwitch.get(), i++);
 		return num;
 	}
 	
@@ -146,13 +139,21 @@ public class StateMachine implements Runnable
 			stateThread.setThreadRunning(false);
 		System.out.println("Stopped state machine task");
 	}
+	
+	public synchronized void startLogging(boolean b)
+	{
+		logging = b;
+	}
 
 	public void run()
 	{
 		try
 		{
 			while (stateThread.isThreadRunning())
-			{
+			{	
+				speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
+				incrementer = SmartDashboard.getNumber("Incrementer: ");
+				
 				data.curState = runState(data.curState, data);
 				// System.out.println("data.curState: " + data.curState);
 				
@@ -162,6 +163,9 @@ public class StateMachine implements Runnable
 					data.sensorValues = getSensorData(data);
 					data.curState = StateEnum.STATE_EMPTY;
 				}
+				
+				if (logging)
+					TKOShooter.getInstance().logShooterData();
 				
 				synchronized (stateThread)
 				{
@@ -178,11 +182,6 @@ public class StateMachine implements Runnable
 	public static Timer getTimer()
 	{
 		return timer;
-	}
-
-	public static DoubleSolenoid getShooterPiston()
-	{
-		return shooterPiston;
 	}
 
 	public static DoubleSolenoid getIntakePiston()

@@ -35,8 +35,10 @@ public class BackwardSpin implements IStateFunction
 	    	data.sensorValues = StateMachine.getSensorData(data);
 	    }
 
+	    TKOConveyor.getInstance().stopConveyor();
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
+	    
 	    if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
 	    {
 	        return StateEnum.STATE_ERROR;

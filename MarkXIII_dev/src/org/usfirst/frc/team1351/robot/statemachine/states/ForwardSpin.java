@@ -26,9 +26,9 @@ public class ForwardSpin implements IStateFunction
 	    while (data.sensorValues != StateMachine.GOT_BALL &&
 	    		data.sensorValues == StateMachine.INTAKE_EXTENDED)
 	    {
-	    	// operator should be spinning rollers right now
 	    	if (StateMachine.getJoystick().getRawButton(2)) // override
 	    	{
+	    		TKOConveyor.getInstance().stopConveyor();
 	    		System.out.println("Override: retry chosen by operator");
 	    		return StateEnum.STATE_RETRY;
 	    	}
@@ -36,11 +36,13 @@ public class ForwardSpin implements IStateFunction
 	    	data.sensorValues = StateMachine.getSensorData(data);
 	    }
 
+	    TKOConveyor.getInstance().stopConveyor();
+	    
 	    if (data.sensorValues != StateMachine.GOT_BALL)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }
 	    
-		return StateEnum.STATE_RETRACT_INTAKE;
+		return StateEnum.STATE_CHOOSE_GOAL;
 	}
 }

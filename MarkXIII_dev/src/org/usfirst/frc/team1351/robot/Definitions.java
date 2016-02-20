@@ -8,6 +8,7 @@ import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.SPI.Port;
 
 public class Definitions
 {
@@ -80,6 +81,7 @@ public class Definitions
 
 	// Evom constants
 
+	public static final Port GYRO_SPI_PORT = Port.kOnboardCS0;
 	public static final int GYRO_ANALOG_CHANNEL = 1;
 	public static final double INCHES_PER_VOLT = 1.;
 	public static final int LIFT_BOTTOM_OPTICAL_SWITCH = 0;
@@ -107,8 +109,9 @@ public class Definitions
 	public static final boolean[] LIFT_REVERSE_OUTPUT_MODE =
 	{ true, false };
 
-	public static final CANTalon.TalonControlMode FLY_TALONS_NORMAL_CONTROL_MODE = CANTalon.TalonControlMode.Position;
-
+	public static final CANTalon.TalonControlMode FLY_TALONS_NORMAL_CONTROL_MODE = CANTalon.TalonControlMode.Speed;
+	public static final CANTalon.TalonControlMode CONVEYOR_CONTROL_MODE = CANTalon.TalonControlMode.PercentVbus;
+	
 	public static final int LIFT_TOP_OPTICAL_SWITCH = 1;
 	public static final double MAX_CURRENT_LEFT = 10.; // used for current driving
 	public static final double MAX_CURRENT_RIGHT = 10.;
@@ -164,18 +167,16 @@ public class Definitions
 			return 3;
 		case "conveyor":
 			return 4;
-		case "lift":
+		case "shooter":	// state machine
 			return 5;
-		case "shooter":
-			return 6;
 		case "vision":
-			return 7;
+			return 6;
 		case "ledArduino":
-			return 8;
+			return 7;
 		case "logger":
-			return 9;
+			return 8;
 		case "talonSafety":
-			return Thread.MAX_PRIORITY; // 10
+			return 9;
 
 		default:
 			return Thread.NORM_PRIORITY; // 5

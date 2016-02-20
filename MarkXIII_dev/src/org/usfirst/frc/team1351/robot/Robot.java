@@ -40,12 +40,15 @@ public class Robot extends SampleRobot
 		autonChooser.addDefault("Drive", new Integer(0));
 		autonChooser.addObject("Drive, Turn", new Integer(1));
 		SmartDashboard.putData("Auton chooser", autonChooser);
-
+		
+		SmartDashboard.putNumber("Shooter P: ", 0.200);
+		SmartDashboard.putNumber("Shooter I: ", 0.);
+		SmartDashboard.putNumber("Shooter D: ", 0.);
+		
 		try
 		{
 			SmartDashboard.putBoolean("Ball switch", !TKOHardware.getSwitch(0).get());
 			SmartDashboard.putBoolean("Intake switch", !TKOHardware.getSwitch(1).get());
-			SmartDashboard.putBoolean("Shooter switch", !TKOHardware.getSwitch(2).get());
 		}
 		catch (TKOException e)
 		{
@@ -162,6 +165,8 @@ public class Robot extends SampleRobot
 	{
 		System.out.println("Enabling test!");
 		
+		TKODrive.getInstance().start();
+		TKODrive.getInstance().isCreep(false);
 		TKOPneumatics.getInstance().start();
 		TKOPneumatics.getInstance().setManual(true);
 		TKOConveyor.getInstance().start();
@@ -178,6 +183,8 @@ public class Robot extends SampleRobot
 			TKOConveyor.getInstance().conveyorThread.join();
 			TKOPneumatics.getInstance().stop();
 			TKOPneumatics.getInstance().pneuThread.join();
+			TKODrive.getInstance().stop();
+			TKODrive.getInstance().driveThread.join();
 		}
 		catch (InterruptedException e)
 		{

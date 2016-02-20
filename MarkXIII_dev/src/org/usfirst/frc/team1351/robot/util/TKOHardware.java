@@ -3,13 +3,13 @@ package org.usfirst.frc.team1351.robot.util;
 import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.AnalogOutput;
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -26,17 +26,14 @@ public class TKOHardware
 	protected static Joystick joysticks[] = new Joystick[Definitions.NUM_JOYSTICKS];
 	protected static CANTalon driveTalons[] = new CANTalon[Definitions.NUM_DRIVE_TALONS];
 	protected static CANTalon flyTalons[] = new CANTalon[Definitions.NUM_FLY_TALONS];
-//	protected static Relay spikes[] = new Relay[Definitions.NUM_SPIKES];
 	protected static CANTalon conveyorTalons[] = new CANTalon[Definitions.NUM_CONVEYOR_TALONS]; 
 	protected static DoubleSolenoid doubleSolenoids[] = new DoubleSolenoid[Definitions.NUM_DSOLENOIDS];
 	protected static Solenoid solenoids[] = new Solenoid[Definitions.NUM_SOLENOIDS];
 	protected static DigitalInput limitSwitches[] = new DigitalInput[Definitions.NUM_SWITCHES];
 	protected static Compressor compressor;
-	protected static AnalogGyro gyro;
+	protected static ADXRS450_Gyro gyro;
 	protected static AnalogOutput arduinoSignal = null;
-
-	protected static CANTalon.TalonControlMode talonModes[] = new CANTalon.TalonControlMode[Definitions.ALL_TALONS];
-
+	
 	public TKOHardware()
 	{
 		xbox = null;
@@ -73,10 +70,6 @@ public class TKOHardware
 		{
 			limitSwitches[i] = null;
 		}
-		for (int i = 0; i < (Definitions.ALL_TALONS); i++)
-		{
-			talonModes[i] = null;
-		}
 		compressor = null;
 		gyro = null;
 		arduinoSignal = null;
@@ -100,7 +93,6 @@ public class TKOHardware
 				try
 				{
 					driveTalons[i] = new CANTalon(Definitions.DRIVE_TALON_ID[i]);
-					talonModes[i] = null; // null means not initialized
 				}
 				catch (AllocationException | CANMessageNotFoundException e)
 				{
@@ -117,7 +109,6 @@ public class TKOHardware
 				try
 				{
 					flyTalons[i] = new CANTalon(Definitions.FLY_TALON_ID[i]);
-					talonModes[Definitions.NUM_DRIVE_TALONS + i] = null; // null means not initialized
 				}
 				catch (AllocationException | CANMessageNotFoundException e)
 				{
@@ -139,7 +130,6 @@ public class TKOHardware
 				try
 				{
 					conveyorTalons[i] = new CANTalon(Definitions.CONVEYOR_ID[i]);
-					talonModes[Definitions.NUM_DRIVE_TALONS + i] = null; // null means not initialized
 				}
 				catch (AllocationException | CANMessageNotFoundException e)
 				{
@@ -170,9 +160,9 @@ public class TKOHardware
 		
 		if (gyro == null)
 		{
-			gyro = new AnalogGyro(Definitions.GYRO_ANALOG_CHANNEL);
-			gyro.initGyro();
-			gyro.setSensitivity(7. / 1000.);
+			gyro = new ADXRS450_Gyro(Definitions.GYRO_SPI_PORT);
+//			gyro.initGyro();
+//			gyro.setSensitivity(7. / 1000.);
 			gyro.reset();
 			System.out.println("Gyro initialized: " + Timer.getFPGATimestamp());
 		}
@@ -182,6 +172,7 @@ public class TKOHardware
 
 		configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
 		configFlyTalons(Definitions.LIFT_P, Definitions.LIFT_I, Definitions.LIFT_D, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
+		configConveyorTalons(Definitions.CONVEYOR_CONTROL_MODE);
 	}
 
 	public static synchronized void configDriveTalons(double p, double I, double d, TalonControlMode mode)
@@ -191,25 +182,18 @@ public class TKOHardware
 			driveTalons[i].delete();
 			driveTalons[i] = null;
 			driveTalons[i] = new CANTalon(Definitions.DRIVE_TALON_ID[i]);
-			talonModes[i] = null;
 			if (driveTalons[i] != null)
 			{
 				if (i == 1 || i == 3) // if follower
 				{
 					driveTalons[i].changeControlMode(CANTalon.TalonControlMode.Follower);
 					driveTalons[i].set(i - 1); // set to follow the CANTalon with id i - 1;
-					talonModes[i] = CANTalon.TalonControlMode.Follower;
 				}
-				else
-				// if not follower
+				else // if not follower
 				{
-					if (!(mode instanceof CANTalon.TalonControlMode))
-						throw new TKORuntimeException("ERROR: Wrong control mode used");
-
 					driveTalons[i].changeControlMode(mode);
 					driveTalons[i].setFeedbackDevice(Definitions.DRIVE_ENCODER_TYPE);
 					driveTalons[i].setPID(p, I, d);
-					talonModes[i] = mode;
 				}
 				driveTalons[i].enableBrakeMode(Definitions.DRIVE_BRAKE_MODE[i]);
 				driveTalons[i].reverseOutput(Definitions.DRIVE_REVERSE_OUTPUT_MODE[i]);
@@ -226,24 +210,19 @@ public class TKOHardware
 			flyTalons[j].delete();
 			flyTalons[j] = null;
 			flyTalons[j] = new CANTalon(Definitions.FLY_TALON_ID[j]);
-			talonModes[Definitions.NUM_DRIVE_TALONS + j] = null;
 			if (flyTalons[j] != null)
 			{
 				if ((Definitions.NUM_DRIVE_TALONS + j) == 5) // if follower
 				{
 					flyTalons[j].changeControlMode(CANTalon.TalonControlMode.Follower);
 					flyTalons[j].set(Definitions.NUM_DRIVE_TALONS + j - 1); // set to follow the CANTalon with id j - 1
-					talonModes[Definitions.NUM_DRIVE_TALONS + j] = CANTalon.TalonControlMode.Follower;
 				}
 				else
 				// if not follower
 				{
-//					if (!(mode instanceof CANTalon.TalonControlMode))
-//						throw new TKORuntimeException("CODE ERROR! Wrong control mode used");
 					flyTalons[j].changeControlMode(mode);
 					flyTalons[j].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE);
 					flyTalons[j].setPID(P, I, D);
-					talonModes[Definitions.NUM_DRIVE_TALONS + j] = mode;
 				}
 //				liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
 //				liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
@@ -253,32 +232,27 @@ public class TKOHardware
 		}
 	}
 	
-	private static synchronized void configConveyorTalons(double P, double I, double D, TalonControlMode mode)
+	private static synchronized void configConveyorTalons(TalonControlMode mode)
 	{
 		for (int j = 0; j < Definitions.NUM_CONVEYOR_TALONS; j++)
 		{
 			conveyorTalons[j].delete();
 			conveyorTalons[j] = null;
 			conveyorTalons[j] = new CANTalon(Definitions.CONVEYOR_ID[j]);
-			talonModes[Definitions.NUM_FLY_TALONS + j] = null;
+			
 			if (conveyorTalons[j] != null)
 			{
 				if ((Definitions.NUM_FLY_TALONS + j) == 7) // if follower
 				{
 					conveyorTalons[j].changeControlMode(CANTalon.TalonControlMode.Follower);
 					conveyorTalons[j].set(Definitions.NUM_FLY_TALONS + j - 1); // set to follow the CANTalon with id j - 1
-					talonModes[Definitions.NUM_FLY_TALONS + j] = CANTalon.TalonControlMode.Follower;
 				}
-				else
-				// if not follower
+				else // if not follower
 				{
-//					if (!(mode instanceof CANTalon.TalonControlMode))
-//						throw new TKORuntimeException("CODE ERROR! Wrong control mode used");
 					//TODO Check, test, and fix this entire function 
 					conveyorTalons[j].changeControlMode(mode);
 					conveyorTalons[j].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE);
-					conveyorTalons[j].setPID(P, I, D);
-					talonModes[Definitions.NUM_FLY_TALONS + j] = mode;
+//					conveyorTalons[j].setPID(P, I, D);
 				}
 //				liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
 //				liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
@@ -309,8 +283,6 @@ public class TKOHardware
 		target.changeControlMode(newMode);
 		target.setPID(newP, newI, newD);
 		target.enableControl();
-		talonModes[target.getDeviceID()] = newMode;
-
 		System.out.println("CHANGED TALON [" + target.getDeviceID() + "] TO [" + target.getControlMode().getValue() + "]");
 	}
 	
@@ -325,7 +297,6 @@ public class TKOHardware
 
 		target.changeControlMode(newMode);
 		target.enableControl();
-		talonModes[target.getDeviceID()] = newMode;
 
 		System.out.println("CHANGED TALON [" + target.getDeviceID() + "] TO [" + target.getControlMode().getValue() + "]");
 	}
@@ -397,14 +368,6 @@ public class TKOHardware
 				flyTalons[i] = null;
 			}
 		}
-//		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
-//		{
-//			if (spikes[i] != null)
-//			{
-//				spikes[i].free();
-//				spikes[i] = null;
-//			}
-//		}
 		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++)
 		{
 			if (conveyorTalons[i] != null)
@@ -437,22 +400,16 @@ public class TKOHardware
 				limitSwitches[i] = null;
 			}
 		}
-		for (int i = 0; i < (Definitions.ALL_TALONS); i++)
-		{
-			talonModes[i] = null;
-		}
 		if (compressor != null)
 		{
 			compressor.free();
 			compressor = null;
 		}
-		
 		if (gyro != null)
 		{
 			gyro.free();
 			gyro = null;
 		}
-
 		if (arduinoSignal != null)
 		{
 			arduinoSignal.free();
@@ -506,8 +463,6 @@ public class TKOHardware
 		{
 			if (driveTalons[num].getControlMode() == CANTalon.TalonControlMode.Follower)
 				throw new TKOException("WARNING: Do not access follower talon");
-			else if (talonModes[num] == null)
-				throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)");
 			else
 				return driveTalons[num];
 		}
@@ -519,10 +474,7 @@ public class TKOHardware
 	{
 		if (driveTalons[0] == null || driveTalons[1] == null)
 			throw new TKOException("Left Drive Talon is null");
-		if (talonModes[0] == null)
-			throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)");
-		if (talonModes[1] != CANTalon.TalonControlMode.Follower)
-			throw new TKOException("ERROR: Follower talon is uninitialized (mode unset)");
+		
 		return driveTalons[0];
 	}
 
@@ -530,24 +482,25 @@ public class TKOHardware
 	{
 		if (driveTalons[2] == null || driveTalons[3] == null)
 			throw new TKOException("Right Drive Talon is null");
-		if (talonModes[2] == null)
-			throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)");
-		if (talonModes[3] != CANTalon.TalonControlMode.Follower)
-			throw new TKOException("ERROR: Follower talon is uninitialized (mode unset)");
+		
 		return driveTalons[2];
 	}
 	
 	public static synchronized CANTalon getFlyTalon() throws TKOException
 	{
 		if (flyTalons[0] == null || flyTalons[1] == null)
-			throw new TKOException("Lift Talon is null");
-
-		if (talonModes[Definitions.NUM_DRIVE_TALONS + 0] == null)
-			throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)");
-		if (talonModes[Definitions.NUM_DRIVE_TALONS + 1] != CANTalon.TalonControlMode.Follower)
-			throw new TKOException("ERROR: Follower talon is uninitialized (mode unset)");
+			throw new TKOException("Fly Talon is null");
 
 		return flyTalons[0];
+	}
+
+	// WARNING: accessing follower talon not advised
+	public static synchronized CANTalon getFlyTalon(int n) throws TKOException
+	{
+		if (flyTalons[n] == null)
+			throw new TKOException("Fly Talon is null");
+
+		return flyTalons[n];
 	}
 	
 	public static synchronized CANTalon getConveyorTalon(int num) throws TKOException //TODO check and test this - crappily added
@@ -555,27 +508,8 @@ public class TKOHardware
 		if (conveyorTalons[0] == null || conveyorTalons[1] == null || conveyorTalons[2] == null)
 			throw new TKOException("Conveyor Talon is null");
 
-		if (talonModes[Definitions.NUM_FLY_TALONS + 0] == null)
-			throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)");
-		if (talonModes[Definitions.NUM_FLY_TALONS + 1] != CANTalon.TalonControlMode.Follower)
-			throw new TKOException("ERROR: Follower talon is uninitialized (mode unset)");
-		if(talonModes[Definitions.NUM_FLY_TALONS + 2] == null) 
-			throw new TKOException("ERROR: Cannot access uninitialized talon (mode unset)"); 
-		
 		return conveyorTalons[num];
 	}
-	
-//	public static synchronized Relay getSpike(int num) throws TKOException
-//	{
-//		if (num >= Definitions.NUM_SPIKES)
-//		{
-//			throw new TKOException("Relay requested out of bounds");
-//		}
-//		if (spikes[num] != null)
-//			return spikes[num];
-//		else
-//			throw new TKOException("Relay " + (num) + "(array value) is null");
-//	}
 
 	public static synchronized DoubleSolenoid getDSolenoid(int num) throws TKOException
 	{
@@ -608,7 +542,7 @@ public class TKOHardware
 		return compressor;
 	}
 
-	public static synchronized AnalogGyro getGyro() throws TKOException
+	public static synchronized ADXRS450_Gyro getGyro() throws TKOException
 	{
 		if (gyro == null)
 			throw new TKOException("ERROR: Gyro is null");
