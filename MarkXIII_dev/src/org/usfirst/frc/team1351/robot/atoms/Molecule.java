@@ -1,4 +1,4 @@
-package org.usfirst.frc.team1351.robot.auton;
+package org.usfirst.frc.team1351.robot.atoms;
 
 import java.util.ArrayList;
 

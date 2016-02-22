@@ -3,22 +3,13 @@
 
 package org.usfirst.frc.team1351.robot.evom;
 
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
+import org.usfirst.frc.team1351.robot.evom.TKOArm;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-
-/** PISTONS:
- * [0] - drivetrain
- * [1] - flywheel
- * [2] - intake
- * [3] - intake
- * [4] - lift
- * [0] - lift
- * [1] - portcullis
- */
 
 public class TKOPneumatics implements Runnable
 {
@@ -26,6 +17,7 @@ public class TKOPneumatics implements Runnable
 	private static TKOPneumatics m_Instance = null;
 	long lastShiftTime = System.currentTimeMillis();
 	long toggledPistonTime[] = new long[Definitions.NUM_DSOLENOIDS + Definitions.NUM_SOLENOIDS];
+	private boolean testEnabled = false;
 
 	protected TKOPneumatics()
 	{
@@ -54,14 +46,14 @@ public class TKOPneumatics implements Runnable
 		}
 		return m_Instance;
 	}
-	
+
 	public synchronized void start()
 	{
 		System.out.println("Starting pneumatics task");
 		if (!pneuThread.isAlive() && m_Instance != null)
 		{
 			pneuThread = new TKOThread(m_Instance);
-			pneuThread.setPriority(Definitions.getPriority("gripper"));
+			pneuThread.setPriority(Definitions.getPriority("pneumatics"));
 		}
 		if (!pneuThread.isThreadRunning())
 			pneuThread.setThreadRunning(true);
@@ -93,7 +85,7 @@ public class TKOPneumatics implements Runnable
 		}
 		System.out.println("Stopped pneumatics task");
 	}
-	
+
 	public synchronized void reset()
 	{
 		try
@@ -105,11 +97,6 @@ public class TKOPneumatics implements Runnable
 			e.printStackTrace();
 		}
 	}
-
-//	public synchronized void setManual(boolean b)
-//	{
-//		manualEnabled = b;
-//	}
 
 	public void autoShift()
 	{
@@ -135,53 +122,62 @@ public class TKOPneumatics implements Runnable
 		}
 	}
 
-	public synchronized void pickupRollerControl()
+	public synchronized void setManual(boolean b)
 	{
-//		try
-//		{
-//			TKOHardware.getPickupTalon(1).set(TKOHardware.getJoystick(2).getY() * 0.5);
-//			TKOHardware.getPickupTalon(0).set(-TKOHardware.getJoystick(3).getY() * 0.5);
-//		}
-//		catch (TKOException e)
-//		{
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		testEnabled = b;
 	}
 
 	public synchronized void pistonControl()
 	{
 		try
 		{
+			if (testEnabled)
+			{
+				if (TKOHardware.getJoystick(1).getRawButton(2))
+				{
+					if (System.currentTimeMillis() - toggledPistonTime[1] > 250)
+					{
+						Value currVal = TKOHardware.getDSolenoid(1).get();
+						Value newVal = currVal;
+						if (currVal == Value.kForward)
+							newVal = Value.kReverse;
+						else if (currVal == Value.kReverse)
+							newVal = Value.kForward;
+						TKOHardware.getDSolenoid(1).set(newVal);
+						toggledPistonTime[1] = System.currentTimeMillis();
+					}
+				}
+
+				if (TKOHardware.getJoystick(1).getRawButton(3))
+				{
+					if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
+					{
+						Value currVal = TKOHardware.getDSolenoid(2).get();
+						Value newVal = currVal;
+						if (currVal == Value.kForward)
+							newVal = Value.kReverse;
+						else if (currVal == Value.kReverse)
+							newVal = Value.kForward;
+						TKOHardware.getDSolenoid(2).set(newVal);
+						toggledPistonTime[2] = System.currentTimeMillis();
+					}
+				}
+			}
+
 			// shifting gearbox
-			if (TKOHardware.getJoystick(0).getRawButton(4))
+			if (TKOHardware.getXboxController().getRightBumper())
 			{
 				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
 				lastShiftTime = System.currentTimeMillis();
 			}
-			else if (TKOHardware.getJoystick(0).getRawButton(5))
+			else if (TKOHardware.getXboxController().getLeftBumper())
 			{
 				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 				lastShiftTime = System.currentTimeMillis();
 			}
 			else
 				autoShift();
-			
-			/*if (TKOHardware.getJoystick(2).getRawButton(2))
-			{
-				// using same joystick button to extend/retract
-				if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
-				{
-					Value currVal = TKOHardware.getPiston(2).get();
-					Value newVal = currVal;
-					if (currVal == Value.kForward)
-						newVal = Value.kReverse;
-					else if (currVal == Value.kReverse)
-						newVal = Value.kForward;
-					TKOHardware.getPiston(2).set(newVal);
-					toggledPistonTime[2] = System.currentTimeMillis();
-				}
-			}*/
+
 		}
 		catch (Exception e)
 		{
@@ -197,7 +193,12 @@ public class TKOPneumatics implements Runnable
 			while (pneuThread.isThreadRunning())
 			{
 				pistonControl();
-				// pickupRollerControl();
+
+				/*if (TKOHardware.getXboxController().getButtonB())
+					TKOArm.getInstance().breachPortcullis();
+
+				if (TKOHardware.getXboxController().getButtonY())
+					TKOArm.getInstance().breachCheval();*/
 
 				synchronized (pneuThread)
 				{

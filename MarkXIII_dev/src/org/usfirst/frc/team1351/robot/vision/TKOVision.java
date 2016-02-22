@@ -5,6 +5,7 @@ package org.usfirst.frc.team1351.robot.vision;
 
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
+import org.usfirst.frc.team1351.robot.util.XboxController;
 import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
@@ -15,6 +16,7 @@ import com.ni.vision.NIVision.Range;
 import com.ni.vision.NIVision.ShapeMode;
 
 import edu.wpi.first.wpilibj.CameraServer;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
@@ -123,6 +125,7 @@ public class TKOVision implements Runnable
 				NIVision.IMAQdxConfigureGrab(cameraChoice);
 				NIVision.IMAQdxStartAcquisition(cameraChoice);
 			}
+			isCameraInit = true;
 		}
 	}
 
@@ -133,83 +136,131 @@ public class TKOVision implements Runnable
 		{
 			while (visionThread.isThreadRunning())
 			{
-				if (TKOHardware.getJoystick(0).getRawButton(6))
+				if (TKOHardware.getXboxController().getButtonY())
 				{
 					isFrontCamera = !isFrontCamera;
-					//Turns camera "off"
+					// Turns camera "off"
 					isCameraInit = false;
-					//Turns off the camera in use 
+					// Turns off the camera in use
 				}
 
 				chooseCamera();
-				//Reinitializes new feed for opposite camera
+				// Reinitializes new feed for opposite camera
 				viewCamera(cameraChoice);
-				//feed will be on opposite camera
+				// feed will be on opposite camera
 				printTable();
-				//prints out information about the camera 
+				// prints out information about the camera
 				synchronized (visionThread)
-				//synchronized prioritizes one thread at a time to "talk" 
-				//to a certain part of TKO hardware  
-				//if not synchronized, then the Talon or other piece of hardware 
-				//would alternate between different threads that are "talking" to it
+				// synchronized prioritizes one thread at a time to "talk"
+				// to a certain part of TKO hardware
+				// if not synchronized, then the Talon or other piece of hardware
+				// would alternate between different threads that are "talking" to it
 				{
 					visionThread.wait(50);
-					//50 is the amount of delay time between cutting the feed
+					// 50 is the amount of delay time between cutting the feed
 					// and reinitializing the new feed while switching
-					
+
 				}
 			}
 		}
-		catch (InterruptedException | TKOException e)
+
+		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}
-		//TKO pre-programs its own exceptions: 
-			//"This file does not exist" if 
-			//a certain file is called but was deleted, renamed, or never created
+		// TKO pre-programs its own exceptions:
+		// "This file does not exist" if
+		// a certain file is called but was deleted, renamed, or never created
+ catch (TKOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void printTable()
 	{
-		System.out.println("\n \n \n"); 
-		double[] areas = table.getNumberArray("area", defaultValue);
+		double def = 0;
+		System.out.println("\n \n \n");
+		double areas = table.getNumber("area", def);
 		System.out.print("areas: ");
-		for (double area : areas)
-		{
-			System.out.print(area + ", ");
-			SmartDashboard.putNumber("Area", area);
-		}
-		
-		double[] centerX = table.getNumberArray("centerX", defaultValue);
+
+		System.out.print(areas + ", ");
+		SmartDashboard.putNumber("Area", areas);
+
+		double centerX = table.getNumber("x", def);
 		System.out.print("centerX: ");
-		for (double x : centerX)
-		{
-			System.out.print(x + ", ");
-			SmartDashboard.putNumber("Center X", x);
-		}
 
-		double[] centerY = table.getNumberArray("centerY", defaultValue);
+		System.out.print(centerX + ", ");
+		SmartDashboard.putNumber("Center X", centerX);
+
+		double centerY = table.getNumber("y", def);
 		System.out.print("centerY: ");
-		for (double cY : centerY)
-		{
-			System.out.print(cY + ", ");
-			SmartDashboard.putNumber("Center Y", cY);
-		}
 
-		double[] heights = table.getNumberArray("height", defaultValue);
+		System.out.print(centerY + ", ");
+		SmartDashboard.putNumber("Center Y", centerY);
+
+		double heights = table.getNumber("height", def);
 		System.out.print("height: ");
-		for (double height : heights)
-		{
+		
 			System.out.print(height + ", ");
 			SmartDashboard.putNumber("Height", height);
-		}
-		
-		double[] widths = table.getNumberArray("width", defaultValue);
+
+		double widths = table.getNumber("width", def);
 		System.out.print("width: ");
-		for (double width : widths)
-		{
-			System.out.print(width + ", ");
-			SmartDashboard.putNumber("Width", width);
-		}
+
+			System.out.print(widths + ", ");
+			SmartDashboard.putNumber("Width", widths);
+
+		tarCenterToEdge = centerX;
+		targetPixelWidth = widths;
+		targetPixelHeight = heights; 
 	}
+
+	/*
+	 * TODO Test the following | Should be decently working distance calculation stuff | Figure out why they set it up w/ separate distance
+	 * and angle variables
+	 */
+	// to be set by the setDistance() method
+	// shows literal distance from target - learn distance robot must travel
+	double distance = 0; // inches: in real life at the angle from target
+	double floorDistance = 0; // inches via the floor - gives distance robot must travel
+	double targetWidth = 16; // field element: target = 1 ft 4 in
+	double imageWidth = 480; // width in pixels
+	double height = 85; // inches TODO fix this all wrong
+	double cameraAngle = 0; // Shows literal angle of robot from target - to be set by findAngle()
+	double tanFnc = (Math.tan(cameraAngle) / 2);
+	double imageTarget = (imageWidth * targetWidth);
+
+	double tarCenterToEdge = 0; // I think
+	double targetPixelWidth = 0; // To be set by values from the network tables
+	double targetPixelHeight = 0; 
+
+	double getFloorDistance()
+	{
+		distance = (imageTarget / (2 * targetPixelWidth) * tanFnc);
+		floorDistance = Math.sqrt((distance * distance) - (height * height));
+		return floorDistance;
+	}
+
+	double findRobotAngle()
+	{
+		cameraAngle = ((targetWidth * Math.abs((imageWidth / 2) - tarCenterToEdge)) / (targetPixelWidth * distance));
+		return cameraAngle;
+	}
+	
+	//Original Equation: d = wR/2ntan(a/2)
+	double heightDistance() {
+		return 9488.347/targetPixelHeight;
+	}
+	
+	double widthDistance() {
+		return 13121.945/targetPixelWidth;
+	}
+	
+	//Original Equation: theta = arcsin(((2x/R)-1)tan(a/2))
+	double turnAngle() {
+		double theta = Math.asin(((0.488*tarCenterToEdge) - 156.074)/320);
+		return theta;
+	}
+
 }

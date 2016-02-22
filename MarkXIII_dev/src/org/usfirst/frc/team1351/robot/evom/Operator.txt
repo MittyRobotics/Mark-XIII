@@ -1,4 +1,25 @@
 Driver Controls:
-cameraSwitcher -> stick 0 (gamepad) Left Bumper 
+- Right/Left Bumpers on xbox: Low/High gears respectively - does this even work lol? 
+- Xbox, Select: Switch Camera  
+- Triggers on xbox: Variable% speed
+- Xbox, Button B: breach portcullis
+- Xbox, Button Y: breach cheval
+
+For Testing:
+- Stick 1, Button 2: toggle arm
+- Stick 1, Button 3: toggle intake
+- Stick 1, Trigger (held down): shoot
+- Stick 1, Button 4-5: conveyor forward/backward
 
 Operator Controls:
+- Stick 3, Button 4-5: roller intake in/out
+- Stick 2, Button 2: extend intake OR go to retry state (override)
+- Stick 2, Button 10-11: choose low goal/high goal
+- Stick 2, Trigger: move ball into shooter (fire)
+- Stick 2, Button 3: retract shooter (override)
+- Stick 2, Button 8: reset state machine (DANGER)
+
+Solenoids:
+0 - drive
+1 - arm
+2 - intake

@@ -1,14 +1,15 @@
-package org.usfirst.frc.team1351.robot.auton.atom;
+package org.usfirst.frc.team1351.robot.atoms.auton;
 
-import org.usfirst.frc.team1351.robot.auton.Atom;
+import org.usfirst.frc.team1351.robot.atoms.Atom;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /* TODO
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class GyroTurnAtom extends Atom
 {
 	PIDController pid;
-	AnalogGyro gyro;
+	ADXRS450_Gyro gyro;
 	double angle, incrementer, threshold;
 	double p, i, d;
 
@@ -40,13 +41,12 @@ public class GyroTurnAtom extends Atom
 		{
 			TKOHardware.autonInit(p, i, d);
 			gyro = TKOHardware.getGyro();
+			gyro.reset();
 			pid = new PIDController(p, i, d, gyro, TKOHardware.getLeftDrive());
 		} catch (TKOException e)
 		{
 			e.printStackTrace();
 		}
-
-		gyro.reset();
 		pid.reset();
 		pid.setOutputRange(-1, 1);
 		pid.setContinuous();
@@ -59,7 +59,6 @@ public class GyroTurnAtom extends Atom
 	public void execute()
 	{
 		System.out.println("Executing gyro turn atom");
-//		TKOLogger.getInstance().addMessage("Starting execution of GYRO TURN");
 		try
 		{
 			pid.enable();
@@ -107,9 +106,11 @@ public class GyroTurnAtom extends Atom
 				}
 				if (t.get() > .25)
 				{
+					System.out.println("Timeout in Gyro turn atom");
 					break;
 				}
-				TKOHardware.getRightDrive().set(TKOHardware.getLeftDrive().get());
+				TKOHardware.getRightDrive().changeControlMode(TalonControlMode.Follower);
+				TKOHardware.getRightDrive().set(TKOHardware.getLeftDrive().getDeviceID());
 				System.out.println("Target Angle: " + pid.getSetpoint()
 					+ "\t PID Error: " + pid.getError()
 					+ "\t Current angle: " + gyro.getAngle());

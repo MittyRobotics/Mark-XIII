@@ -1,0 +1,18 @@
+sudo raspi-config
+	go to expand filesystem
+	press enter
+	reboot
+sudo apt-get update
+sudo apt-get upgrade
+	insert usb
+sudo mount -t vfat /dev/sda1 /mnt
+cd /mnt
+sudo ./install.bash
+sudo reboot
+	safely eject usb
+	
+todo:
+	read-only mode
+	make another usb
+	
+host name has to be roborio-1351-frc.local

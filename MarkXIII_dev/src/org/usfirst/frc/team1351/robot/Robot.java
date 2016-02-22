@@ -1,14 +1,15 @@
 // Last edited by Ben Kim
 // on 01/17/2015
 
-package org.usfirst.frc.team1351.robot.main;
+package org.usfirst.frc.team1351.robot;
 
-import org.usfirst.frc.team1351.robot.auton.Molecule;
-import org.usfirst.frc.team1351.robot.auton.atom.DriveAtom;
-import org.usfirst.frc.team1351.robot.auton.atom.GyroTurnAtom;
+import org.usfirst.frc.team1351.robot.atoms.Molecule;
+import org.usfirst.frc.team1351.robot.atoms.auton.*;
 import org.usfirst.frc.team1351.robot.drive.TKODrive;
+import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.evom.TKOPneumatics;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
+import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOLEDArduino;
@@ -19,18 +20,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/*-----------TODO-------------
- * 
- * clean up TKOHardware goddamn
- * getPriority()
- * 
- */
-
-public class MarkXIII extends SampleRobot
+public class Robot extends SampleRobot
 {
 	SendableChooser autonChooser;
 
-	public MarkXIII()
+	public Robot()
 	{
 		// don't put stuff here, use robotInit();
 	}
@@ -39,20 +33,30 @@ public class MarkXIII extends SampleRobot
 	{
 		System.out.println("-----WELCOME TO MarkXIII 2016-----");
 		System.out.println("-----SYSTEM BOOT: " + Timer.getFPGATimestamp() + "-----");
-		TKOHardware.initObjects();
+
+		TKOHardware.initTesting();
 
 		autonChooser = new SendableChooser();
 		autonChooser.addDefault("Drive", new Integer(0));
 		autonChooser.addObject("Drive, Turn", new Integer(1));
+		autonChooser.addObject("Pickup, Drive", new Integer(2));
+		autonChooser.addObject("Pickup, Turn, Drive", new Integer(3));
+		SmartDashboard.putData("Auton chooser", autonChooser);
 		
-//		try
-//		{
-//			SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
-//			SmartDashboard.putBoolean("Bottom switch", TKOHardware.getLiftBottom());
-//		} catch (TKOException e)
-//		{
-//			e.printStackTrace();
-//		}
+		SmartDashboard.putNumber("Shooter P: ", 0.200);
+		SmartDashboard.putNumber("Shooter I: ", 0.);
+		SmartDashboard.putNumber("Shooter D: ", 0.);
+		
+		try
+		{
+			SmartDashboard.putBoolean("Ball switch", !TKOHardware.getSwitch(0).get());
+			SmartDashboard.putBoolean("Intake switch", !TKOHardware.getSwitch(1).get());
+			SmartDashboard.putBoolean("Arm switch", !TKOHardware.getSwitch(2).get());
+		}
+		catch (TKOException e)
+		{
+			e.printStackTrace();
+		}
 
 		System.out.println("robotInit() finished");
 	}
@@ -71,20 +75,31 @@ public class MarkXIII extends SampleRobot
 		// TKOTalonSafety.getInstance().start();
 		// TKOLEDArduino.getInstance().start();
 		TKOPneumatics.getInstance().start();
-		// TKOPneumatics.getInstance().reset(); //TODO
+		TKOPneumatics.getInstance().reset(); // TODO
 
 		Molecule molecule = new Molecule();
 		molecule.clear();
-		
+
 		double distance = SmartDashboard.getNumber("Drive distance: ");
 		double angle = SmartDashboard.getNumber("Turn angle: ");
-		
+
 		if (autonChooser.getSelected().equals(0))
 		{
 			molecule.add(new DriveAtom(distance));
 		}
 		else if (autonChooser.getSelected().equals(1))
 		{
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new GyroTurnAtom(angle));
+		}
+		else if (autonChooser.getSelected().equals(2))
+		{
+			molecule.add(new PickupAtom());
+			molecule.add(new DriveAtom(distance));
+		}
+		else if (autonChooser.getSelected().equals(3))
+		{
+			molecule.add(new PickupAtom());
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new GyroTurnAtom(angle));
 		}
@@ -101,11 +116,10 @@ public class MarkXIII extends SampleRobot
 		{
 			TKOPneumatics.getInstance().stop();
 			TKOPneumatics.getInstance().pneuThread.join();
-			// TKODataReporting.getInstance().stop();
-			// TKODataReporting.getInstance().dataReportThread.join();
 			TKOLogger.getInstance().stop();
 			TKOLogger.getInstance().loggerThread.join();
-		} catch (InterruptedException e)
+		}
+		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}
@@ -113,44 +127,33 @@ public class MarkXIII extends SampleRobot
 
 	public void operatorControl()
 	{
-		System.out.println("Enabling teleop!");
-		TKOLogger.getInstance().start();
+		System.out.println("Enabling operator control!");
+		
 		TKODrive.getInstance().start();
+		TKODrive.getInstance().isCreep(false);
 		TKOPneumatics.getInstance().start();
-		// TKODataReporting.getInstance().start();
-		TKOTalonSafety.getInstance().start();
-		TKOLEDArduino.getInstance().start();
-
-		while (isOperatorControl() && isEnabled())
+		TKOPneumatics.getInstance().setManual(true);
+		TKOConveyor.getInstance().start();
+		TKOConveyor.getInstance().setManual(true);
+		TKOLogger.getInstance().start();
+		
+		while (isEnabled() && isOperatorControl())
 		{
-			try
-			{
-				TKOHardware.arduinoWrite(1);
-//				SmartDashboard.putNumber("CRATE DISTANCE: ", TKOHardware.getCrateDistance());
-//				SmartDashboard.putBoolean("Top switch", TKOHardware.getLiftTop());
-//				SmartDashboard.putBoolean("Bottom switch", TKOHardware.getLiftBottom());
-			} catch (TKOException e)
-			{
-				e.printStackTrace();
-			}
-			Timer.delay(0.1); // wait for a motor update time
+			Timer.delay(0.1);
 		}
-
+		
 		try
 		{
-			TKOLEDArduino.getInstance().stop();
-			TKOLEDArduino.getInstance().ledArduinoThread.join();
-			TKOTalonSafety.getInstance().stop();
-			TKOTalonSafety.getInstance().safetyCheckerThread.join();
-			// TKODataReporting.getInstance().stop();
-			// TKODataReporting.getInstance().dataReportThread.join();
+			TKOLogger.getInstance().stop();
+			TKOLogger.getInstance().loggerThread.join();
+			TKOConveyor.getInstance().stop();
+			TKOConveyor.getInstance().conveyorThread.join();
 			TKOPneumatics.getInstance().stop();
 			TKOPneumatics.getInstance().pneuThread.join();
 			TKODrive.getInstance().stop();
 			TKODrive.getInstance().driveThread.join();
-			TKOLogger.getInstance().stop();
-			TKOLogger.getInstance().loggerThread.join();
-		} catch (InterruptedException e)
+		}
+		catch (InterruptedException e)
 		{
 			e.printStackTrace();
 		}
@@ -158,11 +161,6 @@ public class MarkXIII extends SampleRobot
 
 	public void test()
 	{
-		System.out.println("Enabling test!");
-		
-		while (isEnabled() && isTest())
-		{
-			
-		}
+
 	}
 }

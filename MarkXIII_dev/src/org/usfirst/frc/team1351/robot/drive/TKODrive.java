@@ -1,20 +1,18 @@
 package org.usfirst.frc.team1351.robot.drive;
 
-import org.usfirst.frc.team1351.robot.logger.TKOLogger;
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKORuntimeException;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
-import edu.wpi.first.wpilibj.DriverStation;
 
 public class TKODrive implements Runnable
 {
 	private static TKODrive m_Instance = null;
 	public TKOThread driveThread = null;
-	
+
 	public static synchronized TKODrive getInstance()
 	{
 		if (TKODrive.m_Instance == null)
@@ -25,8 +23,10 @@ public class TKODrive implements Runnable
 		return m_Instance;
 	}
 
-	protected TKODrive() {}
-	
+	protected TKODrive()
+	{
+	}
+
 	public void start()
 	{
 		System.out.println("Starting drive task");
@@ -39,6 +39,23 @@ public class TKODrive implements Runnable
 			driveThread.setThreadRunning(true);
 
 		System.out.println("Started drive task");
+
+		init();
+	}
+
+	public synchronized void init()
+	{
+		try
+		{
+			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus, Definitions.DRIVE_P,
+					Definitions.DRIVE_I, Definitions.DRIVE_D);
+			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus, Definitions.DRIVE_P,
+					Definitions.DRIVE_I, Definitions.DRIVE_D);
+		}
+		catch (TKOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public void stop()
@@ -49,163 +66,36 @@ public class TKODrive implements Runnable
 		System.out.println("Stopped drive task");
 	}
 
-	public void arcadeDrive()
+	public void squaredXbox()
 	{
-		boolean squaredInputs = true;
 		try
 		{
-			double moveValue = TKOHardware.getJoystick(0).getY();
-			if (TKOHardware.getJoystick(0).getTrigger())
-				moveValue = TKOHardware.getJoystick(0).getY() * 0.6;
+			// Get the squared inputs from xBox controller
+			double leftMove = Math.pow(TKOHardware.getXboxController().getLeftY(), 2);
+			double rightMove = Math.pow(TKOHardware.getXboxController().getRightY(), 2);
 
-			double rotateValue = TKOHardware.getJoystick(1).getX() * 0.8;
-			if (TKOHardware.getJoystick(1).getTrigger())
-				rotateValue = TKOHardware.getJoystick(1).getX() * 0.6;
-
-			if (squaredInputs) // keep sign
+			// Averages the value so it will move more smoothly hopefully
+			if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
 			{
-				moveValue = Math.abs(moveValue) * moveValue;
-				rotateValue = Math.abs(rotateValue) * rotateValue;
+				leftMove = (leftMove + rightMove) / 2;
+				rightMove = leftMove;
 			}
 
-			double max = Math.max(moveValue, rotateValue);
-			double diff = moveValue - rotateValue;
-			double leftMotorSpeed, rightMotorSpeed;
-			
-			if (moveValue > 0.0)
-			{
-				if (rotateValue > 0.0)
-				{
-					leftMotorSpeed = diff;
-					rightMotorSpeed = max;
-				}
-				else
-				{
-					leftMotorSpeed = -diff;
-					rightMotorSpeed = -max;
-				}
-			}
-			else
-			{
-				if (rotateValue > 0.0)
-				{
-					leftMotorSpeed = max;
-					rightMotorSpeed = -diff;
-				}
-				else
-				{
-					leftMotorSpeed = -max;
-					rightMotorSpeed = -diff;
-				}
-			}
-			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			setLeftRightMotorOutputsPercentVBus(leftMotorSpeed, rightMotorSpeed);
+			// Just gets the sign - positive or negative
+			double leftSign = Math.abs(TKOHardware.getXboxController().getLeftY()) / TKOHardware.getXboxController().getLeftY();
+			double rightSign = Math.abs(TKOHardware.getXboxController().getRightY()) / TKOHardware.getXboxController().getRightY();
+			leftSign = leftSign * (1.0 - (0.5 * TKOHardware.getXboxController().getLeftTrigger()));
+			rightSign = rightSign * (1.0 - (0.5 * TKOHardware.getXboxController().getRightTrigger()));
+
+			setLeftRightMotorOutputsPercentVBus(leftMove * leftSign, rightMove * rightSign);
 		}
 		catch (TKOException e)
 		{
-			e.printStackTrace();
-		}
-	}
-	
-	public void tankDrive()
-	{
-		try
-		{
-			// TODO add an if check
-			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.PercentVbus,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.PercentVbus,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			setLeftRightMotorOutputsPercentVBus(TKOHardware.getJoystick(0).getY(), TKOHardware.getJoystick(1).getY());
-		}
-		catch (TKOException e)
-		{
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public synchronized void currentModeTankDrive()
-	{
-		try
-		{
-			TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.Current,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.Current,
-				Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D);
-			setLeftRightMotorOutputsCurrent(TKOHardware.getJoystick(0).getY(), TKOHardware.getJoystick(1).getY());
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
-	}
-
-	@SuppressWarnings("deprecation")
-	public synchronized void PIDCurrentCalibration()
-	{
-		double p = 0., i = 0., d = 0.;
-		boolean calibrating = true;
-		long bestTime = Long.MAX_VALUE;
-
-		try
-		{
-			while (calibrating && DriverStation.getInstance().isEnabled())
-			// TODO first run does not actually go until one iteration of loop (maybe fixed now)
-			{
-				TKOHardware.destroyObjects();
-				TKOHardware.initObjects();
-				TKOHardware.configDriveTalons(p, i, d, CANTalon.TalonControlMode.Current);
-				TKOHardware.setAllDriveTalons(0.);
-				System.out.println("Starting PID current calibration commands");
-				// Thread.sleep(250);
-				TKOLogger.getInstance().addData("Pval", p, null, -1);
-				Thread.sleep(1500);
-				TKOHardware.getLeftDrive().set(Definitions.DRIVE_MULTIPLIER_LEFT);
-				TKOHardware.getRightDrive().set(Definitions.DRIVE_MULTIPLIER_RIGHT);
-//				if (p < 10)
-//					TKOLogger.getInstance().addData("MotorSetCommand", System.nanoTime(), "p: 0" + p + " i: 0" + i + " d: 0" + d, j);
-//				else
-//					TKOLogger.getInstance().addData("MotorSetCommand", System.nanoTime(), "p: " + p + " i: " + i + " d: " + d, j);
-				long start = System.currentTimeMillis();
-				int runningTime = 5000;
-				while ((System.currentTimeMillis() - start) < runningTime)
-				{
-					// record the point in time when feedback exceeds target, or is within x% of target
-					if (TKOHardware.getLeftDrive().getOutputCurrent() > Definitions.DRIVE_MULTIPLIER_LEFT)
-					{
-						if (bestTime > System.nanoTime())
-							bestTime = System.nanoTime();
-					}
-					// record final deviation from target at the end of 5 s
-				}
-				TKOHardware.destroyObjects();
-				TKOHardware.initObjects();
-				
-				// TODO what does this whole block mean
-				// p += 1.;
-				// if (p > 15.)
-				i += 0.01;
-				if (i > .1)
-				{
-					i = 0.;
-					p += 1.;
-					if (p > 15.)
-						calibrating = false;
-				}
-				System.out.println("Next iteration");
-			}
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
-		TKOHardware.destroyObjects();
-		TKOHardware.initObjects();
-	}
-	
 	public synchronized void setLeftRightMotorOutputsPercentVBus(double left, double right)
 	{
 		try
@@ -225,38 +115,23 @@ public class TKODrive implements Runnable
 		}
 	}
 
-	public synchronized void setLeftRightMotorOutputsCurrent(double leftMult, double rightMult)
+	private boolean creep = false;
+	public void isCreep(boolean b)
 	{
-		try
-		{
-			if (TKOHardware.getLeftDrive().getControlMode() == CANTalon.TalonControlMode.Current)
-				TKOHardware.getLeftDrive().set(Definitions.DRIVE_MULTIPLIER_LEFT * Definitions.MAX_CURRENT_LEFT * leftMult);
-			else
-				throw new TKORuntimeException("ERROR: Tried running tank drive when not Current mode");
-			if (TKOHardware.getRightDrive().getControlMode() == CANTalon.TalonControlMode.Current)
-				TKOHardware.getRightDrive().set(Definitions.DRIVE_MULTIPLIER_RIGHT * Definitions.MAX_CURRENT_RIGHT * rightMult);
-			else
-				throw new TKORuntimeException("ERROR: Tried running tank drive when not Current mode");
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
+		creep = b;
 	}
-	
+
 	@Override
 	public void run()
 	{
 		try
 		{
-			// boolean calibRan = false;
 			while (driveThread.isThreadRunning())
 			{
-				if (TKOHardware.getJoystick(3).getTrigger())
-					setLeftRightMotorOutputsPercentVBus(-0.3, -0.3);
-				
-				// tankDrive();
-				arcadeDrive();
+				if (!creep)
+				{
+					squaredXbox();
+				}
 				synchronized (driveThread)
 				{
 					driveThread.wait(5);

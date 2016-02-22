@@ -1,6 +1,6 @@
 package org.usfirst.frc.team1351.robot.util;
 
-import org.usfirst.frc.team1351.robot.main.Definitions;
+import org.usfirst.frc.team1351.robot.Definitions;
 
 public class TKOLEDArduino implements Runnable
 {

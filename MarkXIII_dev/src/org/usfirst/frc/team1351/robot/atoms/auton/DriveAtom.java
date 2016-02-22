@@ -1,10 +1,10 @@
-package org.usfirst.frc.team1351.robot.auton.atom;
+package org.usfirst.frc.team1351.robot.atoms.auton;
 
 // TODO check TKOHardware to see where PID is set
 
-import org.usfirst.frc.team1351.robot.auton.Atom;
+import org.usfirst.frc.team1351.robot.Definitions;
+import org.usfirst.frc.team1351.robot.atoms.Atom;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
-import org.usfirst.frc.team1351.robot.main.Definitions;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
@@ -82,8 +82,8 @@ public class DriveAtom extends Atom
 				}
 			}
 
-			TKOHardware.getDriveTalon(0).set(distance);
-			TKOHardware.getDriveTalon(2).set(distance);
+			TKOHardware.getLeftDrive().set(distance);
+			TKOHardware.getRightDrive().set(distance);
 
 			double diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance);
 			while (diff > threshold && DriverStation.getInstance().isEnabled())
