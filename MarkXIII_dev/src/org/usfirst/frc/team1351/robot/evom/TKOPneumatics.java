@@ -11,16 +11,6 @@ import org.usfirst.frc.team1351.robot.evom.TKOArm;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-/**
- * PISTONS:
- * [0] - drivetrain
- * [1] - flywheel
- * [2] - intake
- * [3] - lift
- * [0] - lift
- * [1] - portcullis
- */
-
 public class TKOPneumatics implements Runnable
 {
 	public TKOThread pneuThread = null;
@@ -172,23 +162,6 @@ public class TKOPneumatics implements Runnable
 						toggledPistonTime[2] = System.currentTimeMillis();
 					}
 				}
-
-				if (TKOHardware.getJoystick(1).getTrigger())
-				{
-					if (System.currentTimeMillis() - toggledPistonTime[5] > 250)
-					{
-						boolean currVal = TKOHardware.getSolenoid(1).get();
-						boolean newVal = currVal;
-						if (currVal)
-							newVal = false;
-						else if (!currVal)
-							newVal = true;
-						TKOHardware.getSolenoid(1).set(newVal);
-						toggledPistonTime[5] = System.currentTimeMillis();
-					}
-				}
-
-				return;
 			}
 
 			// shifting gearbox
@@ -221,11 +194,11 @@ public class TKOPneumatics implements Runnable
 			{
 				pistonControl();
 
-				if (TKOHardware.getXboxController().getButtonB())
+				/*if (TKOHardware.getXboxController().getButtonB())
 					TKOArm.getInstance().breachPortcullis();
 
 				if (TKOHardware.getXboxController().getButtonY())
-					TKOArm.getInstance().breachCheval();
+					TKOArm.getInstance().breachCheval();*/
 
 				synchronized (pneuThread)
 				{

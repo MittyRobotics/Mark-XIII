@@ -6,9 +6,9 @@ Driver Controls:
 - Xbox, Button Y: breach cheval
 
 For Testing:
-- Stick 1, Button 2: toggle shooter
+- Stick 1, Button 2: toggle arm
 - Stick 1, Button 3: toggle intake
-- Stick 1, Trigger: toggle arm
+- Stick 1, Trigger (held down): shoot
 - Stick 1, Button 4-5: conveyor forward/backward
 
 Operator Controls:
@@ -18,3 +18,8 @@ Operator Controls:
 - Stick 2, Trigger: move ball into shooter (fire)
 - Stick 2, Button 3: retract shooter (override)
 - Stick 2, Button 8: reset state machine (DANGER)
+
+Solenoids:
+0 - drive
+1 - arm
+2 - intake

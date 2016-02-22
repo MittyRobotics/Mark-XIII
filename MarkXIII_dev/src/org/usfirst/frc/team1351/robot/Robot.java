@@ -34,11 +34,13 @@ public class Robot extends SampleRobot
 		System.out.println("-----WELCOME TO MarkXIII 2016-----");
 		System.out.println("-----SYSTEM BOOT: " + Timer.getFPGATimestamp() + "-----");
 
-		TKOHardware.initObjects();
+		TKOHardware.initTesting();
 
 		autonChooser = new SendableChooser();
 		autonChooser.addDefault("Drive", new Integer(0));
 		autonChooser.addObject("Drive, Turn", new Integer(1));
+		autonChooser.addObject("Pickup, Drive", new Integer(2));
+		autonChooser.addObject("Pickup, Turn, Drive", new Integer(3));
 		SmartDashboard.putData("Auton chooser", autonChooser);
 		
 		SmartDashboard.putNumber("Shooter P: ", 0.200);
@@ -49,6 +51,7 @@ public class Robot extends SampleRobot
 		{
 			SmartDashboard.putBoolean("Ball switch", !TKOHardware.getSwitch(0).get());
 			SmartDashboard.putBoolean("Intake switch", !TKOHardware.getSwitch(1).get());
+			SmartDashboard.putBoolean("Arm switch", !TKOHardware.getSwitch(2).get());
 		}
 		catch (TKOException e)
 		{
@@ -89,6 +92,17 @@ public class Robot extends SampleRobot
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new GyroTurnAtom(angle));
 		}
+		else if (autonChooser.getSelected().equals(2))
+		{
+			molecule.add(new PickupAtom());
+			molecule.add(new DriveAtom(distance));
+		}
+		else if (autonChooser.getSelected().equals(3))
+		{
+			molecule.add(new PickupAtom());
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new GyroTurnAtom(angle));
+		}
 		else
 		{
 			System.out.println("Molecule empty why this");
@@ -113,47 +127,31 @@ public class Robot extends SampleRobot
 
 	public void operatorControl()
 	{
-		System.out.println("Enabling teleop!");
-		TKOLogger.getInstance().start();
+		System.out.println("Enabling operator control!");
+		
 		TKODrive.getInstance().start();
+		TKODrive.getInstance().isCreep(false);
 		TKOPneumatics.getInstance().start();
+		TKOPneumatics.getInstance().setManual(true);
 		TKOConveyor.getInstance().start();
-		StateMachine.getInstance().start();
-		// TKODataReporting.getInstance().start();
-		TKOTalonSafety.getInstance().start();
-		TKOLEDArduino.getInstance().start();
-
-		while (isOperatorControl() && isEnabled())
+		TKOConveyor.getInstance().setManual(true);
+		TKOLogger.getInstance().start();
+		
+		while (isEnabled() && isOperatorControl())
 		{
-			try
-			{
-				TKOHardware.arduinoWrite(1);
-			}
-			catch (TKOException e)
-			{
-				e.printStackTrace();
-			}
-			Timer.delay(0.1); // wait for a motor update time
+			Timer.delay(0.1);
 		}
-
+		
 		try
 		{
-			TKOLEDArduino.getInstance().stop();
-			TKOLEDArduino.getInstance().ledArduinoThread.join();
-			TKOTalonSafety.getInstance().stop();
-			TKOTalonSafety.getInstance().safetyCheckerThread.join();
-			StateMachine.getInstance().stop();
-			StateMachine.getInstance().stateThread.join();
+			TKOLogger.getInstance().stop();
+			TKOLogger.getInstance().loggerThread.join();
 			TKOConveyor.getInstance().stop();
 			TKOConveyor.getInstance().conveyorThread.join();
-			// TKODataReporting.getInstance().stop();
-			// TKODataReporting.getInstance().dataReportThread.join();
 			TKOPneumatics.getInstance().stop();
 			TKOPneumatics.getInstance().pneuThread.join();
 			TKODrive.getInstance().stop();
 			TKODrive.getInstance().driveThread.join();
-			TKOLogger.getInstance().stop();
-			TKOLogger.getInstance().loggerThread.join();
 		}
 		catch (InterruptedException e)
 		{
@@ -163,32 +161,6 @@ public class Robot extends SampleRobot
 
 	public void test()
 	{
-		System.out.println("Enabling test!");
-		
-		TKODrive.getInstance().start();
-		TKODrive.getInstance().isCreep(false);
-		TKOPneumatics.getInstance().start();
-		TKOPneumatics.getInstance().setManual(true);
-		TKOConveyor.getInstance().start();
-		TKOConveyor.getInstance().setManual(true);
-		
-		while (isEnabled() && isTest())
-		{
-			Timer.delay(0.1);
-		}
-		
-		try
-		{
-			TKOConveyor.getInstance().stop();
-			TKOConveyor.getInstance().conveyorThread.join();
-			TKOPneumatics.getInstance().stop();
-			TKOPneumatics.getInstance().pneuThread.join();
-			TKODrive.getInstance().stop();
-			TKODrive.getInstance().driveThread.join();
-		}
-		catch (InterruptedException e)
-		{
-			e.printStackTrace();
-		}
+
 	}
 }

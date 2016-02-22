@@ -17,23 +17,23 @@ import edu.wpi.first.wpilibj.can.CANMessageNotFoundException;
 import edu.wpi.first.wpilibj.util.AllocationException;
 
 public class TKOHardware
-{	
+{
 	/**
-	 * The idea behind TKOHardware is to have one common class with all the objects we would need.
-	 * The code is highly modular, as seen below where all the arrays are of variable size.
+	 * The idea behind TKOHardware is to have one common class with all the objects we would need. The code is highly modular, as seen below
+	 * where all the arrays are of variable size.
 	 */
 	protected static XboxController xbox;
 	protected static Joystick joysticks[] = new Joystick[Definitions.NUM_JOYSTICKS];
 	protected static CANTalon driveTalons[] = new CANTalon[Definitions.NUM_DRIVE_TALONS];
 	protected static CANTalon flyTalons[] = new CANTalon[Definitions.NUM_FLY_TALONS];
-	protected static CANTalon conveyorTalons[] = new CANTalon[Definitions.NUM_CONVEYOR_TALONS]; 
+	protected static CANTalon conveyorTalons[] = new CANTalon[Definitions.NUM_CONVEYOR_TALONS];
 	protected static DoubleSolenoid doubleSolenoids[] = new DoubleSolenoid[Definitions.NUM_DSOLENOIDS];
 	protected static Solenoid solenoids[] = new Solenoid[Definitions.NUM_SOLENOIDS];
 	protected static DigitalInput limitSwitches[] = new DigitalInput[Definitions.NUM_SWITCHES];
 	protected static Compressor compressor;
 	protected static ADXRS450_Gyro gyro;
 	protected static AnalogOutput arduinoSignal = null;
-	
+
 	public TKOHardware()
 	{
 		xbox = null;
@@ -41,7 +41,7 @@ public class TKOHardware
 		{
 			joysticks[i] = null;
 		}
-		
+
 		// After a follower talon is created, it should not be accessed (exception thrown)
 		for (int i = 0; i < Definitions.NUM_DRIVE_TALONS; i++)
 		{
@@ -51,12 +51,13 @@ public class TKOHardware
 		{
 			flyTalons[i] = null;
 		}
-//		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
-//		{
-//			spikes[i] = null;
-//		}
-		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++) {
-			conveyorTalons[i] = null; 
+		// for (int i = 0; i < Definitions.NUM_SPIKES; i++)
+		// {
+		// spikes[i] = null;
+		// }
+		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++)
+		{
+			conveyorTalons[i] = null;
 		}
 		for (int i = 0; i < Definitions.NUM_DSOLENOIDS; i++)
 		{
@@ -75,12 +76,95 @@ public class TKOHardware
 		arduinoSignal = null;
 	}
 
+	public static synchronized void initTesting()
+	{
+		System.out.println("Initializing objects (testing)");
+		
+		// TODO maybe destroy objects before initializing them?
+		if (xbox == null)
+			xbox = new XboxController(Definitions.JOYSTICK_ID[0]);
+
+		if (joysticks[1] == null)
+			joysticks[1] = new Joystick(1);
+		
+		for (int i = 0; i < Definitions.NUM_DRIVE_TALONS; i++)
+		{
+			if (driveTalons[i] == null)
+			{
+				try
+				{
+					driveTalons[i] = new CANTalon(Definitions.DRIVE_TALON_ID[i]);
+				}
+				catch (AllocationException | CANMessageNotFoundException e)
+				{
+					e.printStackTrace();
+					System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
+					TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR");
+				}
+			}
+		}
+		for (int i = 0; i < Definitions.NUM_FLY_TALONS; i++)
+		{
+			if (flyTalons[i] == null)
+			{
+				try
+				{
+					flyTalons[i] = new CANTalon(Definitions.FLY_TALON_ID[i]);
+				}
+				catch (AllocationException | CANMessageNotFoundException e)
+				{
+					e.printStackTrace();
+					System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
+					TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR");
+				}
+			}
+		}
+		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++)
+		{
+			if (conveyorTalons[i] == null)
+			{
+				try
+				{
+					conveyorTalons[i] = new CANTalon(Definitions.CONVEYOR_ID[i]);
+				}
+				catch (AllocationException | CANMessageNotFoundException e)
+				{
+					e.printStackTrace();
+					System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
+					TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR");
+				}
+			}
+		}
+		if (doubleSolenoids[0] == null) // gearbox
+			doubleSolenoids[0] = new DoubleSolenoid(0, 1);
+		if (doubleSolenoids[1] == null) // arm
+			doubleSolenoids[1] = new DoubleSolenoid(2, 3);
+		if (doubleSolenoids[2] == null) // intake
+			doubleSolenoids[2] = new DoubleSolenoid(4, 5);
+
+		if (limitSwitches[0] == null) // ball switch
+			limitSwitches[0] = new DigitalInput(0);
+		if (limitSwitches[1] == null) // intake switch
+			limitSwitches[1] = new DigitalInput(1);
+		if (limitSwitches[2] == null) // arm switch
+			limitSwitches[2] = new DigitalInput(2);
+
+		if (compressor == null)
+			compressor = new Compressor(0);
+
+		configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
+		configFlyTalons(Definitions.SHOOTER_kP, Definitions.SHOOTER_kI, Definitions.SHOOTER_kD, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
+		configConveyorTalons(Definitions.CONVEYOR_CONTROL_MODE);
+		
+		System.out.println("Initialized objects (testing)");
+	}
+
 	public static synchronized void initObjects()
 	{
 		// TODO maybe destroy objects before initializing them?
 		if (xbox == null)
 			xbox = new XboxController(Definitions.JOYSTICK_ID[0]);
-		
+
 		for (int i = 1; i < Definitions.NUM_JOYSTICKS; i++)
 		{
 			if (joysticks[i] == null)
@@ -118,11 +202,11 @@ public class TKOHardware
 				}
 			}
 		}
-//		for (int i = 0; i < Definitions.NUM_SPIKES; i++)
-//		{
-//			if (spikes[i] == null)
-//				spikes[i] = new Relay(Definitions.ROLLER_ID[i]);
-//		}
+		// for (int i = 0; i < Definitions.NUM_SPIKES; i++)
+		// {
+		// if (spikes[i] == null)
+		// spikes[i] = new Relay(Definitions.ROLLER_ID[i]);
+		// }
 		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++)
 		{
 			if (conveyorTalons[i] == null)
@@ -151,27 +235,27 @@ public class TKOHardware
 			solenoids[0] = new Solenoid(Definitions.S_LIFT_A, Definitions.S_LIFT_B);
 		if (solenoids[1] == null)
 			solenoids[1] = new Solenoid(Definitions.PORTCULLIS_A, Definitions.PORTCULLIS_B);
-		
-//		if (limitSwitches[0] == null)
-//			limitSwitches[0] = new DigitalInput(Definitions.LIFT_BOTTOM_OPTICAL_SWITCH);
+
+		// if (limitSwitches[0] == null)
+		// limitSwitches[0] = new DigitalInput(Definitions.LIFT_BOTTOM_OPTICAL_SWITCH);
 
 		if (compressor == null)
 			compressor = new Compressor(Definitions.PCM_ID);
-		
+
 		if (gyro == null)
 		{
 			gyro = new ADXRS450_Gyro(Definitions.GYRO_SPI_PORT);
-//			gyro.initGyro();
-//			gyro.setSensitivity(7. / 1000.);
+			// gyro.initGyro();
+			// gyro.setSensitivity(7. / 1000.);
 			gyro.reset();
 			System.out.println("Gyro initialized: " + Timer.getFPGATimestamp());
 		}
-		
+
 		if (arduinoSignal == null)
 			arduinoSignal = new AnalogOutput(0);
 
 		configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
-		configFlyTalons(Definitions.LIFT_P, Definitions.LIFT_I, Definitions.LIFT_D, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
+//		configFlyTalons(Definitions.LIFT_P, Definitions.LIFT_I, Definitions.LIFT_D, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
 		configConveyorTalons(Definitions.CONVEYOR_CONTROL_MODE);
 	}
 
@@ -189,7 +273,8 @@ public class TKOHardware
 					driveTalons[i].changeControlMode(CANTalon.TalonControlMode.Follower);
 					driveTalons[i].set(i - 1); // set to follow the CANTalon with id i - 1;
 				}
-				else // if not follower
+				else
+				// if not follower
 				{
 					driveTalons[i].changeControlMode(mode);
 					driveTalons[i].setFeedbackDevice(Definitions.DRIVE_ENCODER_TYPE);
@@ -202,7 +287,7 @@ public class TKOHardware
 			}
 		}
 	}
-	
+
 	private static synchronized void configFlyTalons(double P, double I, double D, TalonControlMode mode)
 	{
 		for (int j = 0; j < Definitions.NUM_FLY_TALONS; j++)
@@ -224,14 +309,14 @@ public class TKOHardware
 					flyTalons[j].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE);
 					flyTalons[j].setPID(P, I, D);
 				}
-//				liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
-//				liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
+				// liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
+				// liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
 				flyTalons[j].setExpiration(10000.);
 				flyTalons[j].setSafetyEnabled(false);
 			}
 		}
 	}
-	
+
 	private static synchronized void configConveyorTalons(TalonControlMode mode)
 	{
 		for (int j = 0; j < Definitions.NUM_CONVEYOR_TALONS; j++)
@@ -239,7 +324,7 @@ public class TKOHardware
 			conveyorTalons[j].delete();
 			conveyorTalons[j] = null;
 			conveyorTalons[j] = new CANTalon(Definitions.CONVEYOR_ID[j]);
-			
+
 			if (conveyorTalons[j] != null)
 			{
 				if ((Definitions.NUM_FLY_TALONS + j) == 7) // if follower
@@ -247,23 +332,24 @@ public class TKOHardware
 					conveyorTalons[j].changeControlMode(CANTalon.TalonControlMode.Follower);
 					conveyorTalons[j].set(Definitions.NUM_FLY_TALONS + j - 1); // set to follow the CANTalon with id j - 1
 				}
-				else // if not follower
+				else
+				// if not follower
 				{
-					//TODO Check, test, and fix this entire function 
+					// TODO Check, test, and fix this entire function
 					conveyorTalons[j].changeControlMode(mode);
 					conveyorTalons[j].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE);
-//					conveyorTalons[j].setPID(P, I, D);
+					// conveyorTalons[j].setPID(P, I, D);
 				}
-//				liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
-//				liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
+				// liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
+				// liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
 				conveyorTalons[j].setExpiration(10000.);
 				conveyorTalons[j].setSafetyEnabled(false);
 			}
 		}
 	}
 
-	public static synchronized void changeTalonMode(CANTalon target, CANTalon.TalonControlMode newMode, double newP, double newI, double newD)
-			throws TKOException
+	public static synchronized void changeTalonMode(CANTalon target, CANTalon.TalonControlMode newMode, double newP, double newI,
+			double newD) throws TKOException
 	{
 		if (target == null)
 			throw new TKOException("ERROR Attempted to change mode of null CANTalon");
@@ -285,9 +371,8 @@ public class TKOHardware
 		target.enableControl();
 		System.out.println("CHANGED TALON [" + target.getDeviceID() + "] TO [" + target.getControlMode().getValue() + "]");
 	}
-	
-	public static synchronized void changeTalonMode(CANTalon target, CANTalon.TalonControlMode newMode)
-			throws TKOException
+
+	public static synchronized void changeTalonMode(CANTalon target, CANTalon.TalonControlMode newMode) throws TKOException
 	{
 		if (target == null)
 			throw new TKOException("ERROR Attempted to change mode of null CANTalon");
@@ -300,9 +385,8 @@ public class TKOHardware
 
 		System.out.println("CHANGED TALON [" + target.getDeviceID() + "] TO [" + target.getControlMode().getValue() + "]");
 	}
-	
-	public static synchronized void autonInit(double p, double i, double d)
-			throws TKOException
+
+	public static synchronized void autonInit(double p, double i, double d) throws TKOException
 	{
 		TKOHardware.changeTalonMode(TKOHardware.getLeftDrive(), CANTalon.TalonControlMode.Position, p, i, d);
 		TKOHardware.changeTalonMode(TKOHardware.getRightDrive(), CANTalon.TalonControlMode.Position, p, i, d);
@@ -321,6 +405,7 @@ public class TKOHardware
 		TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getPosition());
 		TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 	}
+
 	/**
 	 * Sets *ALL* drive Talons to given value. CAUTION WHEN USING THIS METHOD, DOES NOT CARE ABOUT FOLLOWER TALONS. Intended for PID Tuning
 	 * loop ONLY.
@@ -344,7 +429,7 @@ public class TKOHardware
 	{
 		if (xbox != null)
 			xbox = null;
-		
+
 		for (int i = 0; i < Definitions.NUM_JOYSTICKS; i++)
 		{
 			if (joysticks[i] != null)
@@ -430,14 +515,14 @@ public class TKOHardware
 		else
 			throw new TKOException("Digital input " + (num) + "(array value) is null");
 	}
-	
+
 	public static synchronized XboxController getXboxController() throws TKOException
 	{
 		if (xbox == null)
 			throw new TKOException("ERROR: Xbox controller is null");
 		return xbox;
 	}
-	
+
 	public static synchronized Joystick getJoystick(int num) throws TKOException
 	{
 		if (num >= Definitions.NUM_JOYSTICKS)
@@ -449,7 +534,7 @@ public class TKOHardware
 		else
 			throw new TKOException("Joystick " + (num) + "(array value) is null");
 	}
-	
+
 	/**
 	 * To avoid potential problems, use getLeftDrive() and/or getRightDrive() instead
 	 */
@@ -469,12 +554,12 @@ public class TKOHardware
 		else
 			throw new TKOException("Drive talon " + (num) + "(array value) is null");
 	}
-	
+
 	public static synchronized CANTalon getLeftDrive() throws TKOException
 	{
 		if (driveTalons[0] == null || driveTalons[1] == null)
 			throw new TKOException("Left Drive Talon is null");
-		
+
 		return driveTalons[0];
 	}
 
@@ -482,10 +567,10 @@ public class TKOHardware
 	{
 		if (driveTalons[2] == null || driveTalons[3] == null)
 			throw new TKOException("Right Drive Talon is null");
-		
+
 		return driveTalons[2];
 	}
-	
+
 	public static synchronized CANTalon getFlyTalon() throws TKOException
 	{
 		if (flyTalons[0] == null || flyTalons[1] == null)
@@ -502,8 +587,8 @@ public class TKOHardware
 
 		return flyTalons[n];
 	}
-	
-	public static synchronized CANTalon getConveyorTalon(int num) throws TKOException //TODO check and test this - crappily added
+
+	public static synchronized CANTalon getConveyorTalon(int num) throws TKOException // TODO check and test this - crappily added
 	{
 		if (conveyorTalons[0] == null || conveyorTalons[1] == null || conveyorTalons[2] == null)
 			throw new TKOException("Conveyor Talon is null");
@@ -522,7 +607,7 @@ public class TKOHardware
 		else
 			throw new TKOException("Piston " + (num) + "(array value) is null");
 	}
-	
+
 	public static synchronized Solenoid getSolenoid(int num) throws TKOException
 	{
 		if (num >= Definitions.NUM_SOLENOIDS)
@@ -555,7 +640,7 @@ public class TKOHardware
 			throw new TKOException("ERROR: Gyro is null");
 		return gyro.getAngle();
 	}
-	
+
 	public static synchronized void arduinoWrite(double voltage) throws TKOException
 	{
 		if (arduinoSignal == null)

@@ -6,12 +6,15 @@ import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class TKOConveyor implements Runnable
 {
 	public TKOThread conveyorThread = null;
 	private static TKOConveyor m_Instance = null;
 	private boolean testEnabled = false;
+	double speed = 0.;
+	double incrementer = 0.;
 
 	protected TKOConveyor()
 	{
@@ -80,7 +83,8 @@ public class TKOConveyor implements Runnable
 
 				if (testEnabled)
 				{
-					TKOShooter.getInstance().manualSpin();
+					speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
+					incrementer = SmartDashboard.getNumber("Incrementer: ");
 					
 					if (TKOHardware.getJoystick(1).getRawButton(4))
 						startConveyorBackward();
@@ -88,6 +92,13 @@ public class TKOConveyor implements Runnable
 						startConveyorForward();
 					else
 						stopConveyor();
+					
+					if (TKOHardware.getJoystick(1).getTrigger())
+						TKOShooter.getInstance().spinUp(speed, incrementer);
+					else
+						TKOShooter.getInstance().spinDown();
+					
+					TKOShooter.getInstance().logShooterData();
 				}
 
 				synchronized (conveyorThread)

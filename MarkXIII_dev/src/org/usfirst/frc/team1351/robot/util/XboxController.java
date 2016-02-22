@@ -60,41 +60,41 @@ public class XboxController
 	// Buttons
 	public boolean getButtonA()
 	{
-		return xbox.getRawButton(0);
+		return xbox.getRawButton(1);
 	}
 
 	public boolean getButtonB()
 	{
-		return xbox.getRawButton(1);
+		return xbox.getRawButton(2);
 	}
 
 	public boolean getButtonX()
 	{
-		return xbox.getRawButton(2);
+		return xbox.getRawButton(3);
 	}
 
 	public boolean getButtonY()
 	{
-		return xbox.getRawButton(3);
+		return xbox.getRawButton(4);
 	}
 
 	public boolean getLeftBumper()
 	{
-		return xbox.getRawButton(4);
+		return xbox.getRawButton(5);
 	}
 
 	public boolean getRightBumper()
 	{
-		return xbox.getRawButton(5);
+		return xbox.getRawButton(6);
 	}
 
 	public boolean getBackButton()
 	{
-		return xbox.getRawButton(6);
+		return xbox.getRawButton(7);
 	}
 
 	public boolean getStartButton()
 	{
-		return xbox.getRawButton(7);
+		return xbox.getRawButton(8);
 	}
 }
