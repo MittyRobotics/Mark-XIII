@@ -95,7 +95,7 @@ public class StateMachine implements Runnable
 //		SmartDashboard.putBoolean("Shooter Switch: ", false);
 		
 		// TODO where to put this?
-		SmartDashboard.putNumber("Speed: ", speed);
+		SmartDashboard.putNumber("Speed: ", speed * Definitions.TICKS_TO_REVOLUTIONS);
 		SmartDashboard.putNumber("Incrementer: ", incrementer);
 	}
 
@@ -151,7 +151,7 @@ public class StateMachine implements Runnable
 		{
 			while (stateThread.isThreadRunning())
 			{	
-				speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
+				speed = (Definitions.REVOLUTIONS_TO_TICKS) * SmartDashboard.getNumber("Speed: ");
 				incrementer = SmartDashboard.getNumber("Incrementer: ");
 				
 				data.curState = runState(data.curState, data);

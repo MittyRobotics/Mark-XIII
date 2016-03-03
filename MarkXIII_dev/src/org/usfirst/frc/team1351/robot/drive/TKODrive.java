@@ -136,6 +136,9 @@ public class TKODrive implements Runnable
 				{
 					driveThread.wait(5);
 				}
+				if(TKOHardware.getLeftDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD || TKOHardware.getRightDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD) {
+					TKOHardware.getXboxController().vibrateStrong(1.f);
+				}
 			}
 		}
 		catch (Exception e)

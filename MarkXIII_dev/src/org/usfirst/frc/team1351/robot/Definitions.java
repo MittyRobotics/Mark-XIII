@@ -51,6 +51,8 @@ public class Definitions
 	{ true, false, false, false };
 	public static final boolean[] DRIVE_REVERSE_SENSOR =
 	{ false, false, true, false };
+	
+	public static final double CURRENT_SAFETY_THRESHOLD = 60; //Amps for the motors 
 
 	// Hardware constants
 
@@ -114,6 +116,9 @@ public class Definitions
 
 	public static final double[] TALON_CURRENT_TIMEOUT =
 	{ 5, 5, 5, 5, 5, 5 };
+	
+	public static final double REVOLUTIONS_TO_TICKS = 6000. / 1024.; 
+	public static final double TICKS_TO_REVOLUTIONS = 1024. / 6000.; 
 
 	// Pneumatics constants
 

@@ -1,9 +1,10 @@
 Driver Controls:
-- Right/Left Bumpers on xbox: Low/High gears respectively - does this even work lol? 
+- Right/Left Bumpers on xbox: Low/High gears respectively 
 - Xbox, Select: Switch Camera  
-- Triggers on xbox: Variable% speed
+- Triggers on xbox: Variable% speed for each respective side 
 - Xbox, Button B: breach portcullis
 - Xbox, Button Y: breach cheval
+- Xbox, Strong Vibration on Full: Alerts to current overdraw by any talons  
 
 For Testing:
 - Stick 1, Button 2: toggle arm

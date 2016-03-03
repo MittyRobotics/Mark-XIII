@@ -1,6 +1,7 @@
 package org.usfirst.frc.team1351.robot.util;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Joystick.RumbleType;
 
 public class XboxController
 {
@@ -8,11 +9,12 @@ public class XboxController
 
 	public XboxController(int _id)
 	{
+		xbox = new Joystick(_id);
 		if (!(xbox.getIsXbox()))
 		{
 			System.out.println("WARNING: joystick is not xbox controller");
 		}
-		xbox = new Joystick(_id);
+		
 	}
 
 	public double getLeftX()
@@ -96,5 +98,19 @@ public class XboxController
 	public boolean getStartButton()
 	{
 		return xbox.getRawButton(8);
+	}
+	
+	//TODO these names whyyyy
+	public void vibrateLight(float value) {
+		xbox.setRumble(RumbleType.kLeftRumble, value);
+	}
+	
+	public void vibrateStrong(float value) {
+		xbox.setRumble(RumbleType.kRightRumble, value);
+	}
+	
+	public void stopRumble() {
+		xbox.setRumble(RumbleType.kLeftRumble, 0);
+		xbox.setRumble(RumbleType.kRightRumble, 0);
 	}
 }
