@@ -1,11 +1,13 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
+import org.usfirst.frc.team1351.robot.evom.TKOArm;
 import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
 import org.usfirst.frc.team1351.robot.statemachine.InstanceData;
 import org.usfirst.frc.team1351.robot.statemachine.StateEnum;
 import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
+import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -20,6 +22,7 @@ public class HighGoalDone implements IStateFunction
 		if (data.sensorValues != StateMachine.GOT_BALL)
 			return StateEnum.STATE_ERROR;
 		
+		TKOArm.getInstance().moveArmDown();
 		data.curState = StateEnum.STATE_HIGH_GOAL_DONE;
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();

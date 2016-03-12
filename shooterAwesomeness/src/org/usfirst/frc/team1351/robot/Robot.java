@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * TODO write new auton atoms
+ * 
  * @author Ben
  *
  */
@@ -25,19 +26,20 @@ public class Robot extends SampleRobot
 	CANTalon shooterTalon;
 	CANTalon conveyorTalon;
 	CANTalon driveTalon[] = new CANTalon[4];
-	
+
 	DoubleSolenoid armPiston;
 	DoubleSolenoid intakePiston;
 	DoubleSolenoid gearboxPiston;
-	
+
 	DigitalInput ballSwitch;
 	DigitalInput intakeSwitch;
 	DigitalInput armSwitch;
-	
+
 	Compressor compressor;
 	PowerDistributionPanel pdp;
 	Joystick joystick;
 	XboxController xbox;
+	
 
 	double rpmMax = 0.0;
 	double PIDsetpoint = 0.0;
@@ -46,6 +48,8 @@ public class Robot extends SampleRobot
 
 	long lastShift;
 	int logSetting = 0;
+	
+	long buttonActivated = 0; 
 
 	public Robot()
 	{
@@ -65,11 +69,11 @@ public class Robot extends SampleRobot
 		shooterTalonEnc.setD(SmartDashboard.getNumber("Shooter D: "));
 		shooterTalonEnc.enableControl();
 
-		shooterTalon = new CANTalon(1);
+		shooterTalon = new CANTalon(5);
 		shooterTalon.changeControlMode(TalonControlMode.Follower);
 		shooterTalon.set(shooterTalonEnc.getDeviceID());
 
-		conveyorTalon = new CANTalon(0);
+		conveyorTalon = new CANTalon(8);
 		conveyorTalon.changeControlMode(TalonControlMode.PercentVbus);
 
 		driveTalon[0] = new CANTalon(0);
@@ -86,26 +90,27 @@ public class Robot extends SampleRobot
 		{
 			driveTalon[i].enableBrakeMode(false);
 		}
-		
+
 		pdp = new PowerDistributionPanel();
 		xbox = new XboxController(0);
 		joystick = new Joystick(1);
-		
-		armPiston = new DoubleSolenoid(0, 1);
-		intakePiston = new DoubleSolenoid(2, 3);
-		gearboxPiston = new DoubleSolenoid(4, 5);
-		
+
+		armPiston = new DoubleSolenoid(2, 3);
+		intakePiston = new DoubleSolenoid(4, 5);
+		gearboxPiston = new DoubleSolenoid(0, 1);
+
 		ballSwitch = new DigitalInput(0);
 		intakeSwitch = new DigitalInput(1);
 		armSwitch = new DigitalInput(2);
 
 		compressor = new Compressor(0);
-		
+
 		SmartDashboard.putNumber("Speed: ", speed);
 		SmartDashboard.putNumber("Incrementer: ", incrementer);
 		SmartDashboard.putNumber("Log setting: ", logSetting);
-		
+
 		lastShift = System.currentTimeMillis();
+		buttonActivated = System.currentTimeMillis(); 
 	}
 
 	public void disabled()
@@ -120,7 +125,7 @@ public class Robot extends SampleRobot
 
 	void log()
 	{
-		if (logSetting == 0)
+		if (true) //TODO add log settings variable back 
 		{
 			TKOLogger.getInstance().addMessage("%8.2f\t%8.2f\t%8.2f\t%8.2f\t%8.2f%8.2f\t%8.2f",
 					DriverStation.getInstance().getBatteryVoltage(), shooterTalonEnc.getSpeed(),
@@ -142,13 +147,19 @@ public class Robot extends SampleRobot
 			PIDsetpoint -= inc;
 		}
 		shooterTalonEnc.set(PIDsetpoint);
-		conveyorTalon.set(joystick.getRawAxis(2));
+		if(ballSwitch.get()) {
+			conveyorTalon.set(joystick.getRawAxis(2));
+			buttonActivated = System.currentTimeMillis(); 
+		}
+		else if(System.currentTimeMillis() - 500. < buttonActivated){
+			conveyorTalon.set(.1); 
+		}
 	}
 
 	void xboxDrive()
 	{
-		double leftMove = Math.pow(xbox.getLeftY(), 2);
-		double rightMove = Math.pow(xbox.getRightY(), 2);
+		double leftMove = Math.pow(xbox.getLeftY(), 4);
+		double rightMove = Math.pow(xbox.getRightY(), 4);
 
 		// Averages the value so it will move more smoothly hopefully
 		if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
@@ -160,13 +171,13 @@ public class Robot extends SampleRobot
 		// Just gets the sign - positive or negative
 		double leftSign = Math.abs(xbox.getLeftY()) / xbox.getLeftY();
 		double rightSign = Math.abs(xbox.getRightY()) / xbox.getRightY();
-		leftSign = leftSign * (1.0 - (0.5 * xbox.getLeftTrigger()));
-		rightSign = rightSign * (1.0 - (0.5 * xbox.getRightTrigger()));
+//		leftSign = leftSign * (1.0 - (0.5 * xbox.getLeftTrigger()));
+//		rightSign = rightSign * (1.0 - (0.5 * xbox.getRightTrigger()));
 
 		driveTalon[0].set(leftMove * leftSign);
-		driveTalon[2].set(rightMove * rightSign);
+		driveTalon[2].set(-1. * rightMove * rightSign);
 	}
-	
+
 	void pistonControl()
 	{
 		if (joystick.getRawButton(2))
@@ -204,7 +215,7 @@ public class Robot extends SampleRobot
 	{
 		TKOLogger.getInstance().start();
 		compressor.start();
-		
+
 		gearboxPiston.set(Value.kForward);
 		intakePiston.set(Value.kForward);
 		armPiston.set(Value.kForward);

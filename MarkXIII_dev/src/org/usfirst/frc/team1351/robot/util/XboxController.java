@@ -100,15 +100,23 @@ public class XboxController
 		return xbox.getRawButton(8);
 	}
 	
-	//TODO these names whyyyy
+	/*
+	 * Weak vibration motor for the xbox controller
+	 */
 	public void vibrateLight(float value) {
 		xbox.setRumble(RumbleType.kLeftRumble, value);
 	}
 	
+	/*
+	 * Strong vibration motor for the xbox controller. 
+	 */
 	public void vibrateStrong(float value) {
 		xbox.setRumble(RumbleType.kRightRumble, value);
 	}
 	
+	/*
+	 * Stops both rumble motors, strong and weak 
+	 */
 	public void stopRumble() {
 		xbox.setRumble(RumbleType.kLeftRumble, 0);
 		xbox.setRumble(RumbleType.kRightRumble, 0);

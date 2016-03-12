@@ -70,9 +70,9 @@ public class TKODrive implements Runnable
 	{
 		try
 		{
-			// Get the squared inputs from xBox controller
-			double leftMove = Math.pow(TKOHardware.getXboxController().getLeftY(), 2);
-			double rightMove = Math.pow(TKOHardware.getXboxController().getRightY(), 2);
+			// Get the squared inputs from xBox controller - actually x^4 
+			double leftMove = Math.pow(TKOHardware.getXboxController().getLeftY(), 4);
+			double rightMove = Math.pow(TKOHardware.getXboxController().getRightY(), 4);
 
 			// Averages the value so it will move more smoothly hopefully
 			if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
@@ -87,6 +87,10 @@ public class TKODrive implements Runnable
 			leftSign = leftSign * (1.0 - (0.5 * TKOHardware.getXboxController().getLeftTrigger()));
 			rightSign = rightSign * (1.0 - (0.5 * TKOHardware.getXboxController().getRightTrigger()));
 
+			if(reverse) {
+				leftSign *= -1; 
+				rightSign *= -1; 
+			}
 			setLeftRightMotorOutputsPercentVBus(leftMove * leftSign, rightMove * rightSign);
 		}
 		catch (TKOException e)
@@ -121,6 +125,7 @@ public class TKODrive implements Runnable
 		creep = b;
 	}
 
+	private boolean reverse = false; 
 	@Override
 	public void run()
 	{
@@ -139,6 +144,8 @@ public class TKODrive implements Runnable
 				if(TKOHardware.getLeftDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD || TKOHardware.getRightDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD) {
 					TKOHardware.getXboxController().vibrateStrong(1.f);
 				}
+				if(TKOHardware.getXboxController().getButtonA()) 
+					reverse = !reverse; 
 			}
 		}
 		catch (Exception e)
