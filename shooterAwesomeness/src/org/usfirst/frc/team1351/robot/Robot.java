@@ -39,12 +39,13 @@ public class Robot extends SampleRobot
 	PowerDistributionPanel pdp;
 	Joystick joystick;
 	XboxController xbox;
+	Joystick joy2; 
 	
 
 	double rpmMax = 0.0;
 	double PIDsetpoint = 0.0;
-	double speed = 0.0;
-	double incrementer = 0.0;
+	double speed = 7250.0;
+	double incrementer = 200.0;
 
 	long lastShift;
 	int logSetting = 0;
@@ -62,6 +63,7 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Shooter I: ", 0.);
 		SmartDashboard.putNumber("Shooter D: ", 0.);
 
+		joy2 = new Joystick(3); 
 		shooterTalonEnc = new CANTalon(4);
 		shooterTalonEnc.changeControlMode(TalonControlMode.Speed);
 		shooterTalonEnc.setP(SmartDashboard.getNumber("Shooter P: "));
@@ -147,30 +149,40 @@ public class Robot extends SampleRobot
 			PIDsetpoint -= inc;
 		}
 		shooterTalonEnc.set(PIDsetpoint);
-		if(ballSwitch.get()) {
-			conveyorTalon.set(joystick.getRawAxis(2));
-			buttonActivated = System.currentTimeMillis(); 
-		}
-		else if(System.currentTimeMillis() - 500. < buttonActivated){
-			conveyorTalon.set(.1); 
-		}
+		
+	}
+	
+	void conveyor() {
+//		if(ballSwitch.get() && xbox.getRightTrigger() > 0.5) {
+//			conveyorTalon.set(0.2);
+//			buttonActivated = System.currentTimeMillis(); 
+//		}
+//		else if(System.currentTimeMillis() - 500. < buttonActivated){
+//			conveyorTalon.set(.1); 
+//		}
+		if (joy2.getRawButton(5))
+			conveyorTalon.set(-.3);
+		else if (joy2.getRawButton(4))
+			conveyorTalon.set(.3);
+		else
+			conveyorTalon.set(0.);
 	}
 
 	void xboxDrive()
 	{
-		double leftMove = Math.pow(xbox.getLeftY(), 4);
-		double rightMove = Math.pow(xbox.getRightY(), 4);
+		double leftMove = Math.pow(xbox.getRightY(), 2);
+		double rightMove = Math.pow(xbox.getLeftY(), 2);
 
 		// Averages the value so it will move more smoothly hopefully
-		if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
-		{
-			leftMove = (leftMove + rightMove) / 2;
-			rightMove = leftMove;
-		}
+//		if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
+//		{
+//			leftMove = (leftMove + rightMove) / 2;
+//			rightMove = leftMove;
+//		}
 
 		// Just gets the sign - positive or negative
-		double leftSign = Math.abs(xbox.getLeftY()) / xbox.getLeftY();
-		double rightSign = Math.abs(xbox.getRightY()) / xbox.getRightY();
+		double leftSign = Math.abs(xbox.getRightY()) / xbox.getRightY();
+		double rightSign = Math.abs(xbox.getLeftY()) / xbox.getLeftY();
 //		leftSign = leftSign * (1.0 - (0.5 * xbox.getLeftTrigger()));
 //		rightSign = rightSign * (1.0 - (0.5 * xbox.getRightTrigger()));
 
@@ -214,7 +226,8 @@ public class Robot extends SampleRobot
 	public void operatorControl()
 	{
 		TKOLogger.getInstance().start();
-		compressor.start();
+//		compressor.start();
+		rpmMax = 0.;
 
 		gearboxPiston.set(Value.kForward);
 		intakePiston.set(Value.kForward);
@@ -224,6 +237,7 @@ public class Robot extends SampleRobot
 		{
 			xboxDrive();
 			pistonControl();
+			conveyor();
 
 			logSetting = (int) SmartDashboard.getNumber("Log setting: ");
 			shooterTalonEnc.setP(SmartDashboard.getNumber("Shooter P: "));
@@ -232,7 +246,13 @@ public class Robot extends SampleRobot
 
 			speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
 			incrementer = SmartDashboard.getNumber("Incrementer: ");
-			incrementerSpinUP(speed, incrementer);
+			if(joystick.getTrigger()) {
+				shooterTalonEnc.enableControl();
+				incrementerSpinUP(speed, incrementer);
+			}
+			else {
+				shooterTalonEnc.disableControl();
+			}
 
 			SmartDashboard.putNumber("Current RPM: ", (shooterTalonEnc.getSpeed() * (1024. / 6000.)));
 			SmartDashboard.putNumber("Max RPM: ", rpmMax);

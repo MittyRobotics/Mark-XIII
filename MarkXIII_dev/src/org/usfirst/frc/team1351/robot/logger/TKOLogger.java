@@ -20,7 +20,7 @@ public class TKOLogger implements Runnable
 	private PrintWriter m_LogFile, m_DataLogFile;
 	private static TKOLogger m_Instance = null;
 	public TKOThread loggerThread = null;
-	private String directory = "/home/lvuser/";
+	private String directory = "/home/lvuser/"; //TODO fix this
 	private String logFileName = "log";
 	private String dataDumpFileName = "data";
 	public long startTime;

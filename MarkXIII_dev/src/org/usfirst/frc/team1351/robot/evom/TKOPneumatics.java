@@ -194,11 +194,11 @@ public class TKOPneumatics implements Runnable
 			{
 				pistonControl();
 
-				/*if (TKOHardware.getXboxController().getButtonB())
+				if (TKOHardware.getXboxController().getButtonB())
 					TKOArm.getInstance().breachPortcullis();
 
 				if (TKOHardware.getXboxController().getButtonY())
-					TKOArm.getInstance().breachCheval();*/
+					TKOArm.getInstance().breachCheval();
 
 				synchronized (pneuThread)
 				{

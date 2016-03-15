@@ -171,7 +171,8 @@ public class TKOVision implements Runnable
 		// TKO pre-programs its own exceptions:
 		// "This file does not exist" if
 		// a certain file is called but was deleted, renamed, or never created
- catch (TKOException e) {
+		catch (TKOException e)
+		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -201,19 +202,23 @@ public class TKOVision implements Runnable
 
 		double heights = table.getNumber("height", def);
 		System.out.print("height: ");
-		
-			System.out.print(height + ", ");
-			SmartDashboard.putNumber("Height", height);
+
+		System.out.print(height + ", ");
+		SmartDashboard.putNumber("Height", height);
 
 		double widths = table.getNumber("width", def);
 		System.out.print("width: ");
 
-			System.out.print(widths + ", ");
-			SmartDashboard.putNumber("Width", widths);
+		System.out.print(widths + ", ");
+		SmartDashboard.putNumber("Width", widths);
 
+		SmartDashboard.putNumber("Height Distance of Robot" , heightDistance());
+		SmartDashboard.putNumber("Width Distance of Robot", widthDistance());
+		SmartDashboard.putNumber("Angle of Robot to Target", turnAngle());
+		
 		tarCenterToEdge = centerX;
 		targetPixelWidth = widths;
-		targetPixelHeight = heights; 
+		targetPixelHeight = heights;
 	}
 
 	/*
@@ -233,7 +238,7 @@ public class TKOVision implements Runnable
 
 	double tarCenterToEdge = 0; // I think
 	double targetPixelWidth = 0; // To be set by values from the network tables
-	double targetPixelHeight = 0; 
+	double targetPixelHeight = 0;
 
 	double getFloorDistance()
 	{
@@ -247,19 +252,22 @@ public class TKOVision implements Runnable
 		cameraAngle = ((targetWidth * Math.abs((imageWidth / 2) - tarCenterToEdge)) / (targetPixelWidth * distance));
 		return cameraAngle;
 	}
-	
-	//Original Equation: d = wR/2ntan(a/2)
-	double heightDistance() {
-		return 9488.347/targetPixelHeight;
+
+	// Original Equation: d = wR/2ntan(a/2)
+	double heightDistance()
+	{
+		return 9488.347 / targetPixelHeight;
 	}
-	
-	double widthDistance() {
-		return 13121.945/targetPixelWidth;
+
+	double widthDistance()
+	{
+		return 13121.945 / targetPixelWidth;
 	}
-	
-	//Original Equation: theta = arcsin(((2x/R)-1)tan(a/2))
-	double turnAngle() {
-		double theta = Math.asin(((0.488*tarCenterToEdge) - 156.074)/320);
+
+	// Original Equation: theta = arcsin(((2x/R)-1)tan(a/2))
+	double turnAngle()
+	{
+		double theta = Math.asin(((0.488 * tarCenterToEdge) - 156.074) / 320);
 		return theta;
 	}
 

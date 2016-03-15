@@ -44,7 +44,8 @@ public class StateMachine implements Runnable
 	public TKOThread stateThread = null;
 	private static StateMachine m_Instance = null;
 
-	public static double speed = 0.0;
+	public static double porkyUpSpeed = 12500.0;
+	public static double porkyDownSpeed = 10000.0; 
 	public static double incrementer = 0.0;
 	private boolean logging = false;
 
@@ -95,7 +96,8 @@ public class StateMachine implements Runnable
 //		SmartDashboard.putBoolean("Shooter Switch: ", false);
 		
 		// TODO where to put this?
-		SmartDashboard.putNumber("Speed: ", speed * Definitions.TICKS_TO_REVOLUTIONS);
+		SmartDashboard.putNumber("Porky Up Speed: ", porkyUpSpeed * Definitions.TICKS_TO_REVOLUTIONS);
+		SmartDashboard.putNumber("Porky Down Speed: ", porkyDownSpeed);
 		SmartDashboard.putNumber("Incrementer: ", incrementer);
 	}
 
@@ -151,7 +153,8 @@ public class StateMachine implements Runnable
 		{
 			while (stateThread.isThreadRunning())
 			{	
-				speed = (Definitions.REVOLUTIONS_TO_TICKS) * SmartDashboard.getNumber("Speed: ");
+				porkyUpSpeed = SmartDashboard.getNumber("Porky Up Speed: ");
+				porkyDownSpeed = SmartDashboard.getNumber("Porky Down Speed: ");
 				incrementer = SmartDashboard.getNumber("Incrementer: ");
 				
 				data.curState = runState(data.curState, data);
