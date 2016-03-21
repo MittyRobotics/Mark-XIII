@@ -14,6 +14,7 @@ import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOLEDArduino;
 import org.usfirst.frc.team1351.robot.util.TKOTalonSafety;
+import org.usfirst.frc.team1351.robot.vision.TKOVision;
 
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Timer;
@@ -42,11 +43,17 @@ public class Robot extends SampleRobot
 		autonChooser.addObject("Pickup, Drive", new Integer(2));
 		autonChooser.addObject("Pickup, Turn, Drive", new Integer(3));
 		SmartDashboard.putData("Auton chooser", autonChooser);
-		
+
 		SmartDashboard.putNumber("Shooter P: ", 0.200);
 		SmartDashboard.putNumber("Shooter I: ", 0.);
 		SmartDashboard.putNumber("Shooter D: ", 0.);
-		
+
+		SmartDashboard.putNumber("Drive P: ", 0.5);
+		SmartDashboard.putNumber("Drive I: ", 0);
+		SmartDashboard.putNumber("Drive D: ", 0);
+		SmartDashboard.putNumber("Drive distance: ", 0);
+		SmartDashboard.putNumber("Turn angle: ", 0);
+
 		try
 		{
 			SmartDashboard.putBoolean("Ball switch", !TKOHardware.getSwitch(0).get());
@@ -69,6 +76,18 @@ public class Robot extends SampleRobot
 	public void autonomous()
 	{
 		System.out.println("Enabling autonomous!");
+		// TODO Remove these parts
+		try
+		{
+			TKOHardware.getRightDrive().reverseSensor(false);
+
+			TKOHardware.getRightDrive().reverseOutput(false);
+		}
+		catch (TKOException e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		TKOLogger.getInstance().start();
 		// TKODataReporting.getInstance().start();
@@ -80,7 +99,7 @@ public class Robot extends SampleRobot
 		Molecule molecule = new Molecule();
 		molecule.clear();
 
-		double distance = SmartDashboard.getNumber("Drive distance: ");
+		double distance = SmartDashboard.getNumber("Drive distance: ") * Definitions.TICKS_PER_INCH;
 		double angle = SmartDashboard.getNumber("Turn angle: ");
 
 		if (autonChooser.getSelected().equals(0))
@@ -89,19 +108,8 @@ public class Robot extends SampleRobot
 		}
 		else if (autonChooser.getSelected().equals(1))
 		{
-			molecule.add(new DriveAtom(distance));
-			molecule.add(new GyroTurnAtom(angle));
-		}
-		else if (autonChooser.getSelected().equals(2))
-		{
 			molecule.add(new PickupAtom());
 			molecule.add(new DriveAtom(distance));
-		}
-		else if (autonChooser.getSelected().equals(3))
-		{
-			molecule.add(new PickupAtom());
-			molecule.add(new DriveAtom(distance));
-			molecule.add(new GyroTurnAtom(angle));
 		}
 		else
 		{
@@ -123,12 +131,24 @@ public class Robot extends SampleRobot
 		{
 			e.printStackTrace();
 		}
+		// while(isEnabled()) {
+		// try
+		// {
+		// System.out.println("Left Side: " + TKOHardware.getLeftDrive().getPosition() + "   Right Side: " +
+		// TKOHardware.getRightDrive().getPosition());
+		// }
+		// catch (TKOException e)
+		// {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
+		// }
 	}
 
 	public void operatorControl()
 	{
 		System.out.println("Enabling operator control!");
-		
+
 		TKODrive.getInstance().start();
 		TKODrive.getInstance().isCreep(false);
 		TKOPneumatics.getInstance().start();
@@ -136,12 +156,13 @@ public class Robot extends SampleRobot
 		TKOConveyor.getInstance().start();
 		TKOConveyor.getInstance().setManual(true);
 		TKOLogger.getInstance().start();
-		
+		// TKOVision.getInstance().start();
+
 		while (isEnabled() && isOperatorControl())
 		{
 			Timer.delay(0.1);
 		}
-		
+
 		try
 		{
 			TKOLogger.getInstance().stop();

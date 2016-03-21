@@ -14,7 +14,7 @@ public class Definitions
 {
 	// Autonomous constants
 
-	public static final double TICKS_PER_INCH = 332.5020781;
+	public static final double TICKS_PER_INCH = 249.3765586; //332.5020781; This is for 6inches with West Coast DS Stock Shifters//TODO Update this value 
 	public static final double AUTON_DRIVE_P = 0.370; // .5
 	public static final double AUTON_DRIVE_I = -0.1; // -0.1
 	public static final double AUTON_DRIVE_D = 0.0;
@@ -36,7 +36,7 @@ public class Definitions
 
 	public static final CANTalon.FeedbackDevice DRIVE_ENCODER_TYPE = CANTalon.FeedbackDevice.QuadEncoder;
 	public static final CANTalon.FeedbackDevice DEF_ENCODER_TYPE = CANTalon.FeedbackDevice.QuadEncoder;
-	public static final CANTalon.TalonControlMode DRIVE_TALONS_NORMAL_CONTROL_MODE = CANTalon.TalonControlMode.Current;
+	public static final CANTalon.TalonControlMode DRIVE_TALONS_NORMAL_CONTROL_MODE = CANTalon.TalonControlMode.PercentVbus;
 
 	public static final double DRIVE_P = 3.5;
 	public static final double DRIVE_I = 0.01;
@@ -70,7 +70,7 @@ public class Definitions
 	public static final int NUM_FLY_TALONS = 2;
 //	public static final int NUM_SPIKES = 3;
 	public static final int NUM_CONVEYOR_TALONS = 3; 
-	public static final int ALL_TALONS = 0; // TODO fix this
+	public static final int ALL_TALONS = NUM_DRIVE_TALONS + NUM_FLY_TALONS + NUM_CONVEYOR_TALONS;
 
 	public static final int NUM_ENCODERS = 3;
 	public static final int NUM_JOYSTICKS = 4;
@@ -93,7 +93,7 @@ public class Definitions
 	public static final double LIFT_CALIBRATION_POWER = .4;
 	public static final int LIFT_CONTROL_STICK = 3;
 
-	public static final CANTalon.FeedbackDevice FLY_ENCODER_TYPE = CANTalon.FeedbackDevice.QuadEncoder;
+	public static final CANTalon.FeedbackDevice FLY_ENCODER_TYPE = CANTalon.FeedbackDevice.CtreMagEncoder_Relative;
 	public static final int LIFT_GRIPPER_SWITCH = 2;
 
 	public static final double SHOOTER_kP = 0.2;
@@ -125,18 +125,12 @@ public class Definitions
 	public static final DoubleSolenoid.Value SHIFTER_LOW = DoubleSolenoid.Value.kForward;
 	public static final DoubleSolenoid.Value SHIFTER_HIGH = DoubleSolenoid.Value.kReverse;
 
-	public static final int SHIFTER_A = 2; // drive train shifting piston
-	public static final int SHIFTER_B = 3;
-	public static final int FLYWHEEL_A = 0;
-	public static final int FLYWHEEL_B = 1;
-	public static final int INTAKE_A = 0;
-	public static final int INTAKE_B = 1;
-	public static final int D_LIFT_A = 0;
-	public static final int D_LIFT_B = 1;
-	public static final int S_LIFT_A = 0;
-	public static final int S_LIFT_B = 1;
-	public static final int PORTCULLIS_A = 0;
-	public static final int PORTCULLIS_B = 1;
+	public static final int SHIFTER_A = 0; // drive train shifting piston
+	public static final int SHIFTER_B = 1;
+	public static final int PORKY_A = 2;
+	public static final int PORKY_B = 3;
+	public static final int INTAKE_A = 4;
+	public static final int INTAKE_B = 5;
 
 	// Thread definitions
 

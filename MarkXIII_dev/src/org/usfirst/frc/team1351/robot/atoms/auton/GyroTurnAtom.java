@@ -39,7 +39,8 @@ public class GyroTurnAtom extends Atom
 	{
 		try
 		{
-			TKOHardware.autonInit(p, i, d);
+			TKOHardware.autonInit(p, i, d); //Only here to finish off the other settings, also reminder ask ben whyyyyy 
+			TKOHardware.configDriveTalons(p, i, d, TalonControlMode.PercentVbus);
 			gyro = TKOHardware.getGyro();
 			gyro.reset();
 			pid = new PIDController(p, i, d, gyro, TKOHardware.getLeftDrive());

@@ -7,7 +7,10 @@ import org.usfirst.frc.team1351.robot.util.TKORuntimeException;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
-
+/**
+ * TODO see why only one side turns, at the very least we need to be able to drive in a straight line 
+ * 
+*/ 
 public class TKODrive implements Runnable
 {
 	private static TKODrive m_Instance = null;
@@ -143,9 +146,18 @@ public class TKODrive implements Runnable
 				}
 				if(TKOHardware.getLeftDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD || TKOHardware.getRightDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD) {
 					TKOHardware.getXboxController().vibrateStrong(1.f);
+				} else {
+					TKOHardware.getXboxController().stopRumble();
 				}
 				if(TKOHardware.getXboxController().getButtonA()) 
 					reverse = !reverse; 
+				if(TKOHardware.getXboxController().getStartButton()) {
+					TKOHardware.getRightDrive().enableBrakeMode(true);
+					TKOHardware.getLeftDrive().enableBrakeMode(true);
+				} else {
+					TKOHardware.getRightDrive().enableBrakeMode(false);
+					TKOHardware.getLeftDrive().enableBrakeMode(false);
+				}
 			}
 		}
 		catch (Exception e)

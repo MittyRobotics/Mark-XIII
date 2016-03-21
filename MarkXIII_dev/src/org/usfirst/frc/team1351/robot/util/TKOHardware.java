@@ -393,9 +393,10 @@ public class TKOHardware
 		TKOHardware.getLeftDrive().reverseOutput(false);
 		TKOHardware.getRightDrive().reverseOutput(true);
 		TKOHardware.getLeftDrive().reverseSensor(true);
-		TKOHardware.getRightDrive().reverseSensor(false);
-		TKOHardware.getLeftDrive().enableBrakeMode(true);
-		TKOHardware.getRightDrive().enableBrakeMode(true);
+		TKOHardware.getRightDrive().reverseSensor(true);
+		//TODO return this to true 
+		TKOHardware.getLeftDrive().enableBrakeMode(false);
+		TKOHardware.getRightDrive().enableBrakeMode(false);
 		TKOHardware.getLeftDrive().setPosition(0); // resets encoder
 		TKOHardware.getRightDrive().setPosition(0);
 		TKOHardware.getLeftDrive().ClearIaccum(); // stops bounce

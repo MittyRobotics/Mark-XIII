@@ -100,11 +100,11 @@ public class TKOArm
 		try
 		{
 			// arms on the back
-			distance = TKOHardware.getLeftDrive().getPosition() - 795.75; // This helps account for the current position on the encoders
-			// TODO determine whether or not to zero the encoders before doing this - would it affect anything? Would make this easier
 			incrementer = Definitions.DRIVE_ATOM_INCREMENTER;
 			threshold = 75; // we can be within approx. half an inch
 			TKOHardware.autonInit(p, i, d);
+			distance = TKOHardware.getLeftDrive().getPosition() + 120; // This helps account for the current position on the encoders
+			// TODO determine whether or not to zero the encoders before doing this - would it affect anything? Would make this easier
 			
 			while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() > distance)
 			{

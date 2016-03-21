@@ -13,13 +13,6 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-/**
- * TODO write new auton atoms
- * 
- * @author Ben
- *
- */
-
 public class Robot extends SampleRobot
 {
 	CANTalon shooterTalonEnc;
@@ -38,8 +31,8 @@ public class Robot extends SampleRobot
 	Compressor compressor;
 	PowerDistributionPanel pdp;
 	Joystick joystick;
-	XboxController xbox;
 	Joystick joy2; 
+	XboxController xbox;
 	
 
 	double rpmMax = 0.0;
@@ -59,7 +52,7 @@ public class Robot extends SampleRobot
 
 	public void robotInit()
 	{
-		SmartDashboard.putNumber("Shooter P: ", 0.200);
+		SmartDashboard.putNumber("Shooter P: ", 0.250);
 		SmartDashboard.putNumber("Shooter I: ", 0.);
 		SmartDashboard.putNumber("Shooter D: ", 0.);
 
@@ -147,11 +140,15 @@ public class Robot extends SampleRobot
 		else if (PIDsetpoint > upperError)
 		{
 			PIDsetpoint -= inc;
+		} else if(PIDsetpoint > lowerError && PIDsetpoint < upperError) {
+			PIDsetpoint = speedTarget; 
 		}
 		shooterTalonEnc.set(PIDsetpoint);
+		SmartDashboard.putNumber("PID Shooter Setpoint", PIDsetpoint * (1024. / 6000.));
 		
 	}
 	
+	long lastThingy = 0; 
 	void conveyor() {
 //		if(ballSwitch.get() && xbox.getRightTrigger() > 0.5) {
 //			conveyorTalon.set(0.2);
@@ -160,12 +157,28 @@ public class Robot extends SampleRobot
 //		else if(System.currentTimeMillis() - 500. < buttonActivated){
 //			conveyorTalon.set(.1); 
 //		}
-		if (joy2.getRawButton(5))
-			conveyorTalon.set(-.3);
-		else if (joy2.getRawButton(4))
-			conveyorTalon.set(.3);
-		else
-			conveyorTalon.set(0.);
+//		if (joy2.getRawButton(5))
+//			conveyorTalon.set(-.3);
+//		else if (joy2.getRawButton(4))
+//			conveyorTalon.set(.3);
+//		else
+//			conveyorTalon.set(0.);
+		
+		if(joy2.getTrigger() && ballSwitch.get()) {
+			conveyorTalon.set(0.3); 
+			lastThingy = System.currentTimeMillis(); 
+		}
+		else if(System.currentTimeMillis() - lastThingy <= 200) {
+			conveyorTalon.set(-0.2);
+		} else if(joy2.getRawButton(4)) {
+			conveyorTalon.set(0.3);
+		}
+		else if(joy2.getRawButton(5)) {
+			conveyorTalon.set(-0.90); 
+		}
+		else {
+			conveyorTalon.set(0.); 
+		}
 	}
 
 	void xboxDrive()
@@ -221,6 +234,20 @@ public class Robot extends SampleRobot
 				lastShift = System.currentTimeMillis();
 			}
 		}
+		if (xbox.getRightBumper())
+		{
+			if (System.currentTimeMillis() - lastShift > 250)
+			{
+				Value currVal = gearboxPiston.get();
+				Value newVal = currVal;
+				if (currVal == Value.kForward)
+					newVal = Value.kReverse;
+				else if (currVal == Value.kReverse)
+					newVal = Value.kForward;
+				gearboxPiston.set(newVal);
+				lastShift = System.currentTimeMillis();
+			}
+		}
 	}
 
 	public void operatorControl()
@@ -228,23 +255,38 @@ public class Robot extends SampleRobot
 		TKOLogger.getInstance().start();
 //		compressor.start();
 		rpmMax = 0.;
-
+		shooterTalon.clearIAccum();
+		shooterTalonEnc.clearIAccum();
+		PIDsetpoint = 0.; 
+		
 		gearboxPiston.set(Value.kForward);
 		intakePiston.set(Value.kForward);
 		armPiston.set(Value.kForward);
 
 		while (isOperatorControl() && isEnabled())
 		{
+			SmartDashboard.putBoolean("Ball Switch" , ballSwitch.get());
+			
 			xboxDrive();
 			pistonControl();
 			conveyor();
 
+			if(xbox.getButtonY()) {
+				for(int i = 0; i < driveTalon.length; i++) {
+					driveTalon[i].enableBrakeMode(true);
+				}
+			} else {
+				for(int i = 0; i < driveTalon.length; i++) {
+					driveTalon[i].enableBrakeMode(false);
+				}
+			}
+			
 			logSetting = (int) SmartDashboard.getNumber("Log setting: ");
 			shooterTalonEnc.setP(SmartDashboard.getNumber("Shooter P: "));
 			shooterTalonEnc.setI(SmartDashboard.getNumber("Shooter I: "));
 			shooterTalonEnc.setD(SmartDashboard.getNumber("Shooter D: "));
 
-			speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
+			speed = (6000. / 1024.) * SmartDashboard.getNumber("Speed: ");
 			incrementer = SmartDashboard.getNumber("Incrementer: ");
 			if(joystick.getTrigger()) {
 				shooterTalonEnc.enableControl();
@@ -260,6 +302,7 @@ public class Robot extends SampleRobot
 				rpmMax = shooterTalonEnc.getSpeed() * (1024. / 6000.);
 
 			log();
+			SmartDashboard.putNumber("Multiplier: ", ((speed * (1024. / 6000.)) / rpmMax));
 			Timer.delay(0.01);
 		}
 

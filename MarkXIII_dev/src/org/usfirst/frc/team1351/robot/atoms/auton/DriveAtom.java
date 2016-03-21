@@ -83,14 +83,19 @@ public class DriveAtom extends Atom
 			}
 
 			TKOHardware.getLeftDrive().set(distance);
+			System.out.println("Left has been set to: " + distance + " and is currently at: " + TKOHardware.getLeftDrive().getPosition());
 			TKOHardware.getRightDrive().set(distance);
 
 			double diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance);
 			while (diff > threshold && DriverStation.getInstance().isEnabled())
 			{
 				TKOLogger.getInstance().addMessage("NOT CLOSE ENOUGH TO TARGET DIST: " + diff);
+				System.out.println("NOT CLOSE ENOUGH TO TARGET DIST: " + diff + "Right Get at: " + TKOHardware.getRightDrive().getPosition());
+				diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance); 
 				Timer.delay(0.001);
 			}
+//			TKOHardware.getLeftDrive().disableControl();
+//			TKOHardware.getRightDrive().disableControl();
 
 		} catch (TKOException e1)
 		{

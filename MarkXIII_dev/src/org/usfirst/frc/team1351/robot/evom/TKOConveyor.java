@@ -141,7 +141,7 @@ public class TKOConveyor implements Runnable
 		try
 		{
 			TKOHardware.getConveyorTalon(2).enableControl();
-			TKOHardware.getConveyorTalon(2).set(0.75);
+			TKOHardware.getConveyorTalon(2).set(0.3);
 		}
 		catch (TKOException e)
 		{
@@ -154,7 +154,7 @@ public class TKOConveyor implements Runnable
 		try
 		{
 			TKOHardware.getConveyorTalon(2).enableControl();
-			TKOHardware.getConveyorTalon(2).set(-0.75);
+			TKOHardware.getConveyorTalon(2).set(-0.3);
 		}
 		catch (TKOException e)
 		{
