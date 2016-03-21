@@ -31,9 +31,8 @@ public class Robot extends SampleRobot
 	Compressor compressor;
 	PowerDistributionPanel pdp;
 	Joystick joystick;
-	Joystick joy2; 
+	Joystick joy2;
 	XboxController xbox;
-	
 
 	double rpmMax = 0.0;
 	double PIDsetpoint = 0.0;
@@ -42,8 +41,8 @@ public class Robot extends SampleRobot
 
 	long lastShift;
 	int logSetting = 0;
-	
-	long buttonActivated = 0; 
+
+	long buttonActivated = 0;
 
 	public Robot()
 	{
@@ -56,7 +55,7 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Shooter I: ", 0.);
 		SmartDashboard.putNumber("Shooter D: ", 0.);
 
-		joy2 = new Joystick(3); 
+		joy2 = new Joystick(3);
 		shooterTalonEnc = new CANTalon(4);
 		shooterTalonEnc.changeControlMode(TalonControlMode.Speed);
 		shooterTalonEnc.setP(SmartDashboard.getNumber("Shooter P: "));
@@ -105,7 +104,7 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Log setting: ", logSetting);
 
 		lastShift = System.currentTimeMillis();
-		buttonActivated = System.currentTimeMillis(); 
+		buttonActivated = System.currentTimeMillis();
 	}
 
 	public void disabled()
@@ -120,7 +119,7 @@ public class Robot extends SampleRobot
 
 	void log()
 	{
-		if (true) //TODO add log settings variable back 
+		if (true) // TODO add log settings variable back
 		{
 			TKOLogger.getInstance().addMessage("%8.2f\t%8.2f\t%8.2f\t%8.2f\t%8.2f%8.2f\t%8.2f",
 					DriverStation.getInstance().getBatteryVoltage(), shooterTalonEnc.getSpeed(),
@@ -140,44 +139,54 @@ public class Robot extends SampleRobot
 		else if (PIDsetpoint > upperError)
 		{
 			PIDsetpoint -= inc;
-		} else if(PIDsetpoint > lowerError && PIDsetpoint < upperError) {
-			PIDsetpoint = speedTarget; 
+		}
+		else if (PIDsetpoint > lowerError && PIDsetpoint < upperError)
+		{
+			PIDsetpoint = speedTarget;
 		}
 		shooterTalonEnc.set(PIDsetpoint);
 		SmartDashboard.putNumber("PID Shooter Setpoint", PIDsetpoint * (1024. / 6000.));
-		
+
 	}
-	
-	long lastThingy = 0; 
-	void conveyor() {
-//		if(ballSwitch.get() && xbox.getRightTrigger() > 0.5) {
-//			conveyorTalon.set(0.2);
-//			buttonActivated = System.currentTimeMillis(); 
-//		}
-//		else if(System.currentTimeMillis() - 500. < buttonActivated){
-//			conveyorTalon.set(.1); 
-//		}
-//		if (joy2.getRawButton(5))
-//			conveyorTalon.set(-.3);
-//		else if (joy2.getRawButton(4))
-//			conveyorTalon.set(.3);
-//		else
-//			conveyorTalon.set(0.);
-		
-		if(joy2.getTrigger() && ballSwitch.get()) {
-			conveyorTalon.set(0.3); 
-			lastThingy = System.currentTimeMillis(); 
+
+	long lastThingy = 0;
+
+	void conveyor()
+	{
+		// if(ballSwitch.get() && xbox.getRightTrigger() > 0.5) {
+		// conveyorTalon.set(0.2);
+		// buttonActivated = System.currentTimeMillis();
+		// }
+		// else if(System.currentTimeMillis() - 500. < buttonActivated){
+		// conveyorTalon.set(.1);
+		// }
+		// if (joy2.getRawButton(5))
+		// conveyorTalon.set(-.3);
+		// else if (joy2.getRawButton(4))
+		// conveyorTalon.set(.3);
+		// else
+		// conveyorTalon.set(0.);
+
+		if (joy2.getTrigger() && ballSwitch.get())
+		{
+			conveyorTalon.set(0.3);
+			lastThingy = System.currentTimeMillis();
 		}
-		else if(System.currentTimeMillis() - lastThingy <= 200) {
+		else if (System.currentTimeMillis() - lastThingy <= 200)
+		{
 			conveyorTalon.set(-0.2);
-		} else if(joy2.getRawButton(4)) {
+		}
+		else if (joy2.getRawButton(4))
+		{
 			conveyorTalon.set(0.3);
 		}
-		else if(joy2.getRawButton(5)) {
-			conveyorTalon.set(-0.90); 
+		else if (joy2.getRawButton(5))
+		{
+			conveyorTalon.set(-0.90);
 		}
-		else {
-			conveyorTalon.set(0.); 
+		else
+		{
+			conveyorTalon.set(0.);
 		}
 	}
 
@@ -187,17 +196,17 @@ public class Robot extends SampleRobot
 		double rightMove = Math.pow(xbox.getLeftY(), 2);
 
 		// Averages the value so it will move more smoothly hopefully
-//		if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
-//		{
-//			leftMove = (leftMove + rightMove) / 2;
-//			rightMove = leftMove;
-//		}
+		// if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
+		// {
+		// leftMove = (leftMove + rightMove) / 2;
+		// rightMove = leftMove;
+		// }
 
 		// Just gets the sign - positive or negative
 		double leftSign = Math.abs(xbox.getRightY()) / xbox.getRightY();
 		double rightSign = Math.abs(xbox.getLeftY()) / xbox.getLeftY();
-//		leftSign = leftSign * (1.0 - (0.5 * xbox.getLeftTrigger()));
-//		rightSign = rightSign * (1.0 - (0.5 * xbox.getRightTrigger()));
+		// leftSign = leftSign * (1.0 - (0.5 * xbox.getLeftTrigger()));
+		// rightSign = rightSign * (1.0 - (0.5 * xbox.getRightTrigger()));
 
 		driveTalon[0].set(leftMove * leftSign);
 		driveTalon[2].set(-1. * rightMove * rightSign);
@@ -253,34 +262,39 @@ public class Robot extends SampleRobot
 	public void operatorControl()
 	{
 		TKOLogger.getInstance().start();
-//		compressor.start();
+		// compressor.start();
 		rpmMax = 0.;
 		shooterTalon.clearIAccum();
 		shooterTalonEnc.clearIAccum();
-		PIDsetpoint = 0.; 
-		
+		PIDsetpoint = 0.;
+
 		gearboxPiston.set(Value.kForward);
 		intakePiston.set(Value.kForward);
 		armPiston.set(Value.kForward);
 
 		while (isOperatorControl() && isEnabled())
 		{
-			SmartDashboard.putBoolean("Ball Switch" , ballSwitch.get());
-			
+			SmartDashboard.putBoolean("Ball Switch", ballSwitch.get());
+
 			xboxDrive();
 			pistonControl();
 			conveyor();
 
-			if(xbox.getButtonY()) {
-				for(int i = 0; i < driveTalon.length; i++) {
+			if (xbox.getButtonY())
+			{
+				for (int i = 0; i < driveTalon.length; i++)
+				{
 					driveTalon[i].enableBrakeMode(true);
 				}
-			} else {
-				for(int i = 0; i < driveTalon.length; i++) {
+			}
+			else
+			{
+				for (int i = 0; i < driveTalon.length; i++)
+				{
 					driveTalon[i].enableBrakeMode(false);
 				}
 			}
-			
+
 			logSetting = (int) SmartDashboard.getNumber("Log setting: ");
 			shooterTalonEnc.setP(SmartDashboard.getNumber("Shooter P: "));
 			shooterTalonEnc.setI(SmartDashboard.getNumber("Shooter I: "));
@@ -288,11 +302,13 @@ public class Robot extends SampleRobot
 
 			speed = (6000. / 1024.) * SmartDashboard.getNumber("Speed: ");
 			incrementer = SmartDashboard.getNumber("Incrementer: ");
-			if(joystick.getTrigger()) {
+			if (joystick.getTrigger())
+			{
 				shooterTalonEnc.enableControl();
 				incrementerSpinUP(speed, incrementer);
 			}
-			else {
+			else
+			{
 				shooterTalonEnc.disableControl();
 			}
 

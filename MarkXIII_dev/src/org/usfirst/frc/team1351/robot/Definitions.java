@@ -14,8 +14,9 @@ public class Definitions
 {
 	// Autonomous constants
 
-	public static final double TICKS_PER_INCH = 249.3765586; //332.5020781; This is for 6inches with West Coast DS Stock Shifters//TODO Update this value 
-	public static final double AUTON_DRIVE_P = 0.370; // .5
+	public static final double TICKS_PER_INCH = 112.21945137; // WARNING: bullshit value
+	//332.5020781 for 6"
+	public static final double AUTON_DRIVE_P = 0.2; // .370
 	public static final double AUTON_DRIVE_I = -0.1; // -0.1
 	public static final double AUTON_DRIVE_D = 0.0;
 	public static final double AUTON_GYRO_TURN_P = 0.025;

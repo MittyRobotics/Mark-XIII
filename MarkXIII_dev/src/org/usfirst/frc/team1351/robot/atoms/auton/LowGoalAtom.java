@@ -8,9 +8,9 @@ import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
-public class PickupAtom extends Atom
+public class LowGoalAtom extends Atom
 {
-	public PickupAtom()
+	public LowGoalAtom()
 	{
 
 	}
@@ -24,22 +24,18 @@ public class PickupAtom extends Atom
 	@Override
 	public void execute()
 	{
-		System.out.println("Executing pickup atom");
+		System.out.println("Executing low goal atom");
 		try
 		{
-			long timeout = 0;
-//			TKOHardware.getDSolenoid(2).set(Value.kForward);
-			TKOHardware.configDriveTalons(0., 0., 0., TalonControlMode.PercentVbus);
-			while (TKOHardware.getSwitch(0).get())
-			{
-				TKOHardware.getRightDrive().set(0.35);
-				TKOHardware.getLeftDrive().set(0.35); 
-				TKOConveyor.getInstance().startConveyorForward();
-				timeout = System.currentTimeMillis(); 
-			}
-			while (System.currentTimeMillis() - timeout <= 200)
+			long timeout = System.currentTimeMillis();
+			while (!TKOHardware.getSwitch(0).get())	
 			{
 				TKOConveyor.getInstance().startConveyorBackward();
+				timeout = System.currentTimeMillis();
+			}
+			while (System.currentTimeMillis() - timeout < 2000)
+			{
+				
 			}
 			TKOConveyor.getInstance().stopConveyor();
 		}

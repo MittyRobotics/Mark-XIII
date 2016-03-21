@@ -39,18 +39,22 @@ public class Robot extends SampleRobot
 
 		autonChooser = new SendableChooser();
 		autonChooser.addDefault("Drive", new Integer(0));
-		autonChooser.addObject("Drive, Turn", new Integer(1));
-		autonChooser.addObject("Pickup, Drive", new Integer(2));
-		autonChooser.addObject("Pickup, Turn, Drive", new Integer(3));
+		autonChooser.addObject("Intake, Drive", new Integer(1));
+		autonChooser.addObject("Intake, Drive, Turn, Shoot", new Integer(2));
+		autonChooser.addObject("Portcullis", new Integer(3));
+		autonChooser.addObject("Portcullis, Shoot", new Integer(4));
+		autonChooser.addObject("Chival", new Integer(5));
+		autonChooser.addObject("Chival, Shoot", new Integer(6));
+		autonChooser.addObject("Intake, Low goal", new Integer(7));
 		SmartDashboard.putData("Auton chooser", autonChooser);
 
-		SmartDashboard.putNumber("Shooter P: ", 0.200);
-		SmartDashboard.putNumber("Shooter I: ", 0.);
-		SmartDashboard.putNumber("Shooter D: ", 0.);
+		SmartDashboard.putNumber("Shooter P: ", Definitions.SHOOTER_kP);
+		SmartDashboard.putNumber("Shooter I: ", Definitions.SHOOTER_kI);
+		SmartDashboard.putNumber("Shooter D: ", Definitions.SHOOTER_kD);
 
-		SmartDashboard.putNumber("Drive P: ", 0.5);
-		SmartDashboard.putNumber("Drive I: ", 0);
-		SmartDashboard.putNumber("Drive D: ", 0);
+		SmartDashboard.putNumber("Drive P: ", Definitions.AUTON_DRIVE_P);
+		SmartDashboard.putNumber("Drive I: ", Definitions.AUTON_DRIVE_I);
+		SmartDashboard.putNumber("Drive D: ", Definitions.AUTON_DRIVE_D);
 		SmartDashboard.putNumber("Drive distance: ", 0);
 		SmartDashboard.putNumber("Turn angle: ", 0);
 
@@ -76,18 +80,9 @@ public class Robot extends SampleRobot
 	public void autonomous()
 	{
 		System.out.println("Enabling autonomous!");
-		// TODO Remove these parts
-		try
-		{
-			TKOHardware.getRightDrive().reverseSensor(false);
 
-			TKOHardware.getRightDrive().reverseOutput(false);
-		}
-		catch (TKOException e1)
-		{
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+//		TKOHardware.getRightDrive().reverseSensor(false);
+//		TKOHardware.getRightDrive().reverseOutput(false);
 
 		TKOLogger.getInstance().start();
 		// TKODataReporting.getInstance().start();
@@ -108,8 +103,58 @@ public class Robot extends SampleRobot
 		}
 		else if (autonChooser.getSelected().equals(1))
 		{
-			molecule.add(new PickupAtom());
+			molecule.add(new IntakeAndDrive(distance));
 			molecule.add(new DriveAtom(distance));
+		}
+		else if (autonChooser.getSelected().equals(2))
+		{
+			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new GyroTurnAtom(angle));
+			molecule.add(new ShootAtom());
+		}
+		else if (autonChooser.getSelected().equals(3))
+		{
+			molecule.add(new PorkyAtom(false));
+			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAtom());
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new PorkyAtom(true));
+			molecule.add(new DriveAtom(distance));
+		}
+		else if (autonChooser.getSelected().equals(4))
+		{
+			molecule.add(new PorkyAtom(false));
+			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAtom());
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new PorkyAtom(true));
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new GyroTurnAtom(angle));
+			molecule.add(new ShootAtom());
+		}
+		else if (autonChooser.getSelected().equals(5))
+		{
+			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAtom());
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new PorkyAtom(false));
+			molecule.add(new DriveAtom(distance));
+		}
+		else if (autonChooser.getSelected().equals(6))
+		{
+			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAtom());
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new PorkyAtom(false));
+			molecule.add(new DriveAtom(distance));
+			molecule.add(new GyroTurnAtom(angle));
+			molecule.add(new ShootAtom());
+		}
+		else if (autonChooser.getSelected().equals(7))
+		{
+			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new LowGoalAtom());
 		}
 		else
 		{

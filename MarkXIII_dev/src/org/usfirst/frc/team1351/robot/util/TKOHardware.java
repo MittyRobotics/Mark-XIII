@@ -226,27 +226,15 @@ public class TKOHardware
 		if (doubleSolenoids[0] == null)
 			doubleSolenoids[0] = new DoubleSolenoid(Definitions.SHIFTER_A, Definitions.SHIFTER_B);
 		if (doubleSolenoids[1] == null)
-			doubleSolenoids[1] = new DoubleSolenoid(Definitions.FLYWHEEL_A, Definitions.FLYWHEEL_B);
+			doubleSolenoids[1] = new DoubleSolenoid(Definitions.INTAKE_A, Definitions.INTAKE_B);
 		if (doubleSolenoids[2] == null)
-			doubleSolenoids[2] = new DoubleSolenoid(Definitions.INTAKE_A, Definitions.INTAKE_B);
-		if (doubleSolenoids[3] == null)
-			doubleSolenoids[3] = new DoubleSolenoid(Definitions.D_LIFT_A, Definitions.D_LIFT_B);
-		if (solenoids[0] == null)
-			solenoids[0] = new Solenoid(Definitions.S_LIFT_A, Definitions.S_LIFT_B);
-		if (solenoids[1] == null)
-			solenoids[1] = new Solenoid(Definitions.PORTCULLIS_A, Definitions.PORTCULLIS_B);
-
-		// if (limitSwitches[0] == null)
-		// limitSwitches[0] = new DigitalInput(Definitions.LIFT_BOTTOM_OPTICAL_SWITCH);
-
+			doubleSolenoids[2] = new DoubleSolenoid(Definitions.PORKY_A, Definitions.PORKY_B);
 		if (compressor == null)
 			compressor = new Compressor(Definitions.PCM_ID);
 
 		if (gyro == null)
 		{
 			gyro = new ADXRS450_Gyro(Definitions.GYRO_SPI_PORT);
-			// gyro.initGyro();
-			// gyro.setSensitivity(7. / 1000.);
 			gyro.reset();
 			System.out.println("Gyro initialized: " + Timer.getFPGATimestamp());
 		}
@@ -254,8 +242,15 @@ public class TKOHardware
 		if (arduinoSignal == null)
 			arduinoSignal = new AnalogOutput(0);
 
+		if (limitSwitches[0] == null) // ball switch
+			limitSwitches[0] = new DigitalInput(0);
+		if (limitSwitches[1] == null) // intake switch
+			limitSwitches[1] = new DigitalInput(1);
+		if (limitSwitches[2] == null) // arm switch
+			limitSwitches[2] = new DigitalInput(2);
+		
 		configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
-//		configFlyTalons(Definitions.LIFT_P, Definitions.LIFT_I, Definitions.LIFT_D, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
+		configFlyTalons(Definitions.SHOOTER_kP, Definitions.SHOOTER_kI, Definitions.SHOOTER_kD, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
 		configConveyorTalons(Definitions.CONVEYOR_CONTROL_MODE);
 	}
 
