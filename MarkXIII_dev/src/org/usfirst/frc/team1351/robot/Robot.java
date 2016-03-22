@@ -55,8 +55,8 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Drive P: ", Definitions.AUTON_DRIVE_P);
 		SmartDashboard.putNumber("Drive I: ", Definitions.AUTON_DRIVE_I);
 		SmartDashboard.putNumber("Drive D: ", Definitions.AUTON_DRIVE_D);
-		SmartDashboard.putNumber("Drive distance: ", 0);
-		SmartDashboard.putNumber("Turn angle: ", 0);
+		SmartDashboard.putNumber("Drive distance: ", 0.);
+		SmartDashboard.putNumber("Turn angle: ", 0.);
 
 		try
 		{
@@ -103,52 +103,56 @@ public class Robot extends SampleRobot
 		}
 		else if (autonChooser.getSelected().equals(1))
 		{
-			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAndDrive(12.));
 			molecule.add(new DriveAtom(distance));
 		}
 		else if (autonChooser.getSelected().equals(2))
 		{
-			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAndDrive(12.));
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new GyroTurnAtom(angle));
+			// molecule.add(new VisionTurnAtom());
 			molecule.add(new ShootAtom());
 		}
 		else if (autonChooser.getSelected().equals(3))
 		{
 			molecule.add(new PorkyAtom(false));
-			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAndDrive(-12.));
 			molecule.add(new IntakeAtom());
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new PorkyAtom(true));
-			molecule.add(new DriveAtom(distance));
+			// TKOCreep?
+			molecule.add(new DriveAtom(60.));
 		}
 		else if (autonChooser.getSelected().equals(4))
 		{
 			molecule.add(new PorkyAtom(false));
-			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAndDrive(-12.));
 			molecule.add(new IntakeAtom());
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new PorkyAtom(true));
-			molecule.add(new DriveAtom(distance));
+			molecule.add(new DriveAtom(60.));
 			molecule.add(new GyroTurnAtom(angle));
+			// molecule.add(new VisionTurnAtom());
 			molecule.add(new ShootAtom());
 		}
 		else if (autonChooser.getSelected().equals(5))
 		{
-			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAndDrive(-12.));
 			molecule.add(new IntakeAtom());
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new PorkyAtom(false));
-			molecule.add(new DriveAtom(distance));
+			molecule.add(new DriveAtom(120.));
 		}
 		else if (autonChooser.getSelected().equals(6))
 		{
-			molecule.add(new IntakeAndDrive(distance));
+			molecule.add(new IntakeAndDrive(-12.));
 			molecule.add(new IntakeAtom());
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new PorkyAtom(false));
-			molecule.add(new DriveAtom(distance));
-			molecule.add(new GyroTurnAtom(angle));
+			molecule.add(new DriveAtom(120.));
+			molecule.add(new GyroTurnAtom(180.));
+			// molecule.add(new VisionTurnAtom());
 			molecule.add(new ShootAtom());
 		}
 		else if (autonChooser.getSelected().equals(7))
@@ -176,18 +180,6 @@ public class Robot extends SampleRobot
 		{
 			e.printStackTrace();
 		}
-		// while(isEnabled()) {
-		// try
-		// {
-		// System.out.println("Left Side: " + TKOHardware.getLeftDrive().getPosition() + "   Right Side: " +
-		// TKOHardware.getRightDrive().getPosition());
-		// }
-		// catch (TKOException e)
-		// {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// }
 	}
 
 	public void operatorControl()
