@@ -39,12 +39,13 @@ public class GyroTurnAtom extends Atom
 	{
 		try
 		{
-			TKOHardware.autonInit(p, i, d); //Only here to finish off the other settings, also reminder ask ben whyyyyy 
+			TKOHardware.autonInit(p, i, d); // Only here to finish off the other settings, also reminder ask ben whyyyyy
 			TKOHardware.configDriveTalons(p, i, d, TalonControlMode.PercentVbus);
 			gyro = TKOHardware.getGyro();
 			gyro.reset();
 			pid = new PIDController(p, i, d, gyro, TKOHardware.getLeftDrive());
-		} catch (TKOException e)
+		}
+		catch (TKOException e)
 		{
 			e.printStackTrace();
 		}
@@ -69,32 +70,31 @@ public class GyroTurnAtom extends Atom
 				{
 					pid.setSetpoint(pid.getSetpoint() + incrementer);
 					TKOHardware.getRightDrive().set(TKOHardware.getLeftDrive().get());
-					System.out.println("Left Position: " + TKOHardware.getLeftDrive().get()
-						+ "\t Right Position: " + TKOHardware.getRightDrive().get()
-						+ "\t PID Setpoint: " + pid.getSetpoint());
-					TKOLogger.getInstance().addMessage("Left Position: " + TKOHardware.getLeftDrive().get()
-						+ "\t Right Position: " + TKOHardware.getRightDrive().get()
-						+ "\t PID Setpoint: " + pid.getSetpoint());
+					System.out.println("LEFT GET: " + TKOHardware.getLeftDrive().get() + "\t RIGHT GET: "
+							+ TKOHardware.getRightDrive().get() + "\t Setpoint: " + pid.getSetpoint());
+					TKOLogger.getInstance().addMessage(
+							"LEFT GET: " + TKOHardware.getLeftDrive().get() + "\t RIGHT GET: " + TKOHardware.getRightDrive().get()
+									+ "\t Setpoint: " + pid.getSetpoint());
 					Timer.delay(0.001);
 				}
 			}
-			else
+			else if (angle < 0)
 			{
 				while (DriverStation.getInstance().isEnabled() && pid.getSetpoint() > angle)
 				{
 					pid.setSetpoint(pid.getSetpoint() - incrementer);
-					System.out.println("Left Position: " + TKOHardware.getLeftDrive().get()
-						+ "\t Right Position: " + TKOHardware.getRightDrive().get()
-						+ "\t PID Setpoint: " + pid.getSetpoint());
-					TKOLogger.getInstance().addMessage("Left Position: " + TKOHardware.getLeftDrive().get()
-						+ "\t Right Position: " + TKOHardware.getRightDrive().get()
-						+ "\t PID Setpoint: " + pid.getSetpoint());
+					TKOHardware.getRightDrive().set(TKOHardware.getLeftDrive().get());
+					System.out.println("LEFT GET: " + TKOHardware.getLeftDrive().get() + "\t RIGHT GET: "
+							+ TKOHardware.getRightDrive().get() + "\t Setpoint: " + pid.getSetpoint());
+					TKOLogger.getInstance().addMessage(
+							"LEFT GET: " + TKOHardware.getLeftDrive().get() + "\t RIGHT GET: " + TKOHardware.getRightDrive().get()
+									+ "\t Setpoint: " + pid.getSetpoint());
 					Timer.delay(0.001);
 				}
 			}
-			
+
 			pid.setSetpoint(angle);
-			
+
 			Timer t = new Timer();
 			t.reset();
 			t.start();
@@ -112,19 +112,18 @@ public class GyroTurnAtom extends Atom
 				}
 				TKOHardware.getRightDrive().changeControlMode(TalonControlMode.Follower);
 				TKOHardware.getRightDrive().set(TKOHardware.getLeftDrive().getDeviceID());
-				System.out.println("Target Angle: " + pid.getSetpoint()
-					+ "\t PID Error: " + pid.getError()
-					+ "\t Current angle: " + gyro.getAngle());
-				TKOLogger.getInstance().addMessage("Target Angle: " + pid.getSetpoint()
-					+ "\t PID Error: " + pid.getError()
-					+ "\t Current angle: " + gyro.getAngle());
+				System.out.println("Target Angle: " + pid.getSetpoint() + "\t PID Error: " + pid.getError() + "\t Current angle: "
+						+ gyro.getAngle());
+				TKOLogger.getInstance().addMessage(
+						"Target Angle: " + pid.getSetpoint() + "\t PID Error: " + pid.getError() + "\t Current angle: " + gyro.getAngle());
 				Timer.delay(0.001);
 			}
 			t.stop();
 			TKOHardware.getLeftDrive().set(0);
 			TKOHardware.getRightDrive().set(0);
 			Timer.delay(0.1);
-		} catch (TKOException e1)
+		}
+		catch (TKOException e1)
 		{
 			e1.printStackTrace();
 		}

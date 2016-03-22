@@ -4,6 +4,7 @@ import org.usfirst.frc.team1351.robot.atoms.Atom;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
+import org.usfirst.frc.team1351.robot.vision.TKOVision;
 
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -26,6 +27,7 @@ public class VisionTurnAtom extends Atom
 		p = SmartDashboard.getNumber("Turn P: ");
 		i = SmartDashboard.getNumber("Turn I: ") / 1000.;
 		d = SmartDashboard.getNumber("Turn D: ");
+		angle = 0.;
 	}
 
 	public void init()
@@ -46,12 +48,17 @@ public class VisionTurnAtom extends Atom
 		pid.setOutputRange(-1, 1);
 		pid.setContinuous();
 		pid.setAbsoluteTolerance(1);
+
+		TKOVision.getInstance().start();
 	}
 
 	@Override
 	public void execute()
 	{
 		System.out.println("Executing vision turn atom");
+
+		angle = TKOVision.getInstance().getTurnAngle();
+
 		try
 		{
 			pid.enable();
@@ -61,24 +68,25 @@ public class VisionTurnAtom extends Atom
 				{
 					pid.setSetpoint(pid.getSetpoint() + incrementer);
 					TKOHardware.getRightDrive().set(TKOHardware.getLeftDrive().get());
-					System.out.println("Left Position: " + TKOHardware.getLeftDrive().get() + "\t Right Position: "
-							+ TKOHardware.getRightDrive().get() + "\t PID Setpoint: " + pid.getSetpoint());
+					System.out.println("LEFT GET: " + TKOHardware.getLeftDrive().get() + "\t RIGHT GET: "
+							+ TKOHardware.getRightDrive().get() + "\t Setpoint: " + pid.getSetpoint());
 					TKOLogger.getInstance().addMessage(
-							"Left Position: " + TKOHardware.getLeftDrive().get() + "\t Right Position: "
-									+ TKOHardware.getRightDrive().get() + "\t PID Setpoint: " + pid.getSetpoint());
+							"LEFT GET: " + TKOHardware.getLeftDrive().get() + "\t RIGHT GET: " + TKOHardware.getRightDrive().get()
+									+ "\t Setpoint: " + pid.getSetpoint());
 					Timer.delay(0.001);
 				}
 			}
-			else
+			else if (angle < 0)
 			{
 				while (DriverStation.getInstance().isEnabled() && pid.getSetpoint() > angle)
 				{
 					pid.setSetpoint(pid.getSetpoint() - incrementer);
-					System.out.println("Left Position: " + TKOHardware.getLeftDrive().get() + "\t Right Position: "
-							+ TKOHardware.getRightDrive().get() + "\t PID Setpoint: " + pid.getSetpoint());
+					TKOHardware.getRightDrive().set(TKOHardware.getLeftDrive().get());
+					System.out.println("LEFT GET: " + TKOHardware.getLeftDrive().get() + "\t RIGHT GET: "
+							+ TKOHardware.getRightDrive().get() + "\t Setpoint: " + pid.getSetpoint());
 					TKOLogger.getInstance().addMessage(
-							"Left Position: " + TKOHardware.getLeftDrive().get() + "\t Right Position: "
-									+ TKOHardware.getRightDrive().get() + "\t PID Setpoint: " + pid.getSetpoint());
+							"LEFT GET: " + TKOHardware.getLeftDrive().get() + "\t RIGHT GET: " + TKOHardware.getRightDrive().get()
+									+ "\t Setpoint: " + pid.getSetpoint());
 					Timer.delay(0.001);
 				}
 			}
@@ -119,5 +127,7 @@ public class VisionTurnAtom extends Atom
 		}
 		pid.disable();
 		System.out.println("Done executing vision turn atom");
+
+		TKOVision.getInstance().stop();
 	}
 }

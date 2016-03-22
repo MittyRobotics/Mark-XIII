@@ -18,20 +18,19 @@ public class ReadyToFire implements IStateFunction
 		System.out.println("Entering: Ready to fire");
 
 		data.curState = StateEnum.STATE_READY_TO_FIRE;
-		try //TODO Should we add this to the sensor values or leave this try/catch? 
+		try
 		{
-			if (TKOHardware.getSwitch(2).get())
-			{ // This should be testing for the porky, if its UP here
+			if (TKOHardware.getSwitch(2).get()) // switch is actuated, porky is up
+			{
 				TKOShooter.getInstance().spinUp(StateMachine.porkyUpSpeed, StateMachine.incrementer);
 			}
-			else if (!TKOHardware.getSwitch(2).get())
+			else if (!TKOHardware.getSwitch(2).get()) /// switch is not actuated, porky is down
 			{
 				TKOShooter.getInstance().spinUp(StateMachine.porkyDownSpeed, StateMachine.incrementer);
 			}
 		}
 		catch (TKOException e)
 		{
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		StateMachine.getInstance().startLogging(true);

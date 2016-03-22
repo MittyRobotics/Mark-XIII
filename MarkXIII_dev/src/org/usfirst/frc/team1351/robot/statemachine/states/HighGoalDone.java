@@ -1,6 +1,5 @@
 package org.usfirst.frc.team1351.robot.statemachine.states;
 
-import org.usfirst.frc.team1351.robot.evom.TKOArm;
 import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.statemachine.IStateFunction;
@@ -22,21 +21,26 @@ public class HighGoalDone implements IStateFunction
 		if (data.sensorValues != StateMachine.GOT_BALL)
 			return StateEnum.STATE_ERROR;
 		
-		TKOArm.getInstance().moveArmDown();
 		data.curState = StateEnum.STATE_HIGH_GOAL_DONE;
+		
+//		TKOArm.getInstance().moveArmDown();
 		StateMachine.getTimer().reset();
 	    StateMachine.getTimer().start();
-	    
-	    // TODO test this entire block...
 	    TKOConveyor.getInstance().startConveyorForward();
 	    Timer.delay(2.0);
+	    // ball should have left robot by now
 	    TKOShooter.getInstance().spinDown();
 	    TKOConveyor.getInstance().stopConveyor();
 	    data.sensorValues = StateMachine.getSensorData(data);
 	    if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
-	    	Timer.delay(1.0);
+	    {
+	    	// ball switch should no longer be actuated!
+    		StateMachine.getTimer().stop();
+            StateMachine.getTimer().reset();
+            return StateEnum.STATE_ERROR;
+    	}
+	    
 	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
-		
 	    while (data.sensorValues != StateMachine.EMPTY &&
 	    		data.sensorValues == StateMachine.INTAKE_EXTENDED)
 	    {

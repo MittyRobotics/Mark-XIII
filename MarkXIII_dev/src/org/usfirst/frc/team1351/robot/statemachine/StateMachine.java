@@ -22,6 +22,7 @@ public class StateMachine implements Runnable
 
 	static DigitalInput ballSwitch = null;
 	static DigitalInput intakeSwitch = null;
+	static DigitalInput armSwitch = null;
 
 	static DoubleSolenoid intakePiston = null;
 
@@ -44,6 +45,7 @@ public class StateMachine implements Runnable
 	public TKOThread stateThread = null;
 	private static StateMachine m_Instance = null;
 
+	// TODO find correct RPM values!!
 	public static double porkyUpSpeed = 12500.0;
 	public static double porkyDownSpeed = 10000.0; 
 	public static double incrementer = 0.0;
@@ -63,11 +65,11 @@ public class StateMachine implements Runnable
 	{
 		timer = new Timer();
 
-		// TODO fix arbitrary values
 		try
 		{
 			ballSwitch = TKOHardware.getSwitch(0);
 			intakeSwitch = TKOHardware.getSwitch(1);
+			armSwitch = TKOHardware.getSwitch(2);
 			intakePiston = TKOHardware.getDSolenoid(2);
 			stick = TKOHardware.getJoystick(2);
 		}
@@ -87,7 +89,7 @@ public class StateMachine implements Runnable
 		states[StateEnum.STATE_HIGH_GOAL_DONE.getValue()] = new HighGoalDone();
 		states[StateEnum.STATE_ERROR.getValue()] = new ErrorState();
 		
-		data.numSensors = 2;
+		data.numSensors = 2; // NOT 3
 		data.sensorValues = 0;
 		data.curState = StateEnum.STATE_EMPTY;
 		
