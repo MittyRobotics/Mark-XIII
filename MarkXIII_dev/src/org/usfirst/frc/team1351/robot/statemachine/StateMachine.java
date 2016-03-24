@@ -194,4 +194,9 @@ public class StateMachine implements Runnable
 	{
 		return stick;
 	}
+	
+	public static boolean isPorkyUp()
+	{
+		return !armSwitch.get();
+	}
 }

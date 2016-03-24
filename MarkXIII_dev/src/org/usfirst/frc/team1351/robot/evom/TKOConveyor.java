@@ -119,11 +119,11 @@ public class TKOConveyor implements Runnable
 		{
 			if (TKOHardware.getJoystick(2).getRawButton(4))
 			{
-				TKOHardware.getConveyorTalon(0).set(0.75);
+				TKOHardware.getConveyorTalon(0).set(0.5);
 			}
 			else if (TKOHardware.getJoystick(2).getRawButton(5))
 			{
-				TKOHardware.getConveyorTalon(0).set(-0.75);
+				TKOHardware.getConveyorTalon(0).set(-0.5);
 			}
 			else
 			{

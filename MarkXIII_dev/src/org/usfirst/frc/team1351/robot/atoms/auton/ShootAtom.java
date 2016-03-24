@@ -3,12 +3,14 @@ package org.usfirst.frc.team1351.robot.atoms.auton;
 import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.atoms.Atom;
 import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
+import org.usfirst.frc.team1351.robot.evom.TKOShooter;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class ShootAtom extends Atom
@@ -50,10 +52,12 @@ public class ShootAtom extends Atom
 
 		double upperError = speedTarget * 1.01;
 		double lowerError = speedTarget * 0.99;
-		
+		Timer t = new Timer();
+		t.reset();
+		t.start();
 		try
 		{
-			while (DriverStation.getInstance().isEnabled() && TKOHardware.getFlyTalon().get() < speedTarget)
+			while (DriverStation.getInstance().isEnabled() && t.get() < 5.) // 5 seconds to spin up
 			{
 				if (PIDsetpoint < lowerError)
 				{
@@ -70,9 +74,17 @@ public class ShootAtom extends Atom
 				TKOHardware.getFlyTalon().set(PIDsetpoint);
 //				SmartDashboard.putNumber("PID Shooter Setpoint", PIDsetpoint * (1024. / 6000.));
 			}
+			t.reset();
+			t.start();
+			TKOConveyor.getInstance().startConveyorForward();
+			while (t.get() < 2.)
+			{
+				
+			}
+			TKOConveyor.getInstance().stopConveyor();
+			
 			System.out.println("Done executing");
-
-			TKOHardware.getFlyTalon().disableControl();
+			TKOShooter.getInstance().spinDown();
 		}
 		catch (TKOException e)
 		{

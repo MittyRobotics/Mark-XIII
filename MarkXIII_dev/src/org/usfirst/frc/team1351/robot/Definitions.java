@@ -126,11 +126,11 @@ public class Definitions
 	public static final DoubleSolenoid.Value SHIFTER_LOW = DoubleSolenoid.Value.kForward;
 	public static final DoubleSolenoid.Value SHIFTER_HIGH = DoubleSolenoid.Value.kReverse;
 
-	public static final int SHIFTER_A = 0; // drive train shifting piston
-	public static final int SHIFTER_B = 1;
-	public static final int PORKY_A = 2;
-	public static final int PORKY_B = 3;
-	public static final int INTAKE_A = 4;
+	public static final int SHIFTER_A = 2; // drive train shifting piston
+	public static final int SHIFTER_B = 6;
+	public static final int PORKY_A = 3;
+	public static final int PORKY_B = 7;
+	public static final int INTAKE_A = 1;
 	public static final int INTAKE_B = 5;
 
 	// Thread definitions

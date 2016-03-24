@@ -192,6 +192,7 @@ public class Robot extends SampleRobot
 		TKOPneumatics.getInstance().setManual(true);
 		TKOConveyor.getInstance().start();
 		TKOConveyor.getInstance().setManual(true);
+		StateMachine.getInstance().start();
 		TKOLogger.getInstance().start();
 		// TKOVision.getInstance().start();
 
@@ -202,8 +203,12 @@ public class Robot extends SampleRobot
 
 		try
 		{
+			// TKOVision.getInstance().stop();
+			// TKOVision.getInstance().visionThread.join();
 			TKOLogger.getInstance().stop();
 			TKOLogger.getInstance().loggerThread.join();
+			StateMachine.getInstance().stop();
+			StateMachine.getInstance().stateThread.join();
 			TKOConveyor.getInstance().stop();
 			TKOConveyor.getInstance().conveyorThread.join();
 			TKOPneumatics.getInstance().stop();

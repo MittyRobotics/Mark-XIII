@@ -13,7 +13,7 @@ For Testing:
 - Stick 1, Button 4-5: conveyor forward/backward
 
 Operator Controls:
-- Stick 2, Button 4-5: roller intake in/out
+- Stick 2, Button 4-5: conveyor in/out AND intake rollers in/out
 - Stick 2, Button 2: extend intake OR go to retry state (override) / Low Goal Routine 
 - @deprecated Stick 2, Button 10-11: choose low goal/high goal
 - Stick 2, Trigger: spin up shooter // Automagic 
