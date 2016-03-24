@@ -76,7 +76,7 @@ public class TKOHardware
 		arduinoSignal = null;
 	}
 
-	public static synchronized void initTesting()
+	/*public static synchronized void initTesting()
 	{
 		System.out.println("Initializing objects (testing)");
 		
@@ -157,7 +157,7 @@ public class TKOHardware
 		configConveyorTalons(Definitions.CONVEYOR_CONTROL_MODE);
 		
 		System.out.println("Initialized objects (testing)");
-	}
+	}*/
 
 	public static synchronized void initObjects()
 	{

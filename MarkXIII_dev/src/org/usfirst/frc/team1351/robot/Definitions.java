@@ -61,7 +61,7 @@ public class Definitions
 	{ 0, 1, 2, 3 };
 	public static final int[] FLY_TALON_ID =
 	{ 4, 5 };
-	public static final int[] CONVEYOR_ID =	// 2 are spikes, 1 is talon?
+	public static final int[] CONVEYOR_ID =
 	{ 6, 7, 8 };
 	public static final int[] JOYSTICK_ID =
 	{ 0, 1, 2, 3 };

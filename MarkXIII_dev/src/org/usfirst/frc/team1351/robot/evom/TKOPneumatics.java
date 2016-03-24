@@ -61,7 +61,7 @@ public class TKOPneumatics implements Runnable
 		try
 		{
 			TKOHardware.getCompressor().start();
-			TKOHardware.getCompressor().stop();
+//			TKOHardware.getCompressor().stop();
 		}
 		catch (TKOException e)
 		{

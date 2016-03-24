@@ -10,10 +10,10 @@ public class XboxController
 	public XboxController(int _id)
 	{
 		xbox = new Joystick(_id);
-		if (!(xbox.getIsXbox()))
-		{
-			System.out.println("WARNING: joystick is not xbox controller");
-		}
+//		if (!(xbox.getIsXbox()))
+//		{
+//			System.out.println("WARNING: joystick is not xbox controller");
+//		}
 		
 	}
 

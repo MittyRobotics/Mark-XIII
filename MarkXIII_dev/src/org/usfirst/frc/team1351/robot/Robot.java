@@ -35,7 +35,7 @@ public class Robot extends SampleRobot
 		System.out.println("-----WELCOME TO MarkXIII 2016-----");
 		System.out.println("-----SYSTEM BOOT: " + Timer.getFPGATimestamp() + "-----");
 
-		TKOHardware.initTesting();
+		TKOHardware.initObjects();
 
 		autonChooser = new SendableChooser();
 		autonChooser.addDefault("Drive", new Integer(0));
@@ -75,6 +75,7 @@ public class Robot extends SampleRobot
 	public void disabled()
 	{
 		System.out.println("ROBOT DISABLED!");
+		System.out.println("testing at davis");
 	}
 
 	public void autonomous()
@@ -186,14 +187,14 @@ public class Robot extends SampleRobot
 	{
 		System.out.println("Enabling operator control!");
 
-		TKODrive.getInstance().start();
-		TKODrive.getInstance().isCreep(false);
+//		TKODrive.getInstance().start();
+//		TKODrive.getInstance().isCreep(false);
 		TKOPneumatics.getInstance().start();
 		TKOPneumatics.getInstance().setManual(true);
-		TKOConveyor.getInstance().start();
-		TKOConveyor.getInstance().setManual(true);
-		StateMachine.getInstance().start();
-		TKOLogger.getInstance().start();
+//		TKOConveyor.getInstance().start();
+//		TKOConveyor.getInstance().setManual(true);
+//		StateMachine.getInstance().start();
+//		TKOLogger.getInstance().start();
 		// TKOVision.getInstance().start();
 
 		while (isEnabled() && isOperatorControl())
@@ -205,16 +206,16 @@ public class Robot extends SampleRobot
 		{
 			// TKOVision.getInstance().stop();
 			// TKOVision.getInstance().visionThread.join();
-			TKOLogger.getInstance().stop();
-			TKOLogger.getInstance().loggerThread.join();
-			StateMachine.getInstance().stop();
-			StateMachine.getInstance().stateThread.join();
-			TKOConveyor.getInstance().stop();
-			TKOConveyor.getInstance().conveyorThread.join();
+//			TKOLogger.getInstance().stop();
+//			TKOLogger.getInstance().loggerThread.join();
+//			StateMachine.getInstance().stop();
+//			StateMachine.getInstance().stateThread.join();
+//			TKOConveyor.getInstance().stop();
+//			TKOConveyor.getInstance().conveyorThread.join();
 			TKOPneumatics.getInstance().stop();
 			TKOPneumatics.getInstance().pneuThread.join();
-			TKODrive.getInstance().stop();
-			TKODrive.getInstance().driveThread.join();
+//			TKODrive.getInstance().stop();
+//			TKODrive.getInstance().driveThread.join();
 		}
 		catch (InterruptedException e)
 		{

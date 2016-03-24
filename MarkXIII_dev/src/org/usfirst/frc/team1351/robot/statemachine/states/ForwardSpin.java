@@ -31,7 +31,7 @@ public class ForwardSpin implements IStateFunction
 	    	data.sensorValues = StateMachine.getSensorData(data);
 	    	timeout = System.currentTimeMillis();
 	    }
-	    while (System.currentTimeMillis() - timeout <= 200)
+	    while ( (System.currentTimeMillis() - timeout) <= 200)
 		{
 			TKOConveyor.getInstance().startConveyorBackward();
 		}
