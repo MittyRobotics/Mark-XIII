@@ -14,7 +14,12 @@ public class ErrorState implements IStateFunction
 		System.out.println("Entering: ERROR");
 		
 		/**
-		 * The recoverable error state is when the ball falls out of the robot.
+		 * This recoverable error is when the intake is not down for whatever reason.
+		 * If/when this happens, check if it is safe to extend the intake and/or simply check if the switch is actuated now.
+		 */
+		
+		/**
+		 * This recoverable error state is when the ball falls out of the robot.
 		 * If/when this happens, we run the conveyor again until the ball switch is actuated.
 		 */
 		if (data.curState == StateEnum.STATE_CHOOSE_GOAL || data.curState == StateEnum.STATE_READY_TO_FIRE)

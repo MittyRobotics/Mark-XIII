@@ -166,12 +166,12 @@ public class TKOPneumatics implements Runnable
 			}
 
 			// shifting gearbox
-			if (TKOHardware.getXboxController().getRightBumper())
+			if (TKOHardware.getXboxController().getButtonY())
 			{
 				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
 				lastShiftTime = System.currentTimeMillis();
 			}
-			else if (TKOHardware.getXboxController().getLeftBumper())
+			else if (TKOHardware.getXboxController().getButtonB())
 			{
 				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 				lastShiftTime = System.currentTimeMillis();
@@ -195,11 +195,11 @@ public class TKOPneumatics implements Runnable
 			{
 				pistonControl();
 
-				if (TKOHardware.getXboxController().getButtonB())
-					TKOArm.getInstance().breachPortcullis();
-
-				if (TKOHardware.getXboxController().getButtonY())
-					TKOArm.getInstance().breachCheval();
+//				if (TKOHardware.getXboxController().getButtonB())
+//					TKOArm.getInstance().breachPortcullis();
+//
+//				if (TKOHardware.getXboxController().getButtonY())
+//					TKOArm.getInstance().breachCheval();
 
 				synchronized (pneuThread)
 				{

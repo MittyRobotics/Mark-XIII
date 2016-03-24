@@ -149,7 +149,7 @@ public class TKODrive implements Runnable
 				} else {
 					TKOHardware.getXboxController().stopRumble();
 				}
-				if(TKOHardware.getXboxController().getButtonA()) 
+				if(TKOHardware.getXboxController().getStartButton()) 
 					reverse = !reverse; 
 				if(TKOHardware.getXboxController().getStartButton()) {
 					TKOHardware.getRightDrive().enableBrakeMode(true);

@@ -37,13 +37,21 @@ public class ReadyToFire implements IStateFunction
 
 		if (data.sensorValues == StateMachine.GOT_BALL)
 		{
-			while (!(StateMachine.getJoystick().getTrigger()))
+			try
 			{
-				if (data.sensorValues != StateMachine.GOT_BALL)
-					return StateEnum.STATE_ERROR;
+				while (!(StateMachine.getJoystick().getTrigger() || !TKOHardware.getXboxController().getButtonX()))
+				{
+					if (data.sensorValues != StateMachine.GOT_BALL)
+						return StateEnum.STATE_ERROR;
 
-				Timer.delay(0.1);
-				data.sensorValues = StateMachine.getSensorData(data);
+					Timer.delay(0.1);
+					data.sensorValues = StateMachine.getSensorData(data);
+				}
+			}
+			catch (TKOException e)
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 			System.out.println("Exiting ready to fire state");
 			return StateEnum.STATE_HIGH_GOAL_DONE;

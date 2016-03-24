@@ -78,20 +78,16 @@ public class StateMachine implements Runnable
 			e.printStackTrace();
 		}
 		
-		states[StateEnum.STATE_EMPTY.getValue()] = new EmptyState();
-		states[StateEnum.STATE_EXTEND_INTAKE.getValue()] = new ExtendIntake();
 		states[StateEnum.STATE_FORWARD_SPIN.getValue()] = new ForwardSpin();
-		states[StateEnum.STATE_RETRY.getValue()] = new RetryState();
 		states[StateEnum.STATE_CHOOSE_GOAL.getValue()] = new ChooseGoal();
 		states[StateEnum.STATE_BACKWARD_SPIN.getValue()] = new BackwardSpin();
-		states[StateEnum.STATE_LOW_GOAL_DONE.getValue()] = new LowGoalDone();
 		states[StateEnum.STATE_READY_TO_FIRE.getValue()] = new ReadyToFire();
 		states[StateEnum.STATE_HIGH_GOAL_DONE.getValue()] = new HighGoalDone();
 		states[StateEnum.STATE_ERROR.getValue()] = new ErrorState();
 		
 		data.numSensors = 2; // NOT 3
 		data.sensorValues = 0;
-		data.curState = StateEnum.STATE_EMPTY;
+		data.curState = StateEnum.STATE_FORWARD_SPIN;
 		
 //		SmartDashboard.putBoolean("Ball Switch: ", false);
 //		SmartDashboard.putBoolean("Intake Switch: ", false);
@@ -166,7 +162,7 @@ public class StateMachine implements Runnable
 				{
 					System.out.println("STATE MACHINE RESET");
 					data.sensorValues = getSensorData(data);
-					data.curState = StateEnum.STATE_EMPTY;
+					data.curState = StateEnum.STATE_FORWARD_SPIN; // TODO
 				}
 				
 				if (logging)

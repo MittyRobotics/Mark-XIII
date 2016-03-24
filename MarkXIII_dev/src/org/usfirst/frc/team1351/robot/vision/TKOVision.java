@@ -147,7 +147,7 @@ public class TKOVision implements Runnable
 		{
 			while (visionThread.isThreadRunning())
 			{
-				if (TKOHardware.getXboxController().getButtonY())
+				if (TKOHardware.getXboxController().getStartButton())
 				{
 					isFrontCamera = !isFrontCamera;
 					// Turns camera "off"

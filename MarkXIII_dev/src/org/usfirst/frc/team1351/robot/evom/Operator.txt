@@ -1,5 +1,5 @@
 Driver Controls:
-- Right/Left Bumpers on xbox: Low/High gears respectively 
+- Right/Left Bumpers on xbox: Intake/Outtake Respectively  
 - Xbox, Select: Switch Camera  
 - Triggers on xbox: Variable% speed for each respective side 
 - Xbox, Button B: breach portcullis
@@ -13,11 +13,11 @@ For Testing:
 - Stick 1, Button 4-5: conveyor forward/backward
 
 Operator Controls:
-- Stick 3, Button 4-5: roller intake in/out
-- Stick 2, Button 2: extend intake OR go to retry state (override)
-- Stick 2, Button 10-11: choose low goal/high goal
-- Stick 2, Trigger: move ball into shooter (fire)
-- Stick 2, Button 3: retract shooter (override)
+- Stick 2, Button 4-5: roller intake in/out
+- Stick 2, Button 2: extend intake OR go to retry state (override) / Low Goal Routine 
+- @deprecated Stick 2, Button 10-11: choose low goal/high goal
+- Stick 2, Trigger: spin up shooter // Automagic 
+- Stick 2, Button 3: High Goal Routine 
 - Stick 2, Button 8: reset state machine (DANGER)
 
 Solenoids:

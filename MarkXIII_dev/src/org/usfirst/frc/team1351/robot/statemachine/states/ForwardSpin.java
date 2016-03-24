@@ -23,19 +23,18 @@ public class ForwardSpin implements IStateFunction
 		
 		TKOConveyor.getInstance().startConveyorForward();
 	    
+		long timeout = System.currentTimeMillis();
 	    while (data.sensorValues != StateMachine.GOT_BALL &&
 	    		data.sensorValues == StateMachine.INTAKE_EXTENDED)
 	    {
-	    	if (StateMachine.getJoystick().getRawButton(2)) // override
-	    	{
-	    		TKOConveyor.getInstance().stopConveyor();
-	    		System.out.println("Override: retry chosen by operator");
-	    		return StateEnum.STATE_RETRY;
-	    	}
 	    	Timer.delay(0.1);
 	    	data.sensorValues = StateMachine.getSensorData(data);
+	    	timeout = System.currentTimeMillis();
 	    }
-
+	    while (System.currentTimeMillis() - timeout <= 200)
+		{
+			TKOConveyor.getInstance().startConveyorBackward();
+		}
 	    TKOConveyor.getInstance().stopConveyor();
 	    
 	    if (data.sensorValues != StateMachine.GOT_BALL)

@@ -86,14 +86,14 @@ public class TKOConveyor implements Runnable
 					speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
 					incrementer = SmartDashboard.getNumber("Incrementer: ");
 					
-					if (TKOHardware.getJoystick(1).getRawButton(4))
+					if (TKOHardware.getXboxController().getRightBumper() || TKOHardware.getJoystick(2).getRawButton(4))
 						startConveyorBackward();
-					else if (TKOHardware.getJoystick(1).getRawButton(5))
+					else if (TKOHardware.getXboxController().getLeftBumper() || TKOHardware.getJoystick(2).getRawButton(5))
 						startConveyorForward();
 					else
 						stopConveyor();
 					
-					if (TKOHardware.getJoystick(1).getTrigger())
+					if (TKOHardware.getJoystick(2).getTrigger())
 						TKOShooter.getInstance().spinUp(speed, incrementer);
 					else
 						TKOShooter.getInstance().spinDown();
@@ -117,11 +117,11 @@ public class TKOConveyor implements Runnable
 	{
 		try
 		{
-			if (TKOHardware.getJoystick(3).getRawButton(4))
+			if (TKOHardware.getJoystick(2).getRawButton(4))
 			{
 				TKOHardware.getConveyorTalon(0).set(0.75);
 			}
-			else if (TKOHardware.getJoystick(3).getRawButton(5))
+			else if (TKOHardware.getJoystick(2).getRawButton(5))
 			{
 				TKOHardware.getConveyorTalon(0).set(-0.75);
 			}

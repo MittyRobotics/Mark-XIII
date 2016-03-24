@@ -44,6 +44,6 @@ public class BackwardSpin implements IStateFunction
 	        return StateEnum.STATE_ERROR;
 	    }
 	    
-		return StateEnum.STATE_LOW_GOAL_DONE;
+		return StateEnum.STATE_FORWARD_SPIN;
 	}
 }

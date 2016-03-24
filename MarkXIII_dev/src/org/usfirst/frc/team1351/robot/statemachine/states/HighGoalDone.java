@@ -40,7 +40,7 @@ public class HighGoalDone implements IStateFunction
             return StateEnum.STATE_ERROR;
     	}
 	    
-	    StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
+	    /*StateMachine.getIntakePiston().set(DoubleSolenoid.Value.kReverse);
 	    while (data.sensorValues != StateMachine.EMPTY &&
 	    		data.sensorValues == StateMachine.INTAKE_EXTENDED)
 	    {
@@ -52,16 +52,16 @@ public class HighGoalDone implements IStateFunction
 	    	}
 	    	Timer.delay(0.1);
 	    	data.sensorValues = StateMachine.getSensorData(data);
-	    }
+	    }*/
 	    
 	    StateMachine.getTimer().stop();
 	    StateMachine.getTimer().reset();
 	    StateMachine.getInstance().startLogging(false);
-	    if (data.sensorValues != StateMachine.EMPTY)
+	    if (data.sensorValues != StateMachine.INTAKE_EXTENDED)
 	    {
 	        return StateEnum.STATE_ERROR;
 	    }
 	    
-		return StateEnum.STATE_EMPTY;
+		return StateEnum.STATE_FORWARD_SPIN;
 	}
 }
