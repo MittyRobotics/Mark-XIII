@@ -57,8 +57,8 @@ public class TKOConveyor implements Runnable
 		try
 		{
 			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(0), CANTalon.TalonControlMode.PercentVbus);
-			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(1), CANTalon.TalonControlMode.Follower);
-			TKOHardware.getConveyorTalon(1).set(TKOHardware.getConveyorTalon(0).getDeviceID());
+			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(1), CANTalon.TalonControlMode.PercentVbus);
+			// TKOHardware.getConveyorTalon(1).set(TKOHardware.getConveyorTalon(0).getDeviceID());
 			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(2), CANTalon.TalonControlMode.PercentVbus);
 		}
 		catch (TKOException e)
@@ -71,7 +71,7 @@ public class TKOConveyor implements Runnable
 	{
 		testEnabled = b;
 	}
-	
+
 	@Override
 	public void run()
 	{
@@ -85,19 +85,28 @@ public class TKOConveyor implements Runnable
 				{
 					speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
 					incrementer = SmartDashboard.getNumber("Incrementer: ");
-					
-					if (TKOHardware.getXboxController().getRightBumper() || TKOHardware.getJoystick(2).getRawButton(4))
-						startConveyorBackward();
-					else if (TKOHardware.getXboxController().getLeftBumper() || TKOHardware.getJoystick(2).getRawButton(5))
+				
+					long timeout = 0;
+					if ((TKOHardware.getXboxController().getRightBumper() || TKOHardware.getJoystick(2).getRawButton(4))
+							&& TKOHardware.getSwitch(0).get())
+					{
 						startConveyorForward();
+						timeout = System.currentTimeMillis();
+					}
+					else if ((System.currentTimeMillis() - timeout) <= 200)
+					{
+						startConveyorBackward();
+					}
 					else
+					{
 						stopConveyor();
-					
+					}
+
 					if (TKOHardware.getJoystick(2).getTrigger())
 						TKOShooter.getInstance().spinUp(speed, incrementer);
 					else
 						TKOShooter.getInstance().spinDown();
-					
+
 					TKOShooter.getInstance().logShooterData();
 				}
 
@@ -119,15 +128,18 @@ public class TKOConveyor implements Runnable
 		{
 			if (TKOHardware.getJoystick(2).getRawButton(4))
 			{
-				TKOHardware.getConveyorTalon(0).set(0.5);
+				TKOHardware.getConveyorTalon(0).set(-0.5);
+				TKOHardware.getConveyorTalon(1).set(0.5);
 			}
 			else if (TKOHardware.getJoystick(2).getRawButton(5))
 			{
-				TKOHardware.getConveyorTalon(0).set(-0.5);
+				TKOHardware.getConveyorTalon(0).set(0.5);
+				TKOHardware.getConveyorTalon(1).set(-0.5);
 			}
 			else
 			{
-				TKOHardware.getConveyorTalon(0).set(0);
+				TKOHardware.getConveyorTalon(0).set(0.);
+				TKOHardware.getConveyorTalon(1).set(0.);
 			}
 		}
 		catch (TKOException e)

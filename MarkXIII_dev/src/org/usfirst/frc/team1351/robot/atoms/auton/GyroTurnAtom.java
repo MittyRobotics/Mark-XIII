@@ -2,6 +2,7 @@ package org.usfirst.frc.team1351.robot.atoms.auton;
 
 import org.usfirst.frc.team1351.robot.atoms.Atom;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
+import org.usfirst.frc.team1351.robot.util.SPIGyro;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
@@ -21,7 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class GyroTurnAtom extends Atom
 {
 	PIDController pid;
-	ADXRS450_Gyro gyro;
+	SPIGyro gyro;
 	double angle, incrementer, threshold;
 	double p, i, d;
 

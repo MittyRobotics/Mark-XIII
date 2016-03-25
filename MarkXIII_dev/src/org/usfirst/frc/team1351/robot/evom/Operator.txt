@@ -19,6 +19,8 @@ Operator Controls:
 - Stick 2, Trigger: spin up shooter // Automagic 
 - Stick 2, Button 3: High Goal Routine 
 - Stick 2, Button 8: reset state machine (DANGER)
+- Stick 3, Button 2: arm override
+- Stick 3, Button 3: intake override
 
 Solenoids:
 0 - drive

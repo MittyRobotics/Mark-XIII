@@ -68,8 +68,8 @@ public class StateMachine implements Runnable
 		try
 		{
 			ballSwitch = TKOHardware.getSwitch(0);
-			intakeSwitch = TKOHardware.getSwitch(1);
-			armSwitch = TKOHardware.getSwitch(2);
+			armSwitch = TKOHardware.getSwitch(1);
+			intakeSwitch = TKOHardware.getSwitch(2);
 			intakePiston = TKOHardware.getDSolenoid(2);
 			stick = TKOHardware.getJoystick(2);
 		}

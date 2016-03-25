@@ -5,9 +5,6 @@ import org.usfirst.frc.team1351.robot.evom.TKOConveyor;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
-import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-
 public class IntakeAtom extends Atom
 {
 	public IntakeAtom()
@@ -28,7 +25,6 @@ public class IntakeAtom extends Atom
 		try
 		{
 			long timeout = 0;
-//			TKOHardware.getDSolenoid(2).set(Value.kForward);
 
 			while (TKOHardware.getSwitch(0).get())
 			{

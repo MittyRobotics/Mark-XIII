@@ -209,37 +209,32 @@ public class TKOVision implements Runnable
 		System.out.println("\n \n \n");
 		double areas = table.getNumber("area", def);
 		System.out.print("areas: ");
-
 		System.out.print(areas + ", ");
-		SmartDashboard.putNumber("Area", areas);
+		SmartDashboard.putNumber("Area: ", areas);
 
 		double centerX = table.getNumber("x", def);
 		System.out.print("centerX: ");
-
 		System.out.print(centerX + ", ");
-		SmartDashboard.putNumber("Center X", centerX);
+		SmartDashboard.putNumber("Center X: ", centerX);
 
 		double centerY = table.getNumber("y", def);
 		System.out.print("centerY: ");
-
 		System.out.print(centerY + ", ");
-		SmartDashboard.putNumber("Center Y", centerY);
+		SmartDashboard.putNumber("Center Y: ", centerY);
 
 		double heights = table.getNumber("height", def);
 		System.out.print("height: ");
-
 		System.out.print(height + ", ");
-		SmartDashboard.putNumber("Height", height);
+		SmartDashboard.putNumber("Height: ", height);
 
 		double widths = table.getNumber("width", def);
 		System.out.print("width: ");
-
 		System.out.print(widths + ", ");
-		SmartDashboard.putNumber("Width", widths);
+		SmartDashboard.putNumber("Width: ", widths);
 
-		SmartDashboard.putNumber("Height Distance of Robot", getHeight());
-		SmartDashboard.putNumber("Width Distance of Robot", getWidth());
-		SmartDashboard.putNumber("Angle of Robot to Target", getTurnAngle());
+		SmartDashboard.putNumber("Height Distance of Robot: ", getHeight());
+		SmartDashboard.putNumber("Width Distance of Robot: ", getWidth());
+		SmartDashboard.putNumber("Angle of Robot to Target: ", getTurnAngle());
 
 		tarCenterToEdge = centerX;
 		targetPixelWidth = widths;

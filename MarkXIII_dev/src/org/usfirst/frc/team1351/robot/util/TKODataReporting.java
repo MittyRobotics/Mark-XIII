@@ -211,10 +211,10 @@ public class TKODataReporting implements Runnable // implements Runnable is impo
 	public void collectDriveData()
 	{
 		TKOLogger inst = TKOLogger.getInstance();
-		SmartDashboard.putNumber("DataBufferSize", TKOLogger.getInstance().dataBufferSize);
-		SmartDashboard.putNumber("PValTested", currentPTested);
-		SmartDashboard.putNumber("IValTested", currentITested);
-		SmartDashboard.putNumber("DValTested", currentDTested);
+		SmartDashboard.putNumber("DataBufferSize: ", TKOLogger.getInstance().dataBufferSize);
+		SmartDashboard.putNumber("PValTested: ", currentPTested);
+		SmartDashboard.putNumber("IValTested: ", currentITested);
+		SmartDashboard.putNumber("DValTested: ", currentDTested);
 		try
 		{			
 //			for (CANTalon motor : TKOHardware.getDriveTalons())

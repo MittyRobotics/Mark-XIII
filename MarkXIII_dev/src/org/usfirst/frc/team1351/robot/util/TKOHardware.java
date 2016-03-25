@@ -31,7 +31,7 @@ public class TKOHardware
 	protected static Solenoid solenoids[] = new Solenoid[Definitions.NUM_SOLENOIDS];
 	protected static DigitalInput limitSwitches[] = new DigitalInput[Definitions.NUM_SWITCHES];
 	protected static Compressor compressor;
-	protected static ADXRS450_Gyro gyro;
+	protected static SPIGyro gyro;
 	protected static AnalogOutput arduinoSignal = null;
 
 	public TKOHardware()
@@ -234,7 +234,7 @@ public class TKOHardware
 
 		if (gyro == null)
 		{
-			gyro = new ADXRS450_Gyro(Definitions.GYRO_SPI_PORT);
+			gyro = new SPIGyro();
 			gyro.reset();
 			System.out.println("Gyro initialized: " + Timer.getFPGATimestamp());
 		}
@@ -322,7 +322,11 @@ public class TKOHardware
 
 			if (conveyorTalons[j] != null)
 			{
-				if ((Definitions.NUM_FLY_TALONS + j) == 7) // if follower
+				conveyorTalons[j].changeControlMode(mode);
+				conveyorTalons[j].setExpiration(10000.);
+				conveyorTalons[j].setSafetyEnabled(false);
+				
+				/*if ((Definitions.NUM_FLY_TALONS + j) == 7) // if follower
 				{
 					conveyorTalons[j].changeControlMode(CANTalon.TalonControlMode.Follower);
 					conveyorTalons[j].set(Definitions.NUM_FLY_TALONS + j - 1); // set to follow the CANTalon with id j - 1
@@ -338,7 +342,7 @@ public class TKOHardware
 				// liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
 				// liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
 				conveyorTalons[j].setExpiration(10000.);
-				conveyorTalons[j].setSafetyEnabled(false);
+				conveyorTalons[j].setSafetyEnabled(false);*/
 			}
 		}
 	}
@@ -388,7 +392,7 @@ public class TKOHardware
 		TKOHardware.getLeftDrive().reverseOutput(false);
 		TKOHardware.getRightDrive().reverseOutput(true);
 		TKOHardware.getLeftDrive().reverseSensor(true);
-		TKOHardware.getRightDrive().reverseSensor(true);
+		TKOHardware.getRightDrive().reverseSensor(false);
 		//TODO return this to true 
 		TKOHardware.getLeftDrive().enableBrakeMode(false);
 		TKOHardware.getRightDrive().enableBrakeMode(false);
@@ -488,7 +492,7 @@ public class TKOHardware
 		}
 		if (gyro != null)
 		{
-			gyro.free();
+//			gyro.free();
 			gyro = null;
 		}
 		if (arduinoSignal != null)
@@ -623,7 +627,7 @@ public class TKOHardware
 		return compressor;
 	}
 
-	public static synchronized ADXRS450_Gyro getGyro() throws TKOException
+	public static synchronized SPIGyro getGyro() throws TKOException
 	{
 		if (gyro == null)
 			throw new TKOException("ERROR: Gyro is null");

@@ -2,11 +2,11 @@ package org.usfirst.frc.team1351.robot.atoms.auton;
 
 import org.usfirst.frc.team1351.robot.atoms.Atom;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
+import org.usfirst.frc.team1351.robot.util.SPIGyro;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.vision.TKOVision;
 
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PIDController;
 import edu.wpi.first.wpilibj.Timer;
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class VisionTurnAtom extends Atom
 {
 	PIDController pid;
-	ADXRS450_Gyro gyro;
+	SPIGyro gyro;
 	double angle, incrementer, threshold;
 	double p, i, d;
 

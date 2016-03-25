@@ -134,7 +134,7 @@ public class TKOPneumatics implements Runnable
 		{
 			if (testEnabled)
 			{
-				if (TKOHardware.getJoystick(1).getRawButton(2))
+				if (TKOHardware.getJoystick(3).getRawButton(2))
 				{
 					if (System.currentTimeMillis() - toggledPistonTime[1] > 250)
 					{
@@ -149,7 +149,7 @@ public class TKOPneumatics implements Runnable
 					}
 				}
 
-				if (TKOHardware.getJoystick(1).getRawButton(3))
+				if (TKOHardware.getJoystick(3).getRawButton(3))
 				{
 					if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
 					{
@@ -201,6 +201,9 @@ public class TKOPneumatics implements Runnable
 //				if (TKOHardware.getXboxController().getButtonY())
 //					TKOArm.getInstance().breachCheval();
 
+				if(TKOHardware.getJoystick(3).getRawButton(3)) {
+					
+				}
 				synchronized (pneuThread)
 				{
 					pneuThread.wait(20);

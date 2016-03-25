@@ -11,12 +11,15 @@ import org.usfirst.frc.team1351.robot.evom.TKOPneumatics;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 import org.usfirst.frc.team1351.robot.statemachine.StateMachine;
 import org.usfirst.frc.team1351.robot.util.TKOException;
+import org.usfirst.frc.team1351.robot.util.TKOGyroThread;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 import org.usfirst.frc.team1351.robot.util.TKOLEDArduino;
 import org.usfirst.frc.team1351.robot.util.TKOTalonSafety;
 import org.usfirst.frc.team1351.robot.vision.TKOVision;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.SampleRobot;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends SampleRobot
 {
 	SendableChooser autonChooser;
+	Solenoid light;
 
 	public Robot()
 	{
@@ -58,16 +62,7 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Drive distance: ", 0.);
 		SmartDashboard.putNumber("Turn angle: ", 0.);
 
-		try
-		{
-			SmartDashboard.putBoolean("Ball switch", !TKOHardware.getSwitch(0).get());
-			SmartDashboard.putBoolean("Intake switch", !TKOHardware.getSwitch(1).get());
-			SmartDashboard.putBoolean("Arm switch", !TKOHardware.getSwitch(2).get());
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
+		light = new Solenoid(5, 0);
 
 		System.out.println("robotInit() finished");
 	}
@@ -82,8 +77,8 @@ public class Robot extends SampleRobot
 	{
 		System.out.println("Enabling autonomous!");
 
-//		TKOHardware.getRightDrive().reverseSensor(false);
-//		TKOHardware.getRightDrive().reverseOutput(false);
+		// TKOHardware.getRightDrive().reverseSensor(false);
+		// TKOHardware.getRightDrive().reverseOutput(false);
 
 		TKOLogger.getInstance().start();
 		// TKODataReporting.getInstance().start();
@@ -91,6 +86,15 @@ public class Robot extends SampleRobot
 		// TKOLEDArduino.getInstance().start();
 		TKOPneumatics.getInstance().start();
 		TKOPneumatics.getInstance().reset(); // TODO
+		try
+		{
+			TKOHardware.getDSolenoid(2).set(Value.kReverse);
+		}
+		catch (TKOException e2)
+		{
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 
 		Molecule molecule = new Molecule();
 		molecule.clear();
@@ -166,6 +170,16 @@ public class Robot extends SampleRobot
 			System.out.println("Molecule empty why this");
 		}
 
+		try
+		{
+			TKOHardware.getDSolenoid(2).set(Value.kForward);
+			TKOHardware.getDSolenoid(1).set(Value.kForward);
+		}
+		catch (TKOException e1)
+		{
+			e1.printStackTrace();
+		}
+
 		System.out.println("Running molecule");
 		molecule.initAndRun();
 		System.out.println("Finished running molecule");
@@ -187,35 +201,62 @@ public class Robot extends SampleRobot
 	{
 		System.out.println("Enabling operator control!");
 
-//		TKODrive.getInstance().start();
-//		TKODrive.getInstance().isCreep(false);
+		// TKODrive.getInstance().start();
+		// TKODrive.getInstance().isCreep(false);
 		TKOPneumatics.getInstance().start();
 		TKOPneumatics.getInstance().setManual(true);
-//		TKOConveyor.getInstance().start();
-//		TKOConveyor.getInstance().setManual(true);
-//		StateMachine.getInstance().start();
-//		TKOLogger.getInstance().start();
+		// light.set(true);
 		// TKOVision.getInstance().start();
+		TKOConveyor.getInstance().start();
+		TKOConveyor.getInstance().setManual(true);
+		// StateMachine.getInstance().start();
+		// TKOLogger.getInstance().start();
+		light.set(false);
+		// TKOGyro.getInstance().start();
+
+		try
+		{
+			TKOHardware.getDSolenoid(2).set(Value.kForward);
+			TKOHardware.getDSolenoid(1).set(Value.kForward);
+		}
+		catch (TKOException e1)
+		{
+			e1.printStackTrace();
+		}
 
 		while (isEnabled() && isOperatorControl())
 		{
+			try
+			{
+				SmartDashboard.putBoolean("Ball switch: ", !TKOHardware.getSwitch(0).get());
+				SmartDashboard.putBoolean("Intake switch: ", !TKOHardware.getSwitch(1).get());
+				SmartDashboard.putBoolean("Arm switch: ", !TKOHardware.getSwitch(2).get());
+			}
+			catch (TKOException e)
+			{
+				e.printStackTrace();
+			}
+
 			Timer.delay(0.1);
 		}
 
 		try
 		{
+			// TKOGyro.getInstance().stop();
+			// TKOGyro.getInstance().gyroThread.join();
 			// TKOVision.getInstance().stop();
 			// TKOVision.getInstance().visionThread.join();
-//			TKOLogger.getInstance().stop();
-//			TKOLogger.getInstance().loggerThread.join();
-//			StateMachine.getInstance().stop();
-//			StateMachine.getInstance().stateThread.join();
-//			TKOConveyor.getInstance().stop();
-//			TKOConveyor.getInstance().conveyorThread.join();
+			// TKOLogger.getInstance().stop();
+			// TKOLogger.getInstance().loggerThread.join();
+			// StateMachine.getInstance().stop();
+			// StateMachine.getInstance().stateThread.join();
+			light.set(false);
+			TKOConveyor.getInstance().stop();
+			TKOConveyor.getInstance().conveyorThread.join();
 			TKOPneumatics.getInstance().stop();
 			TKOPneumatics.getInstance().pneuThread.join();
-//			TKODrive.getInstance().stop();
-//			TKODrive.getInstance().driveThread.join();
+			// TKODrive.getInstance().stop();
+			// TKODrive.getInstance().driveThread.join();
 		}
 		catch (InterruptedException e)
 		{
