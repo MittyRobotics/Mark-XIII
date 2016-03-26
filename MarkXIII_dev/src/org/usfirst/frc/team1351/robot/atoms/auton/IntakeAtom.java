@@ -23,7 +23,7 @@ public class IntakeAtom extends Atom
 	@Override
 	public void execute()
 	{
-		System.out.println("Executing pickup atom");
+		System.out.println("Executing intake atom");
 		try
 		{
 			long timeout = 0;
@@ -43,6 +43,6 @@ public class IntakeAtom extends Atom
 			e.printStackTrace();
 		}
 		TKOConveyor.getInstance().stop();
-		System.out.println("Done executing");
+		System.out.println("Done executing intake atom");
 	}
 }

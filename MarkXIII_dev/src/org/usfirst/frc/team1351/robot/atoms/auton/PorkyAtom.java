@@ -7,10 +7,12 @@ import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Timer;
 
 public class PorkyAtom extends Atom
 {
 	boolean direction;
+	Timer t;
 	
 	public PorkyAtom(boolean b)
 	{
@@ -20,7 +22,7 @@ public class PorkyAtom extends Atom
 	@Override
 	public void init()
 	{
-	
+		t = new Timer();
 	}
 
 	@Override
@@ -29,6 +31,8 @@ public class PorkyAtom extends Atom
 		System.out.println("Executing porky atom");
 		try
 		{
+			TKOHardware.getLeftDrive().set(0.1);
+			
 			if (direction)
 				TKOHardware.getDSolenoid(1).set(Value.kForward);
 			else if (!direction)
@@ -38,5 +42,12 @@ public class PorkyAtom extends Atom
 		{
 			e.printStackTrace();
 		}
+		t.reset();
+		t.start();
+		while (t.get() <= 1.0)
+		{
+			
+		}
+		System.out.println("Done with porky atom");
 	}
 }
