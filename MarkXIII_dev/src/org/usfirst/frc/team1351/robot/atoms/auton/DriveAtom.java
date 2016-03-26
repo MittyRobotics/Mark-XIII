@@ -34,7 +34,8 @@ public class DriveAtom extends Atom
 		try
 		{
 			TKOHardware.autonInit(p, i, d);
-		} catch (TKOException e)
+		}
+		catch (TKOException e)
 		{
 			e.printStackTrace();
 			System.out.println("Talon initialization failed!");
@@ -46,38 +47,50 @@ public class DriveAtom extends Atom
 	public void execute()
 	{
 		System.out.println("Executing drive atom");
+		Timer t = new Timer();
+		t.reset();
+		t.start();
 		try
 		{
+			TKOHardware.getLeftDrive().enableBrakeMode(false);
+			TKOHardware.getRightDrive().enableBrakeMode(false);
 			if (distance > 0)
 			{
 				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() < distance)
 				{
+					if (t.get() > 5.0)
+						break;
+
 					// current setpoint + incrementer
 					TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() + incrementer);
 					TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() + incrementer);
-					
-					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
-						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
-						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
-					TKOLogger.getInstance().addMessage("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
-						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
-						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
+
+					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
+							+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
+					TKOLogger.getInstance().addMessage(
+							"Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
+									+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: "
+									+ TKOHardware.getLeftDrive().getSetpoint());
 					Timer.delay(0.001);
 				}
 			}
-			else // driving in reverse
+			else
+			// driving in reverse
 			{
 				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() > distance)
 				{
+					if (t.get() > 5.0)
+						break;
+
 					TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() - incrementer);
 					TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() - incrementer);
 
-					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
-						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
-						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
-					TKOLogger.getInstance().addMessage("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
-						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
-						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
+					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
+							+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
+					TKOLogger.getInstance().addMessage(
+							"Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
+									+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: "
+									+ TKOHardware.getLeftDrive().getSetpoint());
 					Timer.delay(0.001);
 				}
 			}
@@ -90,14 +103,18 @@ public class DriveAtom extends Atom
 			while (diff > threshold && DriverStation.getInstance().isEnabled())
 			{
 				TKOLogger.getInstance().addMessage("NOT CLOSE ENOUGH TO TARGET DIST: " + diff);
-				System.out.println("NOT CLOSE ENOUGH TO TARGET DIST: " + diff + "Right Get at: " + TKOHardware.getRightDrive().getPosition());
-				diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance); 
+				System.out.println("NOT CLOSE ENOUGH TO TARGET DIST: " + diff + "Right Get at: "
+						+ TKOHardware.getRightDrive().getPosition());
+				diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance);
 				Timer.delay(0.001);
 			}
-//			TKOHardware.getLeftDrive().disableControl();
-//			TKOHardware.getRightDrive().disableControl();
+			// TKOHardware.getLeftDrive().disableControl();
+			// TKOHardware.getRightDrive().disableControl();
 
-		} catch (TKOException e1)
+			TKOHardware.getLeftDrive().enableBrakeMode(true);
+			TKOHardware.getRightDrive().enableBrakeMode(true);
+		}
+		catch (TKOException e1)
 		{
 			e1.printStackTrace();
 		}

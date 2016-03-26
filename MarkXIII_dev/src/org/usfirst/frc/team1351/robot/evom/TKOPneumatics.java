@@ -134,39 +134,59 @@ public class TKOPneumatics implements Runnable
 		{
 			if (testEnabled)
 			{
-				if (TKOHardware.getJoystick(3).getRawButton(2))
-				{
-					if (System.currentTimeMillis() - toggledPistonTime[1] > 250)
-					{
-						Value currVal = TKOHardware.getDSolenoid(1).get();
-						Value newVal = currVal;
-						if (currVal == Value.kForward)
-							newVal = Value.kReverse;
-						else if (currVal == Value.kReverse)
-							newVal = Value.kForward;
-						TKOHardware.getDSolenoid(1).set(newVal);
-						toggledPistonTime[1] = System.currentTimeMillis();
-					}
-				}
-
 				if (TKOHardware.getJoystick(3).getRawButton(3))
 				{
-					if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
-					{
-						Value currVal = TKOHardware.getDSolenoid(2).get();
-						Value newVal = currVal;
-						if (currVal == Value.kForward)
-							newVal = Value.kReverse;
-						else if (currVal == Value.kReverse)
-							newVal = Value.kForward;
-						TKOHardware.getDSolenoid(2).set(newVal);
-						toggledPistonTime[2] = System.currentTimeMillis();
-					}
+					System.out.println("Manually moving arm solenoid at time: " + System.currentTimeMillis());
+//					if (System.currentTimeMillis() - toggledPistonTime[1] > 250)
+//					{
+//						Value currVal = TKOHardware.getDSolenoid(1).get();
+//						Value newVal = currVal;
+//						if (currVal == Value.kForward)
+//							newVal = Value.kReverse;
+//						else if (currVal == Value.kReverse)
+//							newVal = Value.kForward;
+//						TKOHardware.getDSolenoid(1).set(newVal);
+//						toggledPistonTime[1] = System.currentTimeMillis();
+//					}
+					TKOHardware.getDSolenoid(1).set(Value.kForward);
+					System.out.println("Arm solenoid is now: "  + TKOHardware.getDSolenoid(1).get());
+				}
+				if (TKOHardware.getJoystick(3).getRawButton(2))
+				{
+					System.out.println("Manually moving arm solenoid at time: " + System.currentTimeMillis());
+					TKOHardware.getDSolenoid(1).set(Value.kReverse);
+					System.out.println("Arm solenoid is now: "  + TKOHardware.getDSolenoid(1).get());
+				}
+				
+
+				if (TKOHardware.getJoystick(3).getRawButton(11))
+				{
+					System.out.println("Manually moving intake solenoid at time: " + System.currentTimeMillis());
+//					if (System.currentTimeMillis() - toggledPistonTime[2] > 250)
+//					{
+//						Value currVal = TKOHardware.getDSolenoid(2).get();
+//						Value newVal = currVal;
+//						if (currVal == Value.kForward)
+//							newVal = Value.kReverse;
+//						else if (currVal == Value.kReverse)
+//							newVal = Value.kForward;
+//						TKOHardware.getDSolenoid(2).set(newVal);
+//						toggledPistonTime[2] = System.currentTimeMillis();
+//					}
+					TKOHardware.getDSolenoid(2).set(Value.kForward);
+					System.out.println("Intake solenoid is now: "  + TKOHardware.getDSolenoid(2).get());
+				}
+				if (TKOHardware.getJoystick(3).getRawButton(10))
+				{
+					System.out.println("Manually moving arm solenoid at time: " + System.currentTimeMillis());
+					TKOHardware.getDSolenoid(2).set(Value.kReverse);
+					System.out.println("Arm solenoid is now: "  + TKOHardware.getDSolenoid(2).get());
 				}
 			}
 
+			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
 			// shifting gearbox
-			if (TKOHardware.getXboxController().getButtonY())
+			/*if (TKOHardware.getXboxController().getButtonY())
 			{
 				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
 				lastShiftTime = System.currentTimeMillis();
@@ -177,7 +197,7 @@ public class TKOPneumatics implements Runnable
 				lastShiftTime = System.currentTimeMillis();
 			}
 			else
-				autoShift();
+				autoShift();*/
 
 		}
 		catch (Exception e)
@@ -201,9 +221,6 @@ public class TKOPneumatics implements Runnable
 //				if (TKOHardware.getXboxController().getButtonY())
 //					TKOArm.getInstance().breachCheval();
 
-				if(TKOHardware.getJoystick(3).getRawButton(3)) {
-					
-				}
 				synchronized (pneuThread)
 				{
 					pneuThread.wait(20);

@@ -92,8 +92,8 @@ public class TKOVision implements Runnable
 	{
 		System.out.println("Stopping vision task");
 
-		// NIVision.IMAQdxStopAcquisition(sessionCamFront);
-		// NIVision.IMAQdxStopAcquisition(sessionCamBack);
+		 NIVision.IMAQdxStopAcquisition(sessionCamFront);
+		 NIVision.IMAQdxStopAcquisition(sessionCamBack);
 
 		if (visionThread.isThreadRunning())
 			visionThread.setThreadRunning(false);
@@ -157,7 +157,7 @@ public class TKOVision implements Runnable
 
 				chooseCamera();
 				viewCamera(cameraChoice);
-				printTable();
+//				printTable();
 
 				synchronized (visionThread)
 				{

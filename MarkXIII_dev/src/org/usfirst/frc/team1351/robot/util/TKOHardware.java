@@ -239,8 +239,8 @@ public class TKOHardware
 			System.out.println("Gyro initialized: " + Timer.getFPGATimestamp());
 		}
 
-		if (arduinoSignal == null)
-			arduinoSignal = new AnalogOutput(0);
+//		if (arduinoSignal == null)
+//			arduinoSignal = new AnalogOutput(0);
 
 		if (limitSwitches[0] == null) // ball switch
 			limitSwitches[0] = new DigitalInput(0);

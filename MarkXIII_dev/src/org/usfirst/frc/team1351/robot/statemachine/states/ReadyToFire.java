@@ -18,14 +18,15 @@ public class ReadyToFire implements IStateFunction
 		System.out.println("Entering: Ready to fire");
 
 		data.curState = StateEnum.STATE_READY_TO_FIRE;
-		if (StateMachine.isPorkyUp()) // switch is actuated, porky is up
+		/*if (StateMachine.isPorkyUp()) // switch is actuated, porky is up
 		{
 			TKOShooter.getInstance().spinUp(StateMachine.porkyUpSpeed, StateMachine.incrementer);
 		}
 		else if (!StateMachine.isPorkyUp()) // / switch is not actuated, porky is down
 		{
 			TKOShooter.getInstance().spinUp(StateMachine.porkyDownSpeed, StateMachine.incrementer);
-		}
+		}*/
+		TKOShooter.getInstance().spinUp(StateMachine.porkyDownSpeed, StateMachine.incrementer);
 		StateMachine.getInstance().startLogging(true);
 
 		if (data.sensorValues == StateMachine.GOT_BALL)

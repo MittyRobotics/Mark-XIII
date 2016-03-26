@@ -5,6 +5,7 @@ Driver Controls:
 - Xbox, Button B: breach portcullis
 - Xbox, Button Y: breach cheval
 - Xbox, Strong Vibration on Full: Alerts to current overdraw by any talons  
+- Xbox, Button X: toggle coast/brake mode for drive talons
 
 For Testing:
 - Stick 1, Button 2: toggle arm

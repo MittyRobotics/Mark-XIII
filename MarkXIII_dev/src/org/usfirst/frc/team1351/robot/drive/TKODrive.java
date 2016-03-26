@@ -7,14 +7,17 @@ import org.usfirst.frc.team1351.robot.util.TKORuntimeException;
 import org.usfirst.frc.team1351.robot.util.TKOThread;
 
 import edu.wpi.first.wpilibj.CANTalon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 /**
- * TODO see why only one side turns, at the very least we need to be able to drive in a straight line 
+ * TODO see why only one side turns, at the very least we need to be able to drive in a straight line
  * 
-*/ 
+ */
 public class TKODrive implements Runnable
 {
 	private static TKODrive m_Instance = null;
 	public TKOThread driveThread = null;
+	private boolean brakeToggle = false;
 
 	public static synchronized TKODrive getInstance()
 	{
@@ -28,6 +31,7 @@ public class TKODrive implements Runnable
 
 	protected TKODrive()
 	{
+		SmartDashboard.putBoolean("Brake mode enabled: ", brakeToggle);
 	}
 
 	public void start()
@@ -73,26 +77,27 @@ public class TKODrive implements Runnable
 	{
 		try
 		{
-			// Get the squared inputs from xBox controller - actually x^4 
+			// Get the squared inputs from xBox controller - actually x^4
 			double leftMove = Math.pow(TKOHardware.getXboxController().getLeftY(), 2);
 			double rightMove = Math.pow(TKOHardware.getXboxController().getRightY(), 2);
 
-//			// Averages the value so it will move more smoothly hopefully
-//			if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
-//			{
-//				leftMove = (leftMove + rightMove) / 2;
-//				rightMove = leftMove;
-//			}
+			// // Averages the value so it will move more smoothly hopefully
+			// if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)
+			// {
+			// leftMove = (leftMove + rightMove) / 2;
+			// rightMove = leftMove;
+			// }
 
 			// Just gets the sign - positive or negative
 			double leftSign = Math.abs(TKOHardware.getXboxController().getLeftY()) / TKOHardware.getXboxController().getLeftY();
 			double rightSign = Math.abs(TKOHardware.getXboxController().getRightY()) / TKOHardware.getXboxController().getRightY();
-//			leftSign = leftSign * (1.0 - (0.5 * TKOHardware.getXboxController().getLeftTrigger()));
-//			rightSign = rightSign * (1.0 - (0.5 * TKOHardware.getXboxController().getRightTrigger()));
+			// leftSign = leftSign * (1.0 - (0.5 * TKOHardware.getXboxController().getLeftTrigger()));
+			// rightSign = rightSign * (1.0 - (0.5 * TKOHardware.getXboxController().getRightTrigger()));
 
-			if(reverse) {
-				leftSign *= -1; 
-				rightSign *= -1; 
+			if (reverse)
+			{
+				leftSign *= -1;
+				rightSign *= -1;
 			}
 			setLeftRightMotorOutputsPercentVBus(leftMove * leftSign, rightMove * rightSign);
 		}
@@ -123,12 +128,14 @@ public class TKODrive implements Runnable
 	}
 
 	private boolean creep = false;
+
 	public void isCreep(boolean b)
 	{
 		creep = b;
 	}
 
-	private boolean reverse = false; 
+	private boolean reverse = false;
+
 	@Override
 	public void run()
 	{
@@ -137,26 +144,40 @@ public class TKODrive implements Runnable
 			while (driveThread.isThreadRunning())
 			{
 				if (!creep)
-				{
 					squaredXbox();
+
+
+				if (TKOHardware.getLeftDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD
+						|| TKOHardware.getRightDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD)
+				{
+					TKOHardware.getXboxController().vibrateStrong(1.f);
 				}
+				else
+				{
+					TKOHardware.getXboxController().stopRumble();
+				}
+				
+//				if (TKOHardware.getXboxController().getStartButton())
+//					reverse = !reverse; //GOTO Hell
+				
+				if (TKOHardware.getXboxController().getButtonX())
+				{
+					brakeToggle = !brakeToggle;
+					if (brakeToggle)
+					{
+						TKOHardware.getLeftDrive().enableBrakeMode(true);
+						TKOHardware.getRightDrive().enableBrakeMode(true);
+					}
+					else if (!brakeToggle)
+					{
+						TKOHardware.getLeftDrive().enableBrakeMode(false);
+						TKOHardware.getRightDrive().enableBrakeMode(false);
+					}
+				}
+				
 				synchronized (driveThread)
 				{
 					driveThread.wait(5);
-				}
-				if(TKOHardware.getLeftDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD || TKOHardware.getRightDrive().getOutputCurrent() > Definitions.CURRENT_SAFETY_THRESHOLD) {
-					TKOHardware.getXboxController().vibrateStrong(1.f);
-				} else {
-					TKOHardware.getXboxController().stopRumble();
-				}
-				if(TKOHardware.getXboxController().getStartButton()) 
-					reverse = !reverse; 
-				if(TKOHardware.getXboxController().getStartButton()) {
-					TKOHardware.getRightDrive().enableBrakeMode(true);
-					TKOHardware.getLeftDrive().enableBrakeMode(true);
-				} else {
-					TKOHardware.getRightDrive().enableBrakeMode(false);
-					TKOHardware.getLeftDrive().enableBrakeMode(false);
 				}
 			}
 		}

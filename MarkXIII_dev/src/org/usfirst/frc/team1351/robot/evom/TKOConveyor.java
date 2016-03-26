@@ -12,13 +12,17 @@ public class TKOConveyor implements Runnable
 {
 	public TKOThread conveyorThread = null;
 	private static TKOConveyor m_Instance = null;
-	private boolean testEnabled = false;
-	double speed = 0.;
-	double incrementer = 0.;
+	private boolean testEnabled = true;
+	double speed = 7250.;
+	double incrementer = 200.;
+	double rpm = 0.;
 
 	protected TKOConveyor()
 	{
 		reset();
+		SmartDashboard.putNumber("Speed: ", speed);
+		SmartDashboard.putNumber("Incrementer: ", incrementer);
+		SmartDashboard.putNumber("Current RPM: ", rpm);
 	}
 
 	public static synchronized TKOConveyor getInstance()
@@ -83,30 +87,41 @@ public class TKOConveyor implements Runnable
 
 				if (testEnabled)
 				{
-					speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
+					speed = Definitions.REVOLUTIONS_TO_TICKS * SmartDashboard.getNumber("Speed: ");
 					incrementer = SmartDashboard.getNumber("Incrementer: ");
-				
-					long timeout = 0;
-					if ((TKOHardware.getXboxController().getRightBumper() || TKOHardware.getJoystick(2).getRawButton(4))
-							&& TKOHardware.getSwitch(0).get())
+
+					if (TKOHardware.getJoystick(2).getRawButton(4))
+						startConveyorForward();
+					else if (TKOHardware.getJoystick(2).getRawButton(5))
+						startConveyorBackward();
+					else
+						stopConveyor();
+					
+					/*long timeout = 0;
+					if (TKOHardware.getJoystick(2).getRawButton(4) && TKOHardware.getSwitch(0).get())
 					{
 						startConveyorForward();
 						timeout = System.currentTimeMillis();
 					}
-					else if ((System.currentTimeMillis() - timeout) <= 200)
+					else if ((System.currentTimeMillis() - timeout) <= 150)
 					{
+						System.out.println("Inside the else-if: " + (System.currentTimeMillis() - timeout));
 						startConveyorBackward();
 					}
-					else
+					else if(TKOHardware.getJoystick(2).getRawButton(5)) {
+						startConveyorBackward();
+					}
+					else 
 					{
 						stopConveyor();
-					}
+					}*/
 
-					if (TKOHardware.getJoystick(2).getTrigger())
+					if (TKOHardware.getJoystick(2).getTrigger() && TKOHardware.getSwitch(0).get())
 						TKOShooter.getInstance().spinUp(speed, incrementer);
 					else
 						TKOShooter.getInstance().spinDown();
 
+					SmartDashboard.putNumber("Current RPM: ", TKOHardware.getFlyTalon(0).getSpeed() * Definitions.TICKS_TO_REVOLUTIONS);
 					TKOShooter.getInstance().logShooterData();
 				}
 
@@ -153,7 +168,7 @@ public class TKOConveyor implements Runnable
 		try
 		{
 			TKOHardware.getConveyorTalon(2).enableControl();
-			TKOHardware.getConveyorTalon(2).set(0.3);
+			TKOHardware.getConveyorTalon(2).set(-0.4);
 		}
 		catch (TKOException e)
 		{
@@ -166,7 +181,7 @@ public class TKOConveyor implements Runnable
 		try
 		{
 			TKOHardware.getConveyorTalon(2).enableControl();
-			TKOHardware.getConveyorTalon(2).set(-0.3);
+			TKOHardware.getConveyorTalon(2).set(0.4);
 		}
 		catch (TKOException e)
 		{

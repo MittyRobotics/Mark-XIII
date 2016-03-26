@@ -104,7 +104,7 @@ public class StateMachine implements Runnable
 		int num = 0;
 		int i = 0;
 		num |= convert(!ballSwitch.get(), i++);
-		num |= convert(!intakeSwitch.get(), i++);
+		num |= convert(intakeSwitch.get(), i++);
 		return num;
 	}
 	
@@ -156,7 +156,9 @@ public class StateMachine implements Runnable
 				incrementer = SmartDashboard.getNumber("Incrementer: ");
 				
 				data.curState = runState(data.curState, data);
-				// System.out.println("data.curState: " + data.curState);
+				System.out.println("data.curState: " + data.curState);
+				System.out.println("data.sensorValues: " + data.sensorValues);
+				System.out.println();
 				
 				if (stick.getRawButton(8))
 				{

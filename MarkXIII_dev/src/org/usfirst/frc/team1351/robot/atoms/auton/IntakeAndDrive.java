@@ -47,16 +47,25 @@ public class IntakeAndDrive extends Atom
 	{
 		System.out.println("Executing pickup atom");
 		long timeout = 0;
+		Timer t = new Timer();
+		t.reset();
+		t.start();
 		try
 		{
 			while (DriverStation.getInstance().isEnabled() && DriverStation.getInstance().isAutonomous())
 			{
+				if (t.get() > 5.0)
+					break;
+				
+				TKOHardware.getConveyorTalon(0).set(-0.5);
+				TKOHardware.getConveyorTalon(1).set(0.5);
+				
 				if (TKOHardware.getSwitch(0).get())
 				{
 					TKOConveyor.getInstance().startConveyorForward();
 					timeout = System.currentTimeMillis();
 				}
-				else if (System.currentTimeMillis() - timeout <= 200)
+				else if (System.currentTimeMillis() - timeout <= 150)
 				{
 					TKOConveyor.getInstance().startConveyorBackward();
 				}
