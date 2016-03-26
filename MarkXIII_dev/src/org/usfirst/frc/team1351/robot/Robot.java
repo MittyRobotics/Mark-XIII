@@ -99,9 +99,7 @@ public class Robot extends SampleRobot
 		else if (autonChooser.getSelected().equals(2))
 		{
 //			molecule.add(new IntakeAtom());
-			molecule.add(new PorkyAtom(false)); 
-			molecule.add(new DriveAtom(-32. * Definitions.TICKS_PER_INCH));
-			molecule.add(new PorkyAtom(true));
+			molecule.add(new ChivalAtom(-32. * Definitions.TICKS_PER_INCH));
 			molecule.add(new DriveAtom(distance));
 		}
 		else
