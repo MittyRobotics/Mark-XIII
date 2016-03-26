@@ -53,7 +53,7 @@ public class Definitions
 	public static final boolean[] DRIVE_REVERSE_SENSOR =
 	{ false, false, true, false };
 	
-	public static final double CURRENT_SAFETY_THRESHOLD = 60; //Amps for the motors 
+	public static final double CURRENT_SAFETY_THRESHOLD = 60.; //Amps for the motors 
 
 	// Hardware constants
 

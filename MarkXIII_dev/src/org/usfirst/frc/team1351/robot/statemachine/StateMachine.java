@@ -86,7 +86,7 @@ public class StateMachine implements Runnable
 		states[StateEnum.STATE_ERROR.getValue()] = new ErrorState();
 		
 		data.numSensors = 2; // NOT 3
-		data.sensorValues = 0;
+		data.sensorValues = StateMachine.INTAKE_EXTENDED;
 		data.curState = StateEnum.STATE_FORWARD_SPIN;
 		
 //		SmartDashboard.putBoolean("Ball Switch: ", false);

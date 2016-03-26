@@ -56,6 +56,7 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Drive D: ", Definitions.AUTON_DRIVE_D);
 		SmartDashboard.putNumber("Drive distance: ", 0.);
 		SmartDashboard.putNumber("Turn angle: ", 0.);
+		SmartDashboard.putNumber("Chival distance: ", -32.);
 
 		light = new Solenoid(5, 0);
 
@@ -86,6 +87,7 @@ public class Robot extends SampleRobot
 
 		double distance = SmartDashboard.getNumber("Drive distance: ") * Definitions.TICKS_PER_INCH;
 		double angle = SmartDashboard.getNumber("Turn angle: ");
+		double chivDist = SmartDashboard.getNumber("Chival distance: ");
 
 		if (autonChooser.getSelected().equals(0))
 		{
@@ -99,7 +101,7 @@ public class Robot extends SampleRobot
 		else if (autonChooser.getSelected().equals(2))
 		{
 //			molecule.add(new IntakeAtom());
-			molecule.add(new ChivalAtom(-32. * Definitions.TICKS_PER_INCH));
+			molecule.add(new ChivalAtom(chivDist * Definitions.TICKS_PER_INCH));
 			molecule.add(new DriveAtom(distance));
 		}
 		else
