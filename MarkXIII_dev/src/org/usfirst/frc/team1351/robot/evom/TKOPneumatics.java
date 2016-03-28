@@ -91,7 +91,7 @@ public class TKOPneumatics implements Runnable
 	{
 		try
 		{
-			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
+			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
 		}
 		catch (TKOException e)
 		{
@@ -184,7 +184,7 @@ public class TKOPneumatics implements Runnable
 				}
 			}
 
-			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
+			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
 			// shifting gearbox
 			/*if (TKOHardware.getXboxController().getButtonY())
 			{

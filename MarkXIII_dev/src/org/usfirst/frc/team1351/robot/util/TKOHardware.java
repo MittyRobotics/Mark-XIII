@@ -396,14 +396,18 @@ public class TKOHardware
 		//TODO return this to true 
 		TKOHardware.getLeftDrive().enableBrakeMode(false);
 		TKOHardware.getRightDrive().enableBrakeMode(false);
-		TKOHardware.getLeftDrive().setPosition(0); // resets encoder
-		TKOHardware.getRightDrive().setPosition(0);
+		TKOHardware.getLeftDrive().setPosition(0.); // resets encoder
+		TKOHardware.getRightDrive().setPosition(0.);
 		TKOHardware.getLeftDrive().ClearIaccum(); // stops bounce
 		TKOHardware.getRightDrive().ClearIaccum();
 		Timer.delay(0.1);
 		TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getPosition());
 		TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getPosition());
-		TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
+		TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
+		TKOHardware.getLeftDrive().reset();
+		TKOHardware.getRightDrive().reset();
+		TKOHardware.getLeftDrive().enableControl();
+		TKOHardware.getRightDrive().enableControl();
 	}
 
 	/**

@@ -16,7 +16,7 @@ public class Definitions
 
 	public static final double TICKS_PER_INCH = 112.21945137; // WARNING: bullshit value
 	//332.5020781 for 6"
-	public static final double AUTON_DRIVE_P = 0.2; // .370
+	public static final double AUTON_DRIVE_P = 0.175; // .370
 	public static final double AUTON_DRIVE_I = -0.1; // -0.1
 	public static final double AUTON_DRIVE_D = 0.0;
 	public static final double AUTON_GYRO_TURN_P = 0.025;
@@ -123,8 +123,8 @@ public class Definitions
 
 	// Pneumatics constants
 
-	public static final DoubleSolenoid.Value SHIFTER_LOW = DoubleSolenoid.Value.kForward;
-	public static final DoubleSolenoid.Value SHIFTER_HIGH = DoubleSolenoid.Value.kReverse;
+	public static final DoubleSolenoid.Value SHIFTER_LOW = DoubleSolenoid.Value.kReverse;
+	public static final DoubleSolenoid.Value SHIFTER_HIGH = DoubleSolenoid.Value.kForward;
 
 	public static final int SHIFTER_A = 2; // drive train shifting piston
 	public static final int SHIFTER_B = 6;

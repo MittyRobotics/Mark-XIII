@@ -132,7 +132,7 @@ public class TKODrive implements Runnable
 	{
 		try
 		{
-			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_LOW);
+			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
 			TKOHardware.getLeftDrive().enableBrakeMode(true);
 			TKOHardware.getRightDrive().enableBrakeMode(true);
 			boolean b = true;
@@ -211,8 +211,13 @@ public class TKODrive implements Runnable
 						TKOHardware.getRightDrive().enableBrakeMode(false);
 					}
 				}
-				
-				shimmy();
+				if (TKOHardware.getXboxController().getButtonA())
+					shimmy();
+//				SmartDashboard.putNumber("Right Drive Current", TKOHardware.getRightDrive().getOutputCurrent());
+//				SmartDashboard.putNumber("Right Drive Voltage", TKOHardware.getRightDrive().getOutputVoltage());
+//				SmartDashboard.putNumber("Left Drive Current", TKOHardware.getLeftDrive().getOutputCurrent());
+//				SmartDashboard.putNumber("Left Drive Voltage", TKOHardware.getLeftDrive().getOutputVoltage());
+
 				
 				synchronized (driveThread)
 				{

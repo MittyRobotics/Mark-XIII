@@ -1,7 +1,5 @@
 package org.usfirst.frc.team1351.robot.atoms.auton;
 
-// TODO check TKOHardware to see where PID is set
-
 import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.atoms.Atom;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
@@ -41,7 +39,7 @@ public class ChivalAtom extends Atom
 			e.printStackTrace();
 			System.out.println("Talon initialization failed!");
 		}
-		System.out.println("Drive atom initialized");
+		System.out.println("Chival atom initialized");
 	}
 
 	@Override
@@ -51,27 +49,27 @@ public class ChivalAtom extends Atom
 		Timer t = new Timer();
 		t.reset();
 		t.start();
+
 		try
 		{
-			TKOHardware.getLeftDrive().enableBrakeMode(false);
-			TKOHardware.getRightDrive().enableBrakeMode(false);
+			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
+			TKOHardware.getDSolenoid(2).set(Value.kForward);
+			TKOHardware.getDSolenoid(1).set(Value.kReverse);
+			System.out.println("Distance: " + distance);
+			distance += TKOHardware.getLeftDrive().getPosition();
+			System.out.println("Distance is now: " + distance);
 			if (distance > 0)
 			{
 				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() < distance)
 				{
 					if (t.get() > 5.0)
+					{
+						System.out.println("Timeout!");
 						break;
-
-					// current setpoint + incrementer
+					}
 					TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() + incrementer);
 					TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() + incrementer);
 
-					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
-							+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
-					TKOLogger.getInstance().addMessage(
-							"Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
-									+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: "
-									+ TKOHardware.getLeftDrive().getSetpoint());
 					Timer.delay(0.001);
 				}
 			}
@@ -81,17 +79,19 @@ public class ChivalAtom extends Atom
 				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() > distance)
 				{
 					if (t.get() > 5.0)
+					{
+						System.out.println("Timeout!");
 						break;
-
+					}
 					TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() - incrementer);
 					TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() - incrementer);
 
-					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
+					/*System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
 							+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
 					TKOLogger.getInstance().addMessage(
 							"Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
 									+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: "
-									+ TKOHardware.getLeftDrive().getSetpoint());
+									+ TKOHardware.getLeftDrive().getSetpoint());*/
 					Timer.delay(0.001);
 				}
 			}
@@ -103,19 +103,26 @@ public class ChivalAtom extends Atom
 			double diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance);
 			while (diff > threshold && DriverStation.getInstance().isEnabled())
 			{
-				TKOLogger.getInstance().addMessage("NOT CLOSE ENOUGH TO TARGET DIST: " + diff);
+				/*TKOLogger.getInstance().addMessage("NOT CLOSE ENOUGH TO TARGET DIST: " + diff);
 				System.out.println("NOT CLOSE ENOUGH TO TARGET DIST: " + diff + "Right Get at: "
-						+ TKOHardware.getRightDrive().getPosition());
+						+ TKOHardware.getRightDrive().getPosition());*/
 				diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance);
 				Timer.delay(0.001);
 			}
+			
+			System.out.println("Setpoint at end of atom: " + TKOHardware.getLeftDrive().getSetpoint());
+			System.out.println("Position at end of atom: " + TKOHardware.getLeftDrive().getPosition() + "\t" + TKOHardware.getLeftDrive().get());
+			
 			// TKOHardware.getLeftDrive().disableControl();
 			// TKOHardware.getRightDrive().disableControl();
 
 			TKOHardware.getLeftDrive().enableBrakeMode(true);
 			TKOHardware.getRightDrive().enableBrakeMode(true);
 			
+			System.out.println("Lowering arm");
 			TKOHardware.getDSolenoid(1).set(Value.kForward);
+			
+			Timer.delay(1.0);
 		}
 		catch (TKOException e1)
 		{

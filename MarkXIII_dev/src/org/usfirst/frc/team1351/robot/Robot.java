@@ -42,9 +42,9 @@ public class Robot extends SampleRobot
 		TKOHardware.initObjects();
 
 		autonChooser = new SendableChooser();
-		autonChooser.addDefault("Lowbar", new Integer(0));
-		autonChooser.addObject("Drive only", new Integer(1));
-		autonChooser.addObject("Chival", new Integer(2));
+		autonChooser.addDefault("Chival", new Integer(2));
+		autonChooser.addObject("Low bar", new Integer(0));
+		autonChooser.addObject("Rough terrain", new Integer(1));
 		SmartDashboard.putData("Auton chooser", autonChooser);
 
 		SmartDashboard.putNumber("Shooter P: ", Definitions.SHOOTER_kP);
@@ -54,9 +54,9 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Drive P: ", Definitions.AUTON_DRIVE_P);
 		SmartDashboard.putNumber("Drive I: ", Definitions.AUTON_DRIVE_I);
 		SmartDashboard.putNumber("Drive D: ", Definitions.AUTON_DRIVE_D);
-		SmartDashboard.putNumber("Drive distance: ", 0.);
+		SmartDashboard.putNumber("Drive distance: ", 120.);
 		SmartDashboard.putNumber("Turn angle: ", 0.);
-		SmartDashboard.putNumber("Chival distance: ", -32.);
+		SmartDashboard.putNumber("Chival distance: ", -48.);
 
 		light = new Solenoid(5, 0);
 
@@ -89,34 +89,23 @@ public class Robot extends SampleRobot
 		double angle = SmartDashboard.getNumber("Turn angle: ");
 		double chivDist = SmartDashboard.getNumber("Chival distance: ");
 
-		if (autonChooser.getSelected().equals(0))
+		if (autonChooser.getSelected().equals(0)) // low bar
 		{
-			molecule.add(new IntakeAtom());
-			molecule.add(new DriveAtom(distance));
+			molecule.add(new DriveAtom(distance, 1));
 		}
-		else if (autonChooser.getSelected().equals(1))
+		else if (autonChooser.getSelected().equals(1)) // rough terrain
 		{
-			molecule.add(new DriveAtom(distance));
+			molecule.add(new DriveAtom(distance, 2));
 		}
-		else if (autonChooser.getSelected().equals(2))
+		else if (autonChooser.getSelected().equals(2)) // chival
 		{
 //			molecule.add(new IntakeAtom());
-			molecule.add(new ChivalAtom(chivDist * Definitions.TICKS_PER_INCH));
-			molecule.add(new DriveAtom(distance));
+			molecule.add(new ChivalAtom(-36. * Definitions.TICKS_PER_INCH));
+			molecule.add(new DriveAtom(-120. * Definitions.TICKS_PER_INCH, 0));
 		}
 		else
 		{
 			System.out.println("Molecule empty why this");
-		}
-
-		try
-		{
-			TKOHardware.getDSolenoid(2).set(Value.kForward);
-//			TKOHardware.getDSolenoid(1).set(Value.kForward);
-		}
-		catch (TKOException e1)
-		{
-			e1.printStackTrace();
 		}
 
 		System.out.println("Running molecule");
@@ -156,6 +145,17 @@ public class Robot extends SampleRobot
 		 * try { TKOHardware.getDSolenoid(2).set(Value.kForward); TKOHardware.getDSolenoid(1).set(Value.kForward); } catch (TKOException e1)
 		 * { e1.printStackTrace(); }
 		 */
+		
+		try
+		{
+			TKOHardware.getDSolenoid(0).set(Value.kForward); // high gear
+			TKOHardware.getDSolenoid(2).set(TKOHardware.getDSolenoid(2).get());
+			TKOHardware.getDSolenoid(1).set(TKOHardware.getDSolenoid(1).get());
+		}
+		catch (TKOException e1)
+		{
+			e1.printStackTrace();
+		}
 
 		while (isEnabled() && isOperatorControl())
 		{
