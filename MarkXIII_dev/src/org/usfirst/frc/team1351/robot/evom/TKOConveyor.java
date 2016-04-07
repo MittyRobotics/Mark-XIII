@@ -108,9 +108,6 @@ public class TKOConveyor implements Runnable
 						System.out.println("Inside the else-if: " + (System.currentTimeMillis() - timeout));
 						startConveyorBackward();
 					}
-					else if(TKOHardware.getJoystick(2).getRawButton(5)) {
-						startConveyorBackward();
-					}
 					else 
 					{
 						stopConveyor();

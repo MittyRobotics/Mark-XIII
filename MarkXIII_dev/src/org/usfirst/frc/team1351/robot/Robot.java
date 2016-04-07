@@ -42,9 +42,10 @@ public class Robot extends SampleRobot
 		TKOHardware.initObjects();
 
 		autonChooser = new SendableChooser();
-		autonChooser.addDefault("Chival", new Integer(2));
-		autonChooser.addObject("Low bar", new Integer(0));
-		autonChooser.addObject("Rough terrain", new Integer(1));
+		autonChooser.addDefault("Low bar", new Integer(0));
+		autonChooser.addObject("Chival", new Integer(1));
+		autonChooser.addObject("Rough terrain", new Integer(2));
+		autonChooser.addObject("Portcullis", new Integer(3));
 		SmartDashboard.putData("Auton chooser", autonChooser);
 
 		SmartDashboard.putNumber("Shooter P: ", Definitions.SHOOTER_kP);
@@ -56,7 +57,7 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Drive D: ", Definitions.AUTON_DRIVE_D);
 		SmartDashboard.putNumber("Drive distance: ", 120.);
 		SmartDashboard.putNumber("Turn angle: ", 0.);
-		SmartDashboard.putNumber("Chival distance: ", -48.);
+		SmartDashboard.putNumber("Chival distance: ", -36.);
 
 		light = new Solenoid(5, 0);
 
@@ -89,19 +90,23 @@ public class Robot extends SampleRobot
 		double angle = SmartDashboard.getNumber("Turn angle: ");
 		double chivDist = SmartDashboard.getNumber("Chival distance: ");
 
-		if (autonChooser.getSelected().equals(0)) // low bar
+		if (autonChooser.getSelected().equals(0))
 		{
-			molecule.add(new DriveAtom(distance, 1));
+			molecule.add(new PorkyAtom(chivDist * Definitions.TICKS_PER_INCH));
+			molecule.add(new DriveAtom(distance * Definitions.TICKS_PER_INCH, 0));
 		}
-		else if (autonChooser.getSelected().equals(1)) // rough terrain
+		else if (autonChooser.getSelected().equals(1))
 		{
 			molecule.add(new DriveAtom(distance, 2));
 		}
-		else if (autonChooser.getSelected().equals(2)) // chival
+		else if (autonChooser.getSelected().equals(2))
 		{
-//			molecule.add(new IntakeAtom());
-			molecule.add(new ChivalAtom(-36. * Definitions.TICKS_PER_INCH));
-			molecule.add(new DriveAtom(-120. * Definitions.TICKS_PER_INCH, 0));
+			molecule.add(new DriveAtom(distance, 1));
+		}
+		else if (autonChooser.getSelected().equals(3))
+		{
+			molecule.add(new ChivalAtom(chivDist * Definitions.TICKS_PER_INCH));
+			molecule.add(new DriveAtom(distance * Definitions.TICKS_PER_INCH, 0));
 		}
 		else
 		{

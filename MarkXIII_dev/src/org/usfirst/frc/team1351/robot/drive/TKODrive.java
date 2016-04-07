@@ -127,44 +127,6 @@ public class TKODrive implements Runnable
 			e.printStackTrace();
 		}
 	}
-
-	private void shimmy()
-	{
-		try
-		{
-			TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
-			TKOHardware.getLeftDrive().enableBrakeMode(true);
-			TKOHardware.getRightDrive().enableBrakeMode(true);
-			boolean b = true;
-			Timer t = new Timer();
-			while (TKOHardware.getXboxController().getButtonA())
-			{
-				t.start();
-				if (b)
-				{
-					while (t.get() < 0.25)
-						setLeftRightMotorOutputsPercentVBus(-.25, .25);
-				}
-				else
-				{
-					while (t.get() < 0.25)
-						setLeftRightMotorOutputsPercentVBus(.25, -.25);
-				}
-				b = !b;
-				t.stop();
-				t.reset();
-			}
-
-			TKOHardware.getLeftDrive().set(0.);
-			TKOHardware.getRightDrive().set(0.);
-			TKOHardware.getLeftDrive().enableBrakeMode(Definitions.DRIVE_BRAKE_MODE[0]);
-			TKOHardware.getRightDrive().enableBrakeMode(Definitions.DRIVE_BRAKE_MODE[2]);
-		}
-		catch (TKOException e)
-		{
-			e.printStackTrace();
-		}
-	}
 	
 	private boolean creep = false;
 	public void isCreep(boolean b)
@@ -211,8 +173,6 @@ public class TKODrive implements Runnable
 						TKOHardware.getRightDrive().enableBrakeMode(false);
 					}
 				}
-				if (TKOHardware.getXboxController().getButtonA())
-					shimmy();
 //				SmartDashboard.putNumber("Right Drive Current", TKOHardware.getRightDrive().getOutputCurrent());
 //				SmartDashboard.putNumber("Right Drive Voltage", TKOHardware.getRightDrive().getOutputVoltage());
 //				SmartDashboard.putNumber("Left Drive Current", TKOHardware.getLeftDrive().getOutputCurrent());

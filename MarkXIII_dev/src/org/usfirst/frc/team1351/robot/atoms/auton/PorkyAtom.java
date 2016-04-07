@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class ChivalAtom extends Atom
+public class PorkyAtom extends Atom
 {
 	double distance, incrementer, threshold;
 	double p, i, d;
 
-	public ChivalAtom(double _dist)
+	public PorkyAtom(double _dist)
 	{
 
 		p = SmartDashboard.getNumber("Drive P: ");
