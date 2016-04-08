@@ -46,6 +46,7 @@ public class Robot extends SampleRobot
 		autonChooser.addObject("Chival", new Integer(1));
 		autonChooser.addObject("Rough terrain", new Integer(2));
 		autonChooser.addObject("Portcullis", new Integer(3));
+		autonChooser.addObject("Intake then chival", new Integer (4));
 		SmartDashboard.putData("Auton chooser", autonChooser);
 
 		SmartDashboard.putNumber("Shooter P: ", Definitions.SHOOTER_kP);
@@ -55,9 +56,9 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Drive P: ", Definitions.AUTON_DRIVE_P);
 		SmartDashboard.putNumber("Drive I: ", Definitions.AUTON_DRIVE_I);
 		SmartDashboard.putNumber("Drive D: ", Definitions.AUTON_DRIVE_D);
-		SmartDashboard.putNumber("Drive distance: ", 120.);
+		SmartDashboard.putNumber("Drive distance: ", -60);
 		SmartDashboard.putNumber("Turn angle: ", 0.);
-		SmartDashboard.putNumber("Chival distance: ", -36.);
+		SmartDashboard.putNumber("Chival distance: ", -42.);
 
 		light = new Solenoid(5, 0);
 
@@ -88,25 +89,30 @@ public class Robot extends SampleRobot
 
 		double distance = SmartDashboard.getNumber("Drive distance: ") * Definitions.TICKS_PER_INCH;
 		double angle = SmartDashboard.getNumber("Turn angle: ");
-		double chivDist = SmartDashboard.getNumber("Chival distance: ");
+		double chivDist = SmartDashboard.getNumber("Chival distance: ") * Definitions.TICKS_PER_INCH;
 
 		if (autonChooser.getSelected().equals(0))
 		{
-			molecule.add(new PorkyAtom(chivDist * Definitions.TICKS_PER_INCH));
-			molecule.add(new DriveAtom(distance * Definitions.TICKS_PER_INCH, 0));
+			molecule.add(new DriveAtom(distance, 1));
 		}
 		else if (autonChooser.getSelected().equals(1))
 		{
-			molecule.add(new DriveAtom(distance, 2));
+			molecule.add(new PorkyAtom(chivDist, 1));
+			molecule.add(new DriveAtom(distance, 0));
 		}
 		else if (autonChooser.getSelected().equals(2))
 		{
-			molecule.add(new DriveAtom(distance, 1));
+			molecule.add(new DriveAtom(distance, 0));
 		}
 		else if (autonChooser.getSelected().equals(3))
 		{
-			molecule.add(new ChivalAtom(chivDist * Definitions.TICKS_PER_INCH));
-			molecule.add(new DriveAtom(distance * Definitions.TICKS_PER_INCH, 0));
+			
+		}
+		else if (autonChooser.getSelected().equals(4))
+		{
+			molecule.add(new IntakeAtom());
+			molecule.add(new PorkyAtom(chivDist, 1));
+			molecule.add(new DriveAtom(distance, 0));
 		}
 		else
 		{
@@ -150,7 +156,7 @@ public class Robot extends SampleRobot
 		 * try { TKOHardware.getDSolenoid(2).set(Value.kForward); TKOHardware.getDSolenoid(1).set(Value.kForward); } catch (TKOException e1)
 		 * { e1.printStackTrace(); }
 		 */
-		
+
 		try
 		{
 			TKOHardware.getDSolenoid(0).set(Value.kForward); // high gear

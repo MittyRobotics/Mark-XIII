@@ -13,9 +13,10 @@ public class TKOConveyor implements Runnable
 	public TKOThread conveyorThread = null;
 	private static TKOConveyor m_Instance = null;
 	private boolean testEnabled = true;
-	double speed = 7250.;
+	double speed = 1400.;
 	double incrementer = 200.;
 	double rpm = 0.;
+	long timeout = 0;
 
 	protected TKOConveyor()
 	{
@@ -83,35 +84,35 @@ public class TKOConveyor implements Runnable
 		{
 			while (conveyorThread.isThreadRunning())
 			{
-				rollerControl();
+//				rollerControl(); 
 
 				if (testEnabled)
 				{
 					speed = Definitions.REVOLUTIONS_TO_TICKS * SmartDashboard.getNumber("Speed: ");
 					incrementer = SmartDashboard.getNumber("Incrementer: ");
-
-					if (TKOHardware.getJoystick(2).getRawButton(4))
-						startConveyorForward();
-					else if (TKOHardware.getJoystick(2).getRawButton(5))
-						startConveyorBackward();
-					else
-						stopConveyor();
 					
-					/*long timeout = 0;
 					if (TKOHardware.getJoystick(2).getRawButton(4) && TKOHardware.getSwitch(0).get())
 					{
-						startConveyorForward();
+						TKOHardware.getConveyorTalon(2).set(-0.4);
 						timeout = System.currentTimeMillis();
 					}
-					else if ((System.currentTimeMillis() - timeout) <= 150)
+					else if (System.currentTimeMillis() - timeout <= 200)
 					{
-						System.out.println("Inside the else-if: " + (System.currentTimeMillis() - timeout));
-						startConveyorBackward();
+						System.out.println("Running conveyor backward");
+						TKOHardware.getConveyorTalon(2).set(0.4);
 					}
-					else 
+					else
 					{
-						stopConveyor();
-					}*/
+						System.out.println("Stopped conveyor");
+						TKOHardware.getConveyorTalon(2).set(0.0);
+					}
+					
+//					if (TKOHardware.getJoystick(2).getRawButton(4))
+//						startConveyorForward();
+//					else if (TKOHardware.getJoystick(2).getRawButton(5))
+//						startConveyorBackward();
+//					else
+//						stopConveyor();
 
 					if (TKOHardware.getJoystick(2).getTrigger() && TKOHardware.getSwitch(0).get())
 						TKOShooter.getInstance().spinUp(speed, incrementer);

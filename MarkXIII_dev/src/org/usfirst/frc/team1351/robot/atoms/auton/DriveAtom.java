@@ -76,7 +76,7 @@ public class DriveAtom extends Atom
 			{
 				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() < distance)
 				{
-					if (t.get() > 5.0)
+					if (t.get() > 1.5)
 					{
 						System.out.println("Timeout!");
 						break;
@@ -100,7 +100,7 @@ public class DriveAtom extends Atom
 			{
 				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() > distance)
 				{
-					if (t.get() > 5.0)
+					if (t.get() > 1.5)
 					{
 						System.out.println("Timeout!");
 						break;

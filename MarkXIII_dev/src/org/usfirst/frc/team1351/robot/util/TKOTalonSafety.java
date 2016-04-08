@@ -8,7 +8,9 @@ public class TKOTalonSafety implements Runnable
 	public TKOThread safetyCheckerThread = null;
 	private static TKOTalonSafety m_Instance = null;
 
-	protected TKOTalonSafety() {}
+	protected TKOTalonSafety()
+	{
+	}
 
 	public static synchronized TKOTalonSafety getInstance()
 	{
@@ -43,28 +45,30 @@ public class TKOTalonSafety implements Runnable
 	{
 		try
 		{
-			for (int i = 0; i < Definitions.NUM_DRIVE_TALONS; i+=2)
+			for (int i = 0; i < Definitions.NUM_DRIVE_TALONS; i += 2)
 			{
 				double current = TKOHardware.getDriveTalon(i).getOutputCurrent();
 				if (current > Definitions.TALON_CURRENT_TIMEOUT[i])
 				{
-					TKOLogger.getInstance().addMessage("DRIVE TALON CURRENT EXCEPTION: " + current + " AMPS " + TKOHardware.getDriveTalon(i).getDeviceID() + " ID");
+					TKOLogger.getInstance().addMessage("DRIVE TALON CURRENT EXCEPTION: " + current + " AMPS, ID " + TKOHardware.getDriveTalon(i).getDeviceID());
 					System.out.println("DRIVE TALON CURRENT EXCEPTION: " + current);
-					//TKOHardware.getDriveTalon(i).disableControl();
+					// TKOHardware.getDriveTalon(i).disableControl();
 					Thread.sleep(Definitions.CURRENT_TIMEOUT_LENGTH[i]);
-					//TKOHardware.getDriveTalon(i).enableControl(); //TODO Unfortunately this might require reconfiguring talon before
+					// TKOHardware.getDriveTalon(i).enableControl(); //TODO Unfortunately this might require reconfiguring talon before
 				}
 			}
-//			double current = TKOHardware.getLiftTalon().getOutputCurrent();
-//			if (current > Definitions.TALON_CURRENT_TIMEOUT[Definitions.NUM_DRIVE_TALONS])
-//			{
-//				TKOLogger.getInstance().addMessage("LIFT TALON CURRENT EXCEPTION: " + current + " AMPS " + TKOHardware.getLiftTalon().getDeviceID() + " ID");
-//				System.out.println("LIFT TALON CURRENT EXCEPTION: " + current);
-//				//TKOHardware.getLiftTalon().disableControl();
-//				Thread.sleep(Definitions.CURRENT_TIMEOUT_LENGTH[Definitions.NUM_DRIVE_TALONS]);
-//				//TKOHardware.getLiftTalon().enableControl();
-//			}
-		} catch (Exception e)
+			// double current = TKOHardware.getLiftTalon().getOutputCurrent();
+			// if (current > Definitions.TALON_CURRENT_TIMEOUT[Definitions.NUM_DRIVE_TALONS])
+			// {
+			// TKOLogger.getInstance().addMessage("LIFT TALON CURRENT EXCEPTION: " + current + " AMPS " +
+			// TKOHardware.getLiftTalon().getDeviceID() + " ID");
+			// System.out.println("LIFT TALON CURRENT EXCEPTION: " + current);
+			// //TKOHardware.getLiftTalon().disableControl();
+			// Thread.sleep(Definitions.CURRENT_TIMEOUT_LENGTH[Definitions.NUM_DRIVE_TALONS]);
+			// //TKOHardware.getLiftTalon().enableControl();
+			// }
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
@@ -84,7 +88,8 @@ public class TKOTalonSafety implements Runnable
 					safetyCheckerThread.wait(20); // the wait time that the thread sleeps, in milliseconds
 				}
 			}
-		} catch (Exception e)
+		}
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}

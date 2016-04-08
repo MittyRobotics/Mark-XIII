@@ -75,6 +75,10 @@ public class TKOShooter
 			{
 				PIDsetpoint -= inc;
 			}
+			else
+			{
+				PIDsetpoint = inc;
+			}
 			TKOHardware.getFlyTalon().set(PIDsetpoint);
 		}
 		catch (TKOException e)

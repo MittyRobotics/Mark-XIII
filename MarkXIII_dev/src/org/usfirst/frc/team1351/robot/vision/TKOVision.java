@@ -39,11 +39,11 @@ public class TKOVision implements Runnable
 
 	NetworkTable table;
 	double[] defaultValue = new double[0];
-	
+
 	double distance = 0.; // inches: in real life at the angle from target
 	double cameraAngle = 0.; // Shows literal angle of robot from target - to be set by findAngle()
 	double tanFnc = (Math.tan(cameraAngle) / 2);
-	double tarCenterToEdge = 0.; 
+	double tarCenterToEdge = 0.;
 	double targetPixelWidth = 0.;
 	double targetPixelHeight = 0.;
 	double targetWidth = 16.;
@@ -92,8 +92,8 @@ public class TKOVision implements Runnable
 	{
 		System.out.println("Stopping vision task");
 
-		 NIVision.IMAQdxStopAcquisition(sessionCamFront);
-		 NIVision.IMAQdxStopAcquisition(sessionCamBack);
+		NIVision.IMAQdxStopAcquisition(sessionCamFront);
+		NIVision.IMAQdxStopAcquisition(sessionCamBack);
 
 		if (visionThread.isThreadRunning())
 			visionThread.setThreadRunning(false);
@@ -157,7 +157,7 @@ public class TKOVision implements Runnable
 
 				chooseCamera();
 				viewCamera(cameraChoice);
-//				printTable();
+				printTable();
 
 				synchronized (visionThread)
 				{
@@ -202,42 +202,50 @@ public class TKOVision implements Runnable
 		double theta = Math.asin(((0.488 * tarCenterToEdge) - 156.074) / 320.);
 		return theta;
 	}
-	
+
 	public void printTable()
 	{
-		double def = 0;
-		System.out.println("\n \n \n");
-		double areas = table.getNumber("area", def);
-		System.out.print("areas: ");
-		System.out.print(areas + ", ");
-		SmartDashboard.putNumber("Area: ", areas);
+		try
+		{
+			double def = 0;
+			System.out.println("\n \n \n");
+			double areas = table.getNumber("area", def);
+			System.out.print("areas: ");
+			System.out.print(areas + ", ");
+			SmartDashboard.putNumber("Area: ", areas);
 
-		double centerX = table.getNumber("x", def);
-		System.out.print("centerX: ");
-		System.out.print(centerX + ", ");
-		SmartDashboard.putNumber("Center X: ", centerX);
+			double centerX = table.getNumber("x", def);
+			System.out.print("centerX: ");
+			System.out.print(centerX + ", ");
+			SmartDashboard.putNumber("Center X: ", centerX);
 
-		double centerY = table.getNumber("y", def);
-		System.out.print("centerY: ");
-		System.out.print(centerY + ", ");
-		SmartDashboard.putNumber("Center Y: ", centerY);
+			double centerY = table.getNumber("y", def);
+			System.out.print("centerY: ");
+			System.out.print(centerY + ", ");
+			SmartDashboard.putNumber("Center Y: ", centerY);
 
-		double heights = table.getNumber("height", def);
-		System.out.print("height: ");
-		System.out.print(height + ", ");
-		SmartDashboard.putNumber("Height: ", height);
+			double heights = table.getNumber("height", def);
+			System.out.print("height: ");
+			System.out.print(height + ", ");
+			SmartDashboard.putNumber("Height: ", height);
 
-		double widths = table.getNumber("width", def);
-		System.out.print("width: ");
-		System.out.print(widths + ", ");
-		SmartDashboard.putNumber("Width: ", widths);
+			double widths = table.getNumber("width", def);
+			System.out.print("width: ");
+			System.out.print(widths + ", ");
+			SmartDashboard.putNumber("Width: ", widths);
 
-		SmartDashboard.putNumber("Height Distance of Robot: ", getHeight());
-		SmartDashboard.putNumber("Width Distance of Robot: ", getWidth());
-		SmartDashboard.putNumber("Angle of Robot to Target: ", getTurnAngle());
+			SmartDashboard.putNumber("Height Distance of Robot: ", getHeight());
+			SmartDashboard.putNumber("Width Distance of Robot: ", getWidth());
+			SmartDashboard.putNumber("Angle of Robot to Target: ", getTurnAngle());
 
-		tarCenterToEdge = centerX;
-		targetPixelWidth = widths;
-		targetPixelHeight = heights;
+			tarCenterToEdge = centerX;
+			targetPixelWidth = widths;
+			targetPixelHeight = heights;
+		}
+		catch (Exception e)
+		{
+			System.out.println("EXCEPTION: printTable() in TKOVision");
+			e.printStackTrace();
+		}
 	}
 }

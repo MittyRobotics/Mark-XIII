@@ -335,6 +335,9 @@ public class Robot extends SampleRobot
 
 	public void test()
 	{
-
+		while(isEnabled() && isTest()) {
+			SmartDashboard.putNumber("Raw Tick Value", shooterTalonEnc.getPosition());
+			SmartDashboard.putNumber("Current RPM", shooterTalonEnc.getSpeed() * (6000. / 1024.));
+		}
 	}
 }
