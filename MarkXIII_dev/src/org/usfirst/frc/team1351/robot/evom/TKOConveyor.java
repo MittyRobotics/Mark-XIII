@@ -91,28 +91,37 @@ public class TKOConveyor implements Runnable
 					speed = Definitions.REVOLUTIONS_TO_TICKS * SmartDashboard.getNumber("Speed: ");
 					incrementer = SmartDashboard.getNumber("Incrementer: ");
 					
-					if (TKOHardware.getJoystick(2).getRawButton(4) && TKOHardware.getSwitch(0).get())
+					if (TKOHardware.getJoystick(2).getRawButton(4))
 					{
 						TKOHardware.getConveyorTalon(2).set(-0.4);
-						timeout = System.currentTimeMillis();
 					}
-					else if (System.currentTimeMillis() - timeout <= 200)
+					else if (TKOHardware.getJoystick(2).getRawButton(5))
 					{
-						System.out.println("Running conveyor backward");
 						TKOHardware.getConveyorTalon(2).set(0.4);
 					}
 					else
 					{
-						System.out.println("Stopped conveyor");
 						TKOHardware.getConveyorTalon(2).set(0.0);
 					}
-					
-//					if (TKOHardware.getJoystick(2).getRawButton(4))
-//						startConveyorForward();
-//					else if (TKOHardware.getJoystick(2).getRawButton(5))
-//						startConveyorBackward();
-//					else
-//						stopConveyor();
+					// TODO fix later
+					/*if (TKOHardware.getJoystick(2).getRawButton(4) && TKOHardware.getSwitch(0).get())
+					{
+						TKOHardware.getConveyorTalon(2).set(-0.4);
+						timeout = System.currentTimeMillis();
+					}
+					else if (TKOHardware.getJoystick(2).getRawButton(4) && (System.currentTimeMillis() - timeout <= 200))
+					{
+						System.out.println("Running conveyor backward");
+						TKOHardware.getConveyorTalon(2).set(0.4);
+					}
+					else if (TKOHardware.getJoystick(2).getRawButton(5))
+					{
+						TKOHardware.getConveyorTalon(2).set(0.4);
+					}
+					else
+					{
+						TKOHardware.getConveyorTalon(2).set(0.0);
+					}*/
 
 					if (TKOHardware.getJoystick(2).getTrigger() && TKOHardware.getSwitch(0).get())
 						TKOShooter.getInstance().spinUp(speed, incrementer);

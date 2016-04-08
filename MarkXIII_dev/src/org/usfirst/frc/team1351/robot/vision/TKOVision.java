@@ -157,7 +157,7 @@ public class TKOVision implements Runnable
 
 				chooseCamera();
 				viewCamera(cameraChoice);
-				printTable();
+//				printTable();
 
 				synchronized (visionThread)
 				{

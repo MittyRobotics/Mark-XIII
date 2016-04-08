@@ -46,7 +46,7 @@ public class Robot extends SampleRobot
 		autonChooser.addObject("Chival", new Integer(1));
 		autonChooser.addObject("Rough terrain", new Integer(2));
 		autonChooser.addObject("Portcullis", new Integer(3));
-		autonChooser.addObject("Intake then chival", new Integer (4));
+//		autonChooser.addObject("Intake then chival", new Integer (4));
 		SmartDashboard.putData("Auton chooser", autonChooser);
 
 		SmartDashboard.putNumber("Shooter P: ", Definitions.SHOOTER_kP);
@@ -106,14 +106,15 @@ public class Robot extends SampleRobot
 		}
 		else if (autonChooser.getSelected().equals(3))
 		{
-			
+			molecule.add(new DriveAtom(chivDist, 1));
+			molecule.add(new DriveAtom(distance, 1));
 		}
-		else if (autonChooser.getSelected().equals(4))
+		/*else if (autonChooser.getSelected().equals(4))
 		{
 			molecule.add(new IntakeAtom());
 			molecule.add(new PorkyAtom(chivDist, 1));
 			molecule.add(new DriveAtom(distance, 0));
-		}
+		}*/
 		else
 		{
 			System.out.println("Molecule empty why this");

@@ -71,10 +71,10 @@ public class TKOShooter
 			{
 				PIDsetpoint += inc;
 			}
-			else if (PIDsetpoint > upperError)
-			{
-				PIDsetpoint -= inc;
-			}
+//			else if (PIDsetpoint > upperError)
+//			{
+//				PIDsetpoint -= inc;
+//			}
 			else
 			{
 				PIDsetpoint = inc;
@@ -105,7 +105,7 @@ public class TKOShooter
 	{
 		try
 		{
-			TKOLogger.getInstance().addMessage("%8.2f\t%8.2f\t%8.2f\t%8.2f\t%8.2f%8.2f\t%8.2f",
+			System.out.printf("%8.2f\t%8.2f\t%8.2f\t%8.2f\t%8.2f%8.2f\t%8.2f\n",
 				DriverStation.getInstance().getBatteryVoltage(),
 				TKOHardware.getFlyTalon().getSpeed(), (1024. * TKOHardware.getFlyTalon().getSpeed() / 6000.),
 				TKOHardware.getFlyTalon(0).getOutputCurrent(), TKOHardware.getFlyTalon(1).getOutputCurrent(),
