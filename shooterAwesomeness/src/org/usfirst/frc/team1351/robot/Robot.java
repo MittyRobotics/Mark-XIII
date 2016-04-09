@@ -123,7 +123,7 @@ public class Robot extends SampleRobot
 		{
 			TKOLogger.getInstance().addMessage("%8.2f\t%8.2f\t%8.2f\t%8.2f\t%8.2f%8.2f\t%8.2f",
 					DriverStation.getInstance().getBatteryVoltage(), shooterTalonEnc.getSpeed(),
-					(1024 * shooterTalonEnc.getSpeed() / 6000), shooterTalonEnc.getOutputCurrent(), shooterTalon.getOutputCurrent(),
+					(1024. * shooterTalonEnc.getSpeed() / 6000.), shooterTalonEnc.getOutputCurrent(), shooterTalon.getOutputCurrent(),
 					shooterTalonEnc.getOutputVoltage(), shooterTalon.getOutputVoltage());
 		}
 	}

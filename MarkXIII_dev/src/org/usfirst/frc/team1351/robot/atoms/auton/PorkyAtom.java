@@ -118,9 +118,14 @@ public class PorkyAtom extends Atom
 			System.out.println("Left has been set to: " + distance + " and is currently at: " + TKOHardware.getLeftDrive().getPosition());
 			TKOHardware.getRightDrive().set(distance);
 
+			t.stop();
+			t.reset();
+			t.start();
 			double diff = Math.abs(TKOHardware.getLeftDrive().getPosition() - distance);
 			while (diff > threshold && DriverStation.getInstance().isEnabled())
 			{
+				if (t.get() > 1.0)
+					break;
 				/*
 				 * TKOLogger.getInstance().addMessage("NOT CLOSE ENOUGH TO TARGET DIST: " + diff);
 				 * System.out.println("NOT CLOSE ENOUGH TO TARGET DIST: " + diff + "Right Get at: " +
@@ -145,7 +150,7 @@ public class PorkyAtom extends Atom
 				System.out.println("Lowering arm");
 				TKOHardware.getDSolenoid(1).set(Value.kForward);
 			}
-			Timer.delay(0.25);
+			Timer.delay(0.125);
 		}
 		catch (TKOException e1)
 		{

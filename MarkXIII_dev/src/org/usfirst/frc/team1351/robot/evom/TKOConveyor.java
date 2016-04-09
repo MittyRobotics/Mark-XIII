@@ -65,6 +65,7 @@ public class TKOConveyor implements Runnable
 			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(1), CANTalon.TalonControlMode.PercentVbus);
 			// TKOHardware.getConveyorTalon(1).set(TKOHardware.getConveyorTalon(0).getDeviceID());
 			TKOHardware.changeTalonMode(TKOHardware.getConveyorTalon(2), CANTalon.TalonControlMode.PercentVbus);
+			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.Speed);
 		}
 		catch (TKOException e)
 		{
@@ -125,8 +126,10 @@ public class TKOConveyor implements Runnable
 
 					if (TKOHardware.getJoystick(2).getTrigger() && TKOHardware.getSwitch(0).get())
 						TKOShooter.getInstance().spinUp(speed, incrementer);
-					else
-						TKOShooter.getInstance().spinDown();
+					else {
+						TKOHardware.getFlyTalon(0).disableControl();
+						TKOHardware.getFlyTalon(1).disableControl();
+					}
 
 					SmartDashboard.putNumber("Current RPM: ", TKOHardware.getFlyTalon(0).getSpeed() * Definitions.TICKS_TO_REVOLUTIONS);
 					TKOShooter.getInstance().logShooterData();

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team1351.robot.evom;
 
+import org.usfirst.frc.team1351.robot.Definitions;
 import org.usfirst.frc.team1351.robot.logger.TKOLogger;
 import org.usfirst.frc.team1351.robot.util.TKOException;
 import org.usfirst.frc.team1351.robot.util.TKOHardware;
@@ -63,8 +64,8 @@ public class TKOShooter
 	{
 		try
 		{
-			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.Speed);
-			TKOHardware.getFlyTalon().enableControl();
+			TKOHardware.getFlyTalon(0).enableControl();
+			TKOHardware.getFlyTalon(1).enableControl();
 			double upperError = speedTarget * 1.01;
 			double lowerError = speedTarget * 0.99;
 			if (PIDsetpoint < lowerError)
@@ -77,9 +78,13 @@ public class TKOShooter
 //			}
 			else
 			{
-				PIDsetpoint = inc;
+				PIDsetpoint = speedTarget;
 			}
-			TKOHardware.getFlyTalon().set(PIDsetpoint);
+			TKOHardware.getFlyTalon(0).set(PIDsetpoint);
+			TKOHardware.getFlyTalon(1).set(4);
+			SmartDashboard.putNumber("Flywheel Speeed", TKOHardware.getFlyTalon().getSpeed() * Definitions.TICKS_TO_REVOLUTIONS);
+			SmartDashboard.putNumber("Flywheel Setpoint", PIDsetpoint * Definitions.TICKS_TO_REVOLUTIONS);
+			SmartDashboard.putNumber("Flywheel Raw Setpoint", PIDsetpoint);
 		}
 		catch (TKOException e)
 		{

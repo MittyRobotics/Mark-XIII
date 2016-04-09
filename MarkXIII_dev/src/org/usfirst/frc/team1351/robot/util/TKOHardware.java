@@ -76,88 +76,37 @@ public class TKOHardware
 		arduinoSignal = null;
 	}
 
-	/*public static synchronized void initTesting()
-	{
-		System.out.println("Initializing objects (testing)");
-		
-		// TODO maybe destroy objects before initializing them?
-		if (xbox == null)
-			xbox = new XboxController(Definitions.JOYSTICK_ID[0]);
-
-		if (joysticks[1] == null)
-			joysticks[1] = new Joystick(1);
-		
-		for (int i = 0; i < Definitions.NUM_DRIVE_TALONS; i++)
-		{
-			if (driveTalons[i] == null)
-			{
-				try
-				{
-					driveTalons[i] = new CANTalon(Definitions.DRIVE_TALON_ID[i]);
-				}
-				catch (AllocationException | CANMessageNotFoundException e)
-				{
-					e.printStackTrace();
-					System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
-					TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR");
-				}
-			}
-		}
-		for (int i = 0; i < Definitions.NUM_FLY_TALONS; i++)
-		{
-			if (flyTalons[i] == null)
-			{
-				try
-				{
-					flyTalons[i] = new CANTalon(Definitions.FLY_TALON_ID[i]);
-				}
-				catch (AllocationException | CANMessageNotFoundException e)
-				{
-					e.printStackTrace();
-					System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
-					TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR");
-				}
-			}
-		}
-		for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++)
-		{
-			if (conveyorTalons[i] == null)
-			{
-				try
-				{
-					conveyorTalons[i] = new CANTalon(Definitions.CONVEYOR_ID[i]);
-				}
-				catch (AllocationException | CANMessageNotFoundException e)
-				{
-					e.printStackTrace();
-					System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
-					TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR");
-				}
-			}
-		}
-		if (doubleSolenoids[0] == null) // gearbox
-			doubleSolenoids[0] = new DoubleSolenoid(0, 1);
-		if (doubleSolenoids[1] == null) // arm
-			doubleSolenoids[1] = new DoubleSolenoid(2, 3);
-		if (doubleSolenoids[2] == null) // intake
-			doubleSolenoids[2] = new DoubleSolenoid(4, 5);
-
-		if (limitSwitches[0] == null) // ball switch
-			limitSwitches[0] = new DigitalInput(0);
-		if (limitSwitches[1] == null) // intake switch
-			limitSwitches[1] = new DigitalInput(1);
-		if (limitSwitches[2] == null) // arm switch
-			limitSwitches[2] = new DigitalInput(2);
-
-		if (compressor == null)
-			compressor = new Compressor(0);
-
-		configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
-		configFlyTalons(Definitions.SHOOTER_kP, Definitions.SHOOTER_kI, Definitions.SHOOTER_kD, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
-		configConveyorTalons(Definitions.CONVEYOR_CONTROL_MODE);
-		
-		System.out.println("Initialized objects (testing)");
-	}*/
+	/*
+	 * public static synchronized void initTesting() { System.out.println("Initializing objects (testing)");
+	 * 
+	 * // TODO maybe destroy objects before initializing them? if (xbox == null) xbox = new XboxController(Definitions.JOYSTICK_ID[0]);
+	 * 
+	 * if (joysticks[1] == null) joysticks[1] = new Joystick(1);
+	 * 
+	 * for (int i = 0; i < Definitions.NUM_DRIVE_TALONS; i++) { if (driveTalons[i] == null) { try { driveTalons[i] = new
+	 * CANTalon(Definitions.DRIVE_TALON_ID[i]); } catch (AllocationException | CANMessageNotFoundException e) { e.printStackTrace();
+	 * System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE"); TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i +
+	 * " CAN ERROR"); } } } for (int i = 0; i < Definitions.NUM_FLY_TALONS; i++) { if (flyTalons[i] == null) { try { flyTalons[i] = new
+	 * CANTalon(Definitions.FLY_TALON_ID[i]); } catch (AllocationException | CANMessageNotFoundException e) { e.printStackTrace();
+	 * System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE"); TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i +
+	 * " CAN ERROR"); } } } for (int i = 0; i < Definitions.NUM_CONVEYOR_TALONS; i++) { if (conveyorTalons[i] == null) { try {
+	 * conveyorTalons[i] = new CANTalon(Definitions.CONVEYOR_ID[i]); } catch (AllocationException | CANMessageNotFoundException e) {
+	 * e.printStackTrace(); System.out.println("MOTOR CONTROLLER " + i + " NOT FOUND OR IN USE");
+	 * TKOLogger.getInstance().addMessage("MOTOR CONTROLLER " + i + " CAN ERROR"); } } } if (doubleSolenoids[0] == null) // gearbox
+	 * doubleSolenoids[0] = new DoubleSolenoid(0, 1); if (doubleSolenoids[1] == null) // arm doubleSolenoids[1] = new DoubleSolenoid(2, 3);
+	 * if (doubleSolenoids[2] == null) // intake doubleSolenoids[2] = new DoubleSolenoid(4, 5);
+	 * 
+	 * if (limitSwitches[0] == null) // ball switch limitSwitches[0] = new DigitalInput(0); if (limitSwitches[1] == null) // intake switch
+	 * limitSwitches[1] = new DigitalInput(1); if (limitSwitches[2] == null) // arm switch limitSwitches[2] = new DigitalInput(2);
+	 * 
+	 * if (compressor == null) compressor = new Compressor(0);
+	 * 
+	 * configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
+	 * configFlyTalons(Definitions.SHOOTER_kP, Definitions.SHOOTER_kI, Definitions.SHOOTER_kD, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
+	 * configConveyorTalons(Definitions.CONVEYOR_CONTROL_MODE);
+	 * 
+	 * System.out.println("Initialized objects (testing)"); }
+	 */
 
 	public static synchronized void initObjects()
 	{
@@ -239,8 +188,8 @@ public class TKOHardware
 			System.out.println("Gyro initialized: " + Timer.getFPGATimestamp());
 		}
 
-//		if (arduinoSignal == null)
-//			arduinoSignal = new AnalogOutput(0);
+		// if (arduinoSignal == null)
+		// arduinoSignal = new AnalogOutput(0);
 
 		if (limitSwitches[0] == null) // ball switch
 			limitSwitches[0] = new DigitalInput(0);
@@ -248,7 +197,7 @@ public class TKOHardware
 			limitSwitches[1] = new DigitalInput(1);
 		if (limitSwitches[2] == null) // arm switch
 			limitSwitches[2] = new DigitalInput(2);
-		
+
 		configDriveTalons(Definitions.DRIVE_P, Definitions.DRIVE_I, Definitions.DRIVE_D, Definitions.DRIVE_TALONS_NORMAL_CONTROL_MODE);
 		configFlyTalons(Definitions.SHOOTER_kP, Definitions.SHOOTER_kI, Definitions.SHOOTER_kD, Definitions.FLY_TALONS_NORMAL_CONTROL_MODE);
 		configConveyorTalons(Definitions.CONVEYOR_CONTROL_MODE);
@@ -292,24 +241,18 @@ public class TKOHardware
 			flyTalons[j] = new CANTalon(Definitions.FLY_TALON_ID[j]);
 			if (flyTalons[j] != null)
 			{
-				if ((Definitions.NUM_DRIVE_TALONS + j) == 5) // if follower
-				{
-					flyTalons[j].changeControlMode(CANTalon.TalonControlMode.Follower);
-					flyTalons[j].set(Definitions.NUM_DRIVE_TALONS + j - 1); // set to follow the CANTalon with id j - 1
-				}
-				else
-				// if not follower
-				{
-					flyTalons[j].changeControlMode(mode);
-					flyTalons[j].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE);
-					flyTalons[j].setPID(P, I, D);
-				}
 				// liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
 				// liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
 				flyTalons[j].setExpiration(10000.);
 				flyTalons[j].setSafetyEnabled(false);
 			}
 		}
+		flyTalons[0].changeControlMode(mode);
+		flyTalons[0].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE);
+		flyTalons[0].setPID(P, I, D);
+		flyTalons[1].changeControlMode(CANTalon.TalonControlMode.Follower);
+		flyTalons[1].set(4);
+
 	}
 
 	private static synchronized void configConveyorTalons(TalonControlMode mode)
@@ -325,24 +268,17 @@ public class TKOHardware
 				conveyorTalons[j].changeControlMode(mode);
 				conveyorTalons[j].setExpiration(10000.);
 				conveyorTalons[j].setSafetyEnabled(false);
-				
-				/*if ((Definitions.NUM_FLY_TALONS + j) == 7) // if follower
-				{
-					conveyorTalons[j].changeControlMode(CANTalon.TalonControlMode.Follower);
-					conveyorTalons[j].set(Definitions.NUM_FLY_TALONS + j - 1); // set to follow the CANTalon with id j - 1
-				}
-				else
-				// if not follower
-				{
-					// TODO Check, test, and fix this entire function
-					conveyorTalons[j].changeControlMode(mode);
-					conveyorTalons[j].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE);
-					// conveyorTalons[j].setPID(P, I, D);
-				}
-				// liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]);
-				// liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]);
-				conveyorTalons[j].setExpiration(10000.);
-				conveyorTalons[j].setSafetyEnabled(false);*/
+
+				/*
+				 * if ((Definitions.NUM_FLY_TALONS + j) == 7) // if follower {
+				 * conveyorTalons[j].changeControlMode(CANTalon.TalonControlMode.Follower); conveyorTalons[j].set(Definitions.NUM_FLY_TALONS
+				 * + j - 1); // set to follow the CANTalon with id j - 1 } else // if not follower { // TODO Check, test, and fix this
+				 * entire function conveyorTalons[j].changeControlMode(mode);
+				 * conveyorTalons[j].setFeedbackDevice(Definitions.FLY_ENCODER_TYPE); // conveyorTalons[j].setPID(P, I, D); } //
+				 * liftTalons[i].enableBrakeMode(Definitions.LIFT_BRAKE_MODE[i]); //
+				 * liftTalons[i].reverseOutput(Definitions.LIFT_REVERSE_OUTPUT_MODE[i]); conveyorTalons[j].setExpiration(10000.);
+				 * conveyorTalons[j].setSafetyEnabled(false);
+				 */
 			}
 		}
 	}
@@ -393,7 +329,7 @@ public class TKOHardware
 		TKOHardware.getRightDrive().reverseOutput(true);
 		TKOHardware.getLeftDrive().reverseSensor(true);
 		TKOHardware.getRightDrive().reverseSensor(false);
-		//TODO return this to true 
+		// TODO return this to true
 		TKOHardware.getLeftDrive().enableBrakeMode(false);
 		TKOHardware.getRightDrive().enableBrakeMode(false);
 		TKOHardware.getLeftDrive().setPosition(0.); // resets encoder
@@ -496,7 +432,7 @@ public class TKOHardware
 		}
 		if (gyro != null)
 		{
-//			gyro.free();
+			// gyro.free();
 			gyro = null;
 		}
 		if (arduinoSignal != null)
