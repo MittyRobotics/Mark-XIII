@@ -7,6 +7,7 @@ import org.usfirst.frc.team1351.robot.util.TKOHardware;
 
 import edu.wpi.first.wpilibj.CANTalon;
 import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -17,7 +18,7 @@ public class TKOShooter
 
 	double PIDsetpoint = 0.;
 	double rpmMax = 0.0;
-
+	
 	protected TKOShooter()
 	{
 		try

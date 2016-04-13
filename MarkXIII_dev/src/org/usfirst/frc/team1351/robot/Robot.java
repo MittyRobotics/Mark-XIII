@@ -17,7 +17,9 @@ import org.usfirst.frc.team1351.robot.util.TKOLEDArduino;
 import org.usfirst.frc.team1351.robot.util.TKOTalonSafety;
 import org.usfirst.frc.team1351.robot.vision.TKOVision;
 
+import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.SampleRobot;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
@@ -27,7 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 public class Robot extends SampleRobot
 {
 	SendableChooser autonChooser;
-	Solenoid light;
+	Relay light;
 
 	public Robot()
 	{
@@ -46,7 +48,7 @@ public class Robot extends SampleRobot
 		autonChooser.addObject("Chival", new Integer(1));
 		autonChooser.addObject("Rough terrain", new Integer(2));
 		autonChooser.addObject("Portcullis", new Integer(3));
-//		autonChooser.addObject("Intake then chival", new Integer (4));
+		// autonChooser.addObject("Intake then chival", new Integer (4));
 		SmartDashboard.putData("Auton chooser", autonChooser);
 
 		SmartDashboard.putNumber("Shooter P: ", Definitions.SHOOTER_kP);
@@ -60,7 +62,8 @@ public class Robot extends SampleRobot
 		SmartDashboard.putNumber("Turn angle: ", 0.);
 		SmartDashboard.putNumber("Chival distance: ", -42.);
 
-		light = new Solenoid(5, 0);
+		light = new Relay(3);
+		System.out.println("Relay initialized");
 
 		System.out.println("robotInit() finished");
 	}
@@ -109,12 +112,10 @@ public class Robot extends SampleRobot
 			molecule.add(new DriveAtom(chivDist, 1));
 			molecule.add(new DriveAtom(distance, 1));
 		}
-		/*else if (autonChooser.getSelected().equals(4))
-		{
-			molecule.add(new IntakeAtom());
-			molecule.add(new PorkyAtom(chivDist, 1));
-			molecule.add(new DriveAtom(distance, 0));
-		}*/
+		/*
+		 * else if (autonChooser.getSelected().equals(4)) { molecule.add(new IntakeAtom()); molecule.add(new PorkyAtom(chivDist, 1));
+		 * molecule.add(new DriveAtom(distance, 0)); }
+		 */
 		else
 		{
 			System.out.println("Molecule empty why this");
@@ -140,15 +141,24 @@ public class Robot extends SampleRobot
 	public void operatorControl()
 	{
 		System.out.println("Enabling operator control!");
-
+		try
+		{
+			TKOHardware.getLeftDrive().changeControlMode(TalonControlMode.PercentVbus);
+			TKOHardware.getRightDrive().changeControlMode(TalonControlMode.PercentVbus);
+		}
+		catch (TKOException e2)
+		{
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
+		}
 		TKODrive.getInstance().start();
 		// TKODrive.getInstance().isCreep(false);
 		TKOPneumatics.getInstance().start();
 		TKOPneumatics.getInstance().setManual(true);
-		light.set(false);
 		TKOVision.getInstance().start();
 		TKOConveyor.getInstance().start();
 		TKOConveyor.getInstance().setManual(true);
+		light.set(Relay.Value.kForward);
 		// StateMachine.getInstance().start();
 		// TKOLogger.getInstance().start();
 		// TKOGyro.getInstance().start();
@@ -176,6 +186,20 @@ public class Robot extends SampleRobot
 				SmartDashboard.putBoolean("Ball switch: ", !TKOHardware.getSwitch(0).get());
 				SmartDashboard.putBoolean("Arm switch: ", !TKOHardware.getSwitch(1).get());
 				SmartDashboard.putBoolean("Intake switch: ", TKOHardware.getSwitch(2).get());
+
+				if (TKOHardware.getXboxController().getButtonA())
+				{
+					if (light.get() == Relay.Value.kOff)
+					{
+						light.set(Relay.Value.kForward);
+						System.out.println("Relay set to forward");
+					}
+					else if (light.get() == Relay.Value.kForward)
+					{
+						light.set(Relay.Value.kOff);
+						System.out.println("Relay set to off");
+					}
+				}
 			}
 			catch (TKOException e)
 			{
@@ -189,13 +213,13 @@ public class Robot extends SampleRobot
 		{
 			// TKOGyro.getInstance().stop();
 			// TKOGyro.getInstance().gyroThread.join();
+			light.set(Relay.Value.kOff);
 			TKOVision.getInstance().stop();
 			TKOVision.getInstance().visionThread.join();
 			// TKOLogger.getInstance().stop();
 			// TKOLogger.getInstance().loggerThread.join();
 			// StateMachine.getInstance().stop();
 			// StateMachine.getInstance().stateThread.join();
-			light.set(false);
 			TKOConveyor.getInstance().stop();
 			TKOConveyor.getInstance().conveyorThread.join();
 			TKOPneumatics.getInstance().stop();

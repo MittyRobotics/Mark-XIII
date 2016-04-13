@@ -100,6 +100,9 @@ public class TKOConveyor implements Runnable
 					{
 						TKOHardware.getConveyorTalon(2).set(0.4);
 					}
+					else if(TKOHardware.getJoystick(2).getRawButton(3)) {
+						TKOHardware.getConveyorTalon(2).set(0.8); 
+					}
 					else
 					{
 						TKOHardware.getConveyorTalon(2).set(0.0);
@@ -132,7 +135,7 @@ public class TKOConveyor implements Runnable
 					}
 
 					SmartDashboard.putNumber("Current RPM: ", TKOHardware.getFlyTalon(0).getSpeed() * Definitions.TICKS_TO_REVOLUTIONS);
-					TKOShooter.getInstance().logShooterData();
+//					TKOShooter.getInstance().logShooterData();
 				}
 
 				synchronized (conveyorThread)
