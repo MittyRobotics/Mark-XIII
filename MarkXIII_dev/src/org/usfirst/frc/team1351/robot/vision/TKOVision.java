@@ -41,6 +41,7 @@ public class TKOVision implements Runnable
 	NetworkTable table;
 	double[] defaultValue = new double[0];
 
+	//initializing all the vision camera things
 	protected TKOVision()
 	{
 		frame = NIVision.imaqCreateImage(NIVision.ImageType.IMAGE_RGB, 0);
@@ -63,6 +64,7 @@ public class TKOVision implements Runnable
 
 	public void start()
 	{
+		//Vison starts!
 		System.out.println("Starting vision task");
 
 		if (!visionThread.isAlive() && m_Instance != null)
@@ -77,6 +79,7 @@ public class TKOVision implements Runnable
 		System.out.println("Started vision task");
 	}
 
+	//End vision
 	public void stop()
 	{
 		System.out.println("Stopping vision task");
@@ -109,6 +112,7 @@ public class TKOVision implements Runnable
 		// Following for initializing and setting cameras properly
 		if (!isCameraInit)
 		{
+			//Front camera in use
 			if (isFrontCamera)
 			{
 				NIVision.IMAQdxStopAcquisition(cameraChoice);
