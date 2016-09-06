@@ -37,6 +37,7 @@ public class TKOLift
 		return m_Instance;
 	}
 
+	//the failed climb method (because we never put on the part to climb)
 	public static void TKOClimb()
 	{
 		// Need 68 in

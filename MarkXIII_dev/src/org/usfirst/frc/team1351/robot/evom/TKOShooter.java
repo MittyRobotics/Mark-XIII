@@ -14,6 +14,7 @@ public class TKOShooter
 {
 	private static TKOShooter m_Instance = null;
 
+	//setting PID setpoint and the rpm max points
 	double PIDsetpoint = 0.;
 	double rpmMax = 0.0;
 
@@ -21,6 +22,7 @@ public class TKOShooter
 	{
 		try
 		{
+			//showing PID values
 			TKOHardware.getFlyTalon().setP(SmartDashboard.getNumber("Shooter P: "));
 			TKOHardware.getFlyTalon().setI(SmartDashboard.getNumber("Shooter I: "));
 			TKOHardware.getFlyTalon().setD(SmartDashboard.getNumber("Shooter D: "));
@@ -63,14 +65,21 @@ public class TKOShooter
 	{
 		try
 		{
+			//defining what controle mode it is in
 			TKOHardware.getFlyTalon().changeControlMode(CANTalon.TalonControlMode.Speed);
 			TKOHardware.getFlyTalon().enableControl();
+			
+			//how much error you can have above and below your intended value
 			double upperError = speedTarget * 1.01;
 			double lowerError = speedTarget * 0.99;
+			
+			//if the setpoint is lower than the low error, increase the setpoint
 			if (PIDsetpoint < lowerError)
 			{
 				PIDsetpoint += inc;
 			}
+			
+			//if the setpoint is greater than the upper error, decrease the setpoint
 			else if (PIDsetpoint > upperError)
 			{
 				PIDsetpoint -= inc;
@@ -83,6 +92,9 @@ public class TKOShooter
 		}
 	}
 
+	
+	// when want to stop the shooter
+	//decrease the speed of the shooter until it is not spinning anymore
 	public synchronized void spinDown()
 	{
 		try
