@@ -80,36 +80,50 @@ public class Robot extends SampleRobot
 		Molecule molecule = new Molecule();
 		molecule.clear();
 
+		// The distance the robot needs to drive.
 		double distance = SmartDashboard.getNumber("Drive distance: ");
-		double angle = SmartDashboard.getNumber("Turn angle: ");
+		// The angle to which the robot needs to turn.
+		double angle = SmartDashboard.getNumber("Turn angle: "); 
 
-		if (autonChooser.getSelected().equals(0))
+		
+		// 0 means the robot only drives forward.
+		if (autonChooser.getSelected().equals(0)) 
 		{
 			molecule.add(new DriveAtom(distance));
 		}
+		
+		// 1 means the robot drives forward and turns a certain number of degrees.
 		else if (autonChooser.getSelected().equals(1))
 		{
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new GyroTurnAtom(angle));
 		}
+		
+		// 2 means the robot picks up a ball and then move a certain distance
 		else if (autonChooser.getSelected().equals(2))
 		{
 			molecule.add(new PickupAtom());
 			molecule.add(new DriveAtom(distance));
 		}
+		
+		//3 means it will pick up the ball, drive a certain distance, and turn a certain angle
 		else if (autonChooser.getSelected().equals(3))
 		{
 			molecule.add(new PickupAtom());
 			molecule.add(new DriveAtom(distance));
 			molecule.add(new GyroTurnAtom(angle));
 		}
+		
+		//if user doesn't enter a valid number
 		else
 		{
 			System.out.println("Molecule empty why this");
 		}
-
+		
+		//time to run the molecule
 		System.out.println("Running molecule");
 		molecule.initAndRun();
+		//molecule is done running
 		System.out.println("Finished running molecule");
 
 		try
