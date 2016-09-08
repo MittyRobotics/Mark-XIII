@@ -83,18 +83,24 @@ public class TKOConveyor implements Runnable
 
 				if (testEnabled)
 				{
+					//Speed will be (6000/1024) * the number given in SmartDashboard
 					speed = (6000 / 1024) * SmartDashboard.getNumber("Speed: ");
+					//incrementer will be the number given in SmartDashboard
 					incrementer = SmartDashboard.getNumber("Incrementer: ");
 					
+					//If button 4 on joystick 1, conveyor will go backwards
 					if (TKOHardware.getJoystick(1).getRawButton(4))
 						startConveyorBackward();
+					//If button 5 on joystick 1, conveyor will go forwards
 					else if (TKOHardware.getJoystick(1).getRawButton(5))
 						startConveyorForward();
 					else
 						stopConveyor();
 					
+					//If the trigger on joystick 1 is pushed, shooter will spin up to certain speed at set increments
 					if (TKOHardware.getJoystick(1).getTrigger())
 						TKOShooter.getInstance().spinUp(speed, incrementer);
+					//will spin it down after
 					else
 						TKOShooter.getInstance().spinDown();
 					
@@ -117,10 +123,12 @@ public class TKOConveyor implements Runnable
 	{
 		try
 		{
+			//Button 4 joystick 3 sets talon 0 to 0.75
 			if (TKOHardware.getJoystick(3).getRawButton(4))
 			{
 				TKOHardware.getConveyorTalon(0).set(0.75);
 			}
+			//Joystick 3 button 5 sets talon 0 to -0.75 (other way)
 			else if (TKOHardware.getJoystick(3).getRawButton(5))
 			{
 				TKOHardware.getConveyorTalon(0).set(-0.75);
