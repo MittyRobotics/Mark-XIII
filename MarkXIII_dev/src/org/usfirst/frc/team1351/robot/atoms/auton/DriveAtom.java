@@ -50,14 +50,17 @@ public class DriveAtom extends Atom
 		{
 			if (distance > 0)
 			{
+				//while driver station is available and the left drive setpoint is less than distance
 				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() < distance)
 				{
 					// current setpoint + incrementer
 					TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() + incrementer);
 					TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() + incrementer);
 					
+					//getting positions of left and right encoders
 					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
 						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
+						//setting left encoder setpoint
 						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
 					TKOLogger.getInstance().addMessage("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
 						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
@@ -67,11 +70,14 @@ public class DriveAtom extends Atom
 			}
 			else // driving in reverse
 			{
+				//While driver station is enabled and left drive setpoint is greater than distance
 				while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() > distance)
 				{
+					//take left setpoint and subtract by the incrementer
 					TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() - incrementer);
+					//take right setpoint and subtract by incrementer
 					TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() - incrementer);
-
+					
 					System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition()
 						+ "\t Encoder Right: " + TKOHardware.getRightDrive().getPosition()
 						+ "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
