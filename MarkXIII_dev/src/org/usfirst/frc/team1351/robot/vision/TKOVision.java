@@ -58,7 +58,7 @@ public class TKOVision implements Runnable
 		sessionCamBack = NIVision.IMAQdxOpenCamera("cam1", NIVision.IMAQdxCameraControlMode.CameraControlModeController);
 		isFrontCamera = true; // First input is from the isFrontCamera
 		isCameraInit = false; // Camera is not originally initialized, use this as a bad toggle
-		table = NetworkTable.getTable("GRIP/myContoursReport");
+		table = NetworkTable.getTable("vision"); // "GRIP/myContoursReport");
 	}
 
 	public static synchronized TKOVision getInstance()
@@ -147,6 +147,7 @@ public class TKOVision implements Runnable
 		{
 			while (visionThread.isThreadRunning())
 			{
+				System.out.println("Help!");
 				if (TKOHardware.getXboxController().getStartButton())
 				{
 					isFrontCamera = !isFrontCamera;
@@ -156,8 +157,8 @@ public class TKOVision implements Runnable
 				}
 
 				chooseCamera();
-				viewCamera(cameraChoice);
-//				printTable();
+				// viewCamera(cameraChoice);
+				printTable();
 
 				synchronized (visionThread)
 				{
@@ -207,40 +208,43 @@ public class TKOVision implements Runnable
 	{
 		try
 		{
+			// while (isCameraInit == true && visionThread.isAlive())
+			// {
 			double def = 0;
 			System.out.println("\n \n \n");
 			double areas = table.getNumber("area", def);
 			System.out.print("areas: ");
 			System.out.print(areas + ", ");
-			SmartDashboard.putNumber("Area: ", areas);
+			// SmartDashboard.getNumber("Area: ", areas);
 
 			double centerX = table.getNumber("x", def);
 			System.out.print("centerX: ");
 			System.out.print(centerX + ", ");
-			SmartDashboard.putNumber("Center X: ", centerX);
+			// SmartDashboard.getNumber("Center X: ", centerX);
 
 			double centerY = table.getNumber("y", def);
 			System.out.print("centerY: ");
 			System.out.print(centerY + ", ");
-			SmartDashboard.putNumber("Center Y: ", centerY);
+			// SmartDashboard.getNumber("Center Y: ", centerY);
 
 			double heights = table.getNumber("height", def);
 			System.out.print("height: ");
 			System.out.print(height + ", ");
-			SmartDashboard.putNumber("Height: ", height);
+			// SmartDashboard.getNumber("Height: ", height);
 
 			double widths = table.getNumber("width", def);
 			System.out.print("width: ");
 			System.out.print(widths + ", ");
-			SmartDashboard.putNumber("Width: ", widths);
+			// SmartDashboard.getNumber("Width: ", widths);
 
-			SmartDashboard.putNumber("Height Distance of Robot: ", getHeight());
-			SmartDashboard.putNumber("Width Distance of Robot: ", getWidth());
-			SmartDashboard.putNumber("Angle of Robot to Target: ", getTurnAngle());
+			SmartDashboard.getNumber("Height Distance of Robot: ", getHeight());
+			SmartDashboard.getNumber("Width Distance of Robot: ", getWidth());
+			SmartDashboard.getNumber("Angle of Robot to Target: ", getTurnAngle());
 
 			tarCenterToEdge = centerX;
 			targetPixelWidth = widths;
 			targetPixelHeight = heights;
+			// }
 		}
 		catch (Exception e)
 		{

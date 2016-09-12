@@ -79,8 +79,8 @@ public class TKODrive implements Runnable
 		try
 		{
 			// Get the squared inputs from xBox controller - actually x^4
-			double leftMove = Math.pow(TKOHardware.getXboxController().getLeftY(), 2);
-			double rightMove = Math.pow(TKOHardware.getXboxController().getRightY(), 2);
+			double leftMove = Math.pow(TKOHardware.getXboxController().getLeftY(), 4);
+			double rightMove = Math.pow(TKOHardware.getXboxController().getRightY(), 4);
 
 			// // Averages the value so it will move more smoothly hopefully
 			// if (leftMove < rightMove + 0.05 && leftMove > rightMove - 0.05)

@@ -226,6 +226,8 @@ public class Robot extends SampleRobot
 			TKOPneumatics.getInstance().pneuThread.join();
 			TKODrive.getInstance().stop();
 			TKODrive.getInstance().driveThread.join();
+			TKOVision.getInstance().stop();
+			TKOVision.getInstance().visionThread.join();
 		}
 		catch (InterruptedException e)
 		{
