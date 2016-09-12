@@ -33,31 +33,46 @@ public class TKOArm
 		return m_Instance;
 	}
 
+	//getting across the portcullis
 	public void breachPortcullis()
 	{
+		//only do this if breach is false
 		if (doneBreaching == false)
 			return;
 		doneBreaching = false;
 		TKODrive.getInstance().isCreep(true);
+		//move the arm down
 		moveArmDown();
+		//creep is happening = moving slowly
 		TKOCreep();
+		//arm goes up
 		moveArmUp();
+		//creep stops
 		TKODrive.getInstance().isCreep(false);
 		TKODrive.getInstance().init();
+		//breaching is done
 		doneBreaching = true;
 	}
 
+	//going across cheval de frise
 	public void breachCheval()
 	{
+		//only run if breaching is false
 		if (doneBreaching == false)
 			return;
 		doneBreaching = false;
 		TKODrive.getInstance().isCreep(true);
+		//arm up
 		moveArmUp();
+		//move in a creep
 		TKOCreep();
+		//arm down
 		moveArmDown();
+		//creep again
 		TKOCreep();
+		//arm up
 		moveArmUp();
+		//stop creeping
 		TKODrive.getInstance().isCreep(false);
 		TKODrive.getInstance().init();
 		doneBreaching = true;
@@ -106,11 +121,15 @@ public class TKOArm
 			threshold = 75; // we can be within approx. half an inch
 			TKOHardware.autonInit(p, i, d);
 			
+			//while driver station is enabled and left drive is greater than the distance
 			while (DriverStation.getInstance().isEnabled() && TKOHardware.getLeftDrive().getSetpoint() > distance)
 			{
+				//make the left drive setpoint subtracted by incrementer
 				TKOHardware.getLeftDrive().set(TKOHardware.getLeftDrive().getSetpoint() - incrementer);
+				//make right drive setpoint subtracted by incrementer
 				TKOHardware.getRightDrive().set(TKOHardware.getRightDrive().getSetpoint() - incrementer);
 
+				//get left and right encoder positions
 				System.out.println("Encoder Left: " + TKOHardware.getLeftDrive().getPosition() + "\t Encoder Right: "
 						+ TKOHardware.getRightDrive().getPosition() + "\t Left Setpoint: " + TKOHardware.getLeftDrive().getSetpoint());
 				TKOLogger.getInstance().addMessage(
