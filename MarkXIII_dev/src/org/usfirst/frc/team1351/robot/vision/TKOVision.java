@@ -158,21 +158,16 @@ public class TKOVision implements Runnable {
 		System.out.print(areas + ", ");
 		// SmartDashboard.getNumber("Area", areas);
 
-		double dist = table.getNumber("floorDistance", getFloorDistance());
-		System.out.print("Floor Distance: " + dist + ", ");
 		
-		double angle = table.getNumber("The Turn Angle is", turnAngle());
-		System.out.print("The Turn Angle: " + angle + ", ");
+		System.out.print("Floor Distance: " + getFloorDistance()+ ", ");
 		
-		double height = table.getNumber("heightDistance", heightDistance());
-		System.out.print("The Height: " + height + ", ");
+		System.out.print("The Turn Angle: " + turnAngle() + ", ");
 		
-		double width = table.getNumber("widthDistance", widthDistance());
-		System.out.print("The Width: " + width + ", ");
+		System.out.print("The Height: " + heightDistance() + ", ");
+	
+		System.out.print("The Width: " + widthDistance() + ", ");
 		
-		
-		double angleRobo = table.getNumber(" findRobotAngle",  findRobotAngle());
-		System.out.print("The Robot Angle: " + angleRobo + ", ");
+		System.out.print("The Robot Angle: " + findRobotAngle() + ", ");
 		
 		
 		double centerX = table.getNumber("x", def);
