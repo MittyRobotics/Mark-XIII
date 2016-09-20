@@ -159,7 +159,7 @@ public class TKOVision implements Runnable {
 		// SmartDashboard.getNumber("Area", areas);
 
 		
-		System.out.print("Floor Distance: " + getFloorDistance()+ ", ");
+		table.putNumber("Floor Distance: " + getFloorDistance()+ ", ");
 		
 		System.out.print("The Turn Angle: " + turnAngle() + ", ");
 		

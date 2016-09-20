@@ -75,15 +75,15 @@ public class TKOConveyor implements Runnable {
 					incrementer = SmartDashboard.getNumber("Incrementer: ");
 
 					if (TKOHardware.getJoystick(2).getRawButton(4)) {
-						// TKOHardware.getConveyorTalon(2).set(-0.4);
+						TKOHardware.getConveyorTalon(2).set(-0.4);
 						// RightFrontIntake.set(0.4);
 						// LeftFrontIntake.set(-0.4);
 					} else if (TKOHardware.getJoystick(2).getRawButton(5)) {
-						// TKOHardware.getConveyorTalon(2).set(0.4);
+						TKOHardware.getConveyorTalon(2).set(0.4);
 						// RightFrontIntake.set(0.4);
 						// LeftFrontIntake.set(-0.4);
 					} else if (TKOHardware.getJoystick(2).getRawButton(3)) {
-						// TKOHardware.getConveyorTalon(2).set(0.8);
+						TKOHardware.getConveyorTalon(2).set(0.8);
 						// RightFrontIntake.set(0.8);
 						// LeftFrontIntake.set(-0.8);
 					} else {
@@ -128,13 +128,13 @@ public class TKOConveyor implements Runnable {
 	public synchronized void rollerControl() {
 		try {
 			if (TKOHardware.getJoystick(2).getRawButton(4)) {
-				// TKOHardware.getConveyorTalon(0).set(-0.5);
-				// TKOHardware.getConveyorTalon(1).set(0.5);
+				TKOHardware.getConveyorTalon(0).set(-0.5);
+				TKOHardware.getConveyorTalon(1).set(0.5);
 				// RightFrontIntake.set(0.5);
 				// LeftFrontIntake.set(-0.5);
 			} else if (TKOHardware.getJoystick(2).getRawButton(5)) {
-				// TKOHardware.getConveyorTalon(0).set(0.5);
-				// TKOHardware.getConveyorTalon(1).set(-0.5);
+				TKOHardware.getConveyorTalon(0).set(0.5);
+				TKOHardware.getConveyorTalon(1).set(-0.5);
 				// RightFrontIntake.set(0.5);
 				// LeftFrontIntake.set(-0.5);
 
@@ -180,7 +180,7 @@ public class TKOConveyor implements Runnable {
 		}
 	}
 
-	public void getBall() {
+	/*public void getBall() {
 		while (TKOHardware.getJoystick(3).getRawButton(5)) {
 			if (TKOHardware.getSwitch(num) == true) {
 				TKOHardware.getConveyorTalon(0).set(0.3);
@@ -191,5 +191,6 @@ public class TKOConveyor implements Runnable {
 				TKOHardware.getConveyorTalon(0).set(-.75);
 			}
 		}
+		*/
 	}
-}
+
