@@ -183,7 +183,7 @@ public class TKOConveyor implements Runnable {
 	public void getBall() {
 		while (TKOHardware.getJoystick(3).getRawButton(5)) {
 			if (TKOHardware.getSwitch(num) == true) {
-				TKOHardware.getConveyorTalon(0).set(0.5);
+				TKOHardware.getConveyorTalon(0).set(0.3);
 				//test values
 			}
 			else if ((TKOHardware.getSwitch(num) == false)
