@@ -197,7 +197,8 @@ public class TKOPneumatics implements Runnable
 				lastShiftTime = System.currentTimeMillis();
 			}
 			else
-				autoShift();
+				TKOHardware.getDSolenoid(0).set(Definitions.SHIFTER_HIGH);
+//				autoShift();
 
 		}
 		catch (Exception e)

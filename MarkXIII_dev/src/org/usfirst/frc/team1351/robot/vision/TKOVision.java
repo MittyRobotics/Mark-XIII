@@ -233,7 +233,7 @@ public class TKOVision implements Runnable {
 	double widthDistance() {
 		return 13121.945 / targetPixelWidth;
 	}
-	double turnAngle() {
+	public double turnAngle() {
 		double theta = Math.asin(((0.488 * tarCenterToEdge) - 156.074) / 320);
 		return theta;
 	}

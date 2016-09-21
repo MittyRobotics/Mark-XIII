@@ -57,7 +57,7 @@ public class VisionTurnAtom extends Atom
 	{
 		System.out.println("Executing vision turn atom");
 
-		angle = TKOVision.getInstance().getTurnAngle();
+		angle = TKOVision.getInstance().turnAngle();
 
 		try
 		{
