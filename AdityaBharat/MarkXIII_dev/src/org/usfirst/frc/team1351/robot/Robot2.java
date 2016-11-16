@@ -1,4 +1,3 @@
-
 package org.usfirst.frc.team1351.robot;
 
 import edu.wpi.first.wpilibj.SampleRobot;
@@ -10,8 +9,7 @@ import edu.wpi.first.wpilibj.CANTalon.TalonControlMode;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public 
-class Robot2 extends SampleRobot {
+public class Robot2 extends SampleRobot {
 	RobotDrive myRobot;
 	CANTalon c0, c1, c2, c3; // declaring variables for cantalon
 	Joystick stick; // declaring variables for joystick
@@ -19,6 +17,8 @@ class Robot2 extends SampleRobot {
 	double x1; // declaring variables for the x values
 	double y1; // declaring variables for the y values
 	double constant = 0.02;
+	double motorDegrees = 171.887338539;
+	double degreeTurn = 0;
 
 	public Robot2() {
 		myRobot = new RobotDrive(0, 1);
@@ -38,14 +38,61 @@ class Robot2 extends SampleRobot {
 		c3.changeControlMode(TalonControlMode.PercentVbus);
 	}
 	public void robotInit() {
-System.
+
 	}
 
 	public void autonomous() {
 
+		c0.setSafetyEnabled(true);
+		c1.setSafetyEnabled(true);
+		c2.setSafetyEnabled(true);
+		c3.setSafetyEnabled(true);
+
+		c0.setEncPosition(0);
+
+		while(c0.getEncPosition() < (motorDegrees * 5) ){
+			c0.set(-0.75);
+			c1.set(-0.75);
+			c2.set(0.75);
+			c3.set(0.75);
+
+		}
+
+		c0.set(0);
+		c1.set(0);
+		c2.set(0);
+		c3.set(0);
+		
+		c0.setEncPosition(0);
+
+		//turning left
+		while(c0.getEncPosition() < degreeTurn){
+			c0.set(0.75);
+			c1.set(0.75);
+			c2.set(0.75);
+			c3.set(0.75);
+		}
+		
+		c0.setEncPosition(0);
+
+		while(c0.getEncPosition() < (motorDegrees * 5) ){
+			c0.set(-0.75);
+			c1.set(-0.75);
+			c2.set(0.75);
+			c3.set(0.75);
+
+		}
+		
 	}
 
+
 	public void operatorControl() {
+
+		c0.setSafetyEnabled(true);
+		c1.setSafetyEnabled(true);
+		c2.setSafetyEnabled(true);
+		c3.setSafetyEnabled(true);
+
 
 		while (isOperatorControl() && isEnabled()) {
 			x1 = stick.getX(); // initializes the x values
