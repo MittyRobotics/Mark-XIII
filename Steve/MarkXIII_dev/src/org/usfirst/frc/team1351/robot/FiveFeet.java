@@ -23,7 +23,7 @@ public class FiveFeet extends SampleRobot {
 	public CANTalon Wheel0,Wheel1,Wheel2,Wheel3;
 	Joystick joystick0;
     public double degPerFt = 171.888;
-    public double deg90 = 0;
+    public double deg90 = 40;
 
     //Defining everything
     //deadzone is the plus/minus value to create a deadzone of 5% for the joystick
