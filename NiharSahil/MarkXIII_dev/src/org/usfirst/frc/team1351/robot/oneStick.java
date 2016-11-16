@@ -19,6 +19,7 @@ public class oneStick {
 		double y1;
 		double x1;
 		double power = 0.16;
+		double motorDeg = 171.887338539;
 		
     public oneStick() {
     	talon0 = new CANTalon(0);
@@ -37,6 +38,33 @@ public class oneStick {
     }
 
     public void autonomous() {
+    	
+    	if (talon0.getEncPosition() < (motorDeg * 5)) {
+    		talon0.set(0.75);
+    		talon1.set(0.75);
+    		talon2.set(-0.75);
+    		talon3.set(-0.75);
+    	}
+    	talon0.setEncPosition(0);
+    	talon1.setEncPosition(0);
+    	talon2.setEncPosition(0);
+    	talon3.setEncPosition(0);
+    	if (talon0.getEncPosition() < (motorDeg * 1.3)) {
+    		talon0.set(0.75);
+    		talon1.set(0.75);
+    		talon2.set(0.75);
+    		talon3.set(0.75);
+    	}
+    	talon0.setEncPosition(0);
+    	talon1.setEncPosition(0);
+    	talon2.setEncPosition(0);
+    	talon3.setEncPosition(0);
+    	if (talon0.getEncPosition() < (motorDeg * 5)) {
+    		talon0.set(0.75);
+    		talon1.set(0.75);
+    		talon2.set(-0.75);
+    		talon3.set(-0.75);
+    	}
     	
     }
 
