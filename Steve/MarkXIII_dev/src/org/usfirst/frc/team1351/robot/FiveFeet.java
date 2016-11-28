@@ -55,9 +55,7 @@ public class FiveFeet extends SampleRobot {
     		Wheel2.set(0.1);
     		Wheel3.set(0.1);
     		while(Wheel2.getEncPosition() < degPerFt * 5){ 
-    			if (joystick0.getRawButton(0)) {
-    				return;
-    			}
+    			
     		}
 //    		Wheel0.set(0);
     		Wheel1.set(0);
@@ -69,12 +67,11 @@ public class FiveFeet extends SampleRobot {
     		Wheel2.set(0.1);
     		Wheel3.set(0.1);
     		while(Wheel2.getEncPosition() < deg90){ 
-    			if (joystick0.getRawButton(0)) {
-    				return;
-    			}
+
     		}
     		Wheel0.set(0);
     		Wheel1.set(0);
+    		
     		Wheel2.set(0);
     		Wheel3.set(0);
     		Wheel2.setEncPosition(0);
@@ -83,9 +80,7 @@ public class FiveFeet extends SampleRobot {
     		Wheel2.set(0.1);
     		Wheel3.set(0.1);
     		while(Wheel2.getEncPosition() < degPerFt * 5){ 
-    			if (joystick0.getRawButton(0)) {
-    				return;
-    			}
+    		
     		}
     		Wheel0.set(0);
     		Wheel1.set(0);
