@@ -12,31 +12,26 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 
-public class robotclaw extends SampleRobot {
-		CANTalon talon0, talon1, talon2, talon3, talon4, talon5;
-		Joystick stick1, stick2;
+
+public class oneStick {
+		Joystick stick;
+		CANTalon talon0, talon1, talon2, talon3;
 		double y1;
-		double y2;
-		double y3;
-		int currentStep = 1;
-		int previousStep = 1;
-		double stepDistance = 2;
+		double x1;
+		double power = 0.16;
+		double motorDeg = 171.887338539;
 		
-    public robotclaw() {
-	    //initializes talons
+    public oneStick() {
     	talon0 = new CANTalon(0);
     	talon1 = new CANTalon(1);
     	talon2 = new CANTalon(2);
     	talon3 = new CANTalon(3);
-    	talon4 = new CANTalon(4);
-    	talon5 = new CANTalon(5);
-    	stick1 = new Joystick(0);
-    	stick2 = new Joystick(1);
+    	stick = new Joystick(0);
     	talon0.changeControlMode(TalonControlMode.PercentVbus);
     	talon1.changeControlMode(TalonControlMode.PercentVbus);
     	talon2.changeControlMode(TalonControlMode.PercentVbus);
-    	talon3.changeControlMode(TalonControlMode.PercentVbus);
-    }
+    	talon3.changeControlMode(TalonControlMode.PercentVbus); 
+	}
     
     public void robotInit() {
     	
@@ -44,66 +39,128 @@ public class robotclaw extends SampleRobot {
 
     public void autonomous() {
     	
+    	while (talon0.getEncPosition() < (motorDeg * 5)) {
+    		talon0.set(0.75);
+    		talon1.set(0.75);
+    		talon2.set(-0.75);
+    		talon3.set(-0.75);
+    	} 
+    		talon0.set(0);
+    		talon1.set(0);
+    		talon2.set(0);
+    		talon3.set(0);
+    	
+    	talon0.setEncPosition(0);
+    	talon1.setEncPosition(0);
+    	talon2.setEncPosition(0);
+    	talon3.setEncPosition(0);
+    	
+    	while (talon0.getEncPosition() < (motorDeg * 1.3)) {
+    		talon0.set(-0.75);
+    		talon1.set(-0.75);
+    		talon2.set(-0.75);
+    		talon3.set(-0.75);
+    	}
+    	
+    	talon0.setEncPosition(0);
+    	talon1.setEncPosition(0);
+    	talon2.setEncPosition(0);
+    	talon3.setEncPosition(0);
+    	
+    	while (talon0.getEncPosition() < (motorDeg * 5)) {
+    		talon0.set(0.75);
+    		talon1.set(0.75);
+    		talon2.set(-0.75);
+    		talon3.set(-0.75);
+    	}
+    	
     }
 
     public void operatorControl() {
-    	//go forward and backward
-    	currentStep = 1;
-    	while(isOperatorControl() && isEnabled()){
-    		 y1 = stick1.getY();
-    		 y2 = stick2.getY();
-    		 if(y1 < 0.01 && y1 > -0.01){
-    			 y1 = 0;
-    		 }
-    	 
-    		 talon0.set(y1);
-    		 talon2.set(y1);
-    		 if(y2 < 0.01 && y2 > -0.01){
-    			 y2 = 0;
-    		 }
-    		 
-    		 talon1.set(y2);
-    		 talon3.set(y2);
-    		 
-    		 if (stick1.getRawButton(1)) {
-    			 talon4.set(stepDistance * (1 - currentStep));
-    			 talon5.set(stepDistance * (1 - currentStep));
-    			 currentStep = 1;
-    		 }
-    		 if (stick1.getRawButton(2)) {
-    			 talon4.set(stepDistance * (2 - currentStep));
-    			 talon5.set(stepDistance * (2 - currentStep));
-    			 currentStep = 2;
-    		 }
-    		 if (stick1.getRawButton(3)) {
-    			 talon4.set(stepDistance * (3 - currentStep));
-    			 talon5.set(stepDistance * (3 - currentStep));
-    			 currentStep = 3;
-    		 }
-    		 if (stick1.getRawButton(4)) {
-    			 talon4.set(stepDistance * (4 - currentStep));
-    			 talon5.set(stepDistance * (4 - currentStep));
-    			 currentStep = 4;
-    		 }
-    		 if (stick1.getRawButton(5)) {
-    			 talon4.set(stepDistance * (5 - currentStep));
-    			 talon5.set(stepDistance * (5 - currentStep));
-    			 currentStep = 5;
-    		 }
-    		 
+    	if (stick.getRawButton(1)){
+    		y1 = stick.getY();
+    		x1 = stick.getX();
+    		if(y1 < 0.01 && y1 > -0.01) {
+   			 	y1 = 0;
+   			 	talon0.set(power);
+   			 	talon1.set(power);
+   			 	talon2.set(power);
+   			 	talon3.set(power);
+   		 	}
+    		if(x1 < 0.01 && x1 > -0.01) {
+   			 	x1 = 0;
+   			 	talon0.set(power);
+   			 	talon1.set(power);
+   			 	talon2.set(power);
+   			 	talon3.set(power);
+   		 	}
+    		if(y1 > 0.01){
+    			talon0.set(2 * power);
+   			 	talon1.set(2 * power);
+   			 	talon2.set(2 * power);
+   			 	talon3.set(2 * power);
+    		}
+    		if(y1 < -0.01){
+    			talon0.set(-0.5 * power);
+   			 	talon1.set(-0.5 * power);
+   			 	talon2.set(-0.5 * power);
+   			 	talon3.set(-0.5 * power);
+    		}
+    		if(x1 > 0.01){
+    			talon0.set(2 * power);
+   			 	talon1.set(2 * power);
+   			 	talon2.set(1 * power);
+   			 	talon3.set(1 * power);
+    		}
+    		if(x1 < -0.01){
+    			talon0.set(1 * power);
+   			 	talon1.set(1 * power);
+   			 	talon2.set(2 * power);
+   			 	talon3.set(2 * power);
+    		}
+    		if(y1 > 0.01 && x1 < -0.01){
+    			talon0.set(2 * power);
+   			 	talon1.set(2 * power);
+   			 	talon2.set(4 * power);
+   			 	talon3.set(4 * power);
+    		}
+    		if(y1 > 0.01 && x1 > 0.01){
+    			talon0.set(4 * power);
+   			 	talon1.set(4 * power);
+   			 	talon2.set(2 * power);
+    			talon3.set(2 * power);
+    		}
 
-    			 
-    			 
-    		 }
+    		if(y1 < -0.01 && x1 < -0.01){
+    			talon0.set(-0.5 * power);
+   			 	talon1.set(-0.5 * power);
+   			 	talon2.set(-1 * power);
+   			 	talon3.set(-1 * power);
+    		}
+    		if(y1 < -0.01 && x1 > 0.01){
+    			talon0.set(-1 * power);
+   			 	talon1.set(-1 * power);
+   			 	talon2.set(-0.5 * power);
+   			 	talon3.set(-0.5 * power);
+    		}
     	}
-    	    		
-    	
-    		
-    		
-    		
-    	
+    	else {
+    		if(x1 < -0.01){
+    			talon0.set(-1 * power);
+    			talon1.set(-1 * power);
+    			talon2.set(1 * power);
+    			talon3.set(1 * power);
+    		}
+    		if(x1 > 0.01){
+    			talon0.set(1 * power);
+    			talon1.set(1 * power);
+    			talon2.set(-1 * power);
+    			talon3.set(-1 * power);
+    		}
+    	}
+    }
     
-
+    	
     public void test() {
     }
 }
